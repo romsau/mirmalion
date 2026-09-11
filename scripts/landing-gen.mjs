@@ -650,9 +650,23 @@ const REDIRECT = `
       })();
     </script>`;
 
-/** Le menu de langue se referme d’un clic ailleurs ou par Échap : un `<details>` seul reste ouvert. */
+/**
+ * L’en-tête : le menu de langue se referme d’un clic ailleurs ou par Échap (un `<details>` seul
+ * reste ouvert), et la marque remonte en haut de page.
+ *
+ * ⚠️ Le retour en haut est pris en main : un lien vers `#top` déjà dans l’adresse ne fait plus
+ * défiler certains navigateurs, et l’ancre est retirée pour que le clic suivant remonte aussi.
+ */
 const LANG_MENU = `
     <script>
+      document.querySelectorAll('a[href="#top"]').forEach(function (link) {
+        link.addEventListener('click', function (event) {
+          event.preventDefault();
+          var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+          window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+          history.replaceState(null, '', location.pathname + location.search);
+        });
+      });
       document.addEventListener('click', function (event) {
         var menu = document.querySelector('.lang[open]');
         if (menu && !menu.contains(event.target)) menu.removeAttribute('open');
