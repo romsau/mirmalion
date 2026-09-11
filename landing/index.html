@@ -10,24 +10,53 @@
     />
     <link rel="alternate" hreflang="fr" href="https://mirmalion.web.app/" />
     <link rel="alternate" hreflang="en" href="https://mirmalion.web.app/en/" />
+    <link rel="alternate" hreflang="es" href="https://mirmalion.web.app/es/" />
+    <link rel="alternate" hreflang="de" href="https://mirmalion.web.app/de/" />
+    <link rel="alternate" hreflang="it" href="https://mirmalion.web.app/it/" />
+    <link rel="alternate" hreflang="pt" href="https://mirmalion.web.app/pt/" />
+    <link rel="alternate" hreflang="x-default" href="https://mirmalion.web.app/" />
     <link rel="icon" href="img/favicon.png" type="image/png" />
     <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
-    <link rel="alternate" hreflang="x-default" href="https://mirmalion.web.app/" />
     <script>
-      // Bascule vers l'anglais quand le navigateur ne parle pas français, sauf choix explicite
-      // mémorisé par le lien de langue.
+      // Sert la page de la langue du navigateur, sauf choix explicite mémorisé par le menu de
+      // langue. La racine reste le français ; les autres langues vivent sous leur code.
       (function () {
         try {
+          var codes = ['fr', 'en', 'es', 'de', 'it', 'pt'];
           var choice = localStorage.getItem('mirmalion-lang');
           if (choice === 'fr') return;
-          var langs = (navigator.languages || [navigator.language || '']).join(',').toLowerCase();
-          if (choice === 'en' || (langs && !/(^|,)fr/.test(langs))) location.replace('en/');
+          var wanted = codes.indexOf(choice) > 0 ? choice : '';
+          var spoken = navigator.languages || [navigator.language || ''];
+          for (var i = 0; i < spoken.length && !wanted; i++) {
+            var code = String(spoken[i]).slice(0, 2).toLowerCase();
+            if (codes.indexOf(code) >= 0) wanted = code;
+          }
+          if (!wanted && spoken.join('')) wanted = 'en';
+          if (wanted && wanted !== 'fr') {
+            // ⚠️ Lu par la mesure d'audience : une visite qui repart aussitôt ne se compte pas ici.
+            window.mirmalionLeaving = true;
+            location.replace(wanted + '/');
+          }
         } catch (e) {
           return;
         }
       })();
     </script>
-    <link rel="stylesheet" href="landing.css?v=2" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-69VB32R303"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      if (!window.mirmalionLeaving) {
+        gtag('config', 'G-69VB32R303', {
+          allow_google_signals: false,
+          allow_ad_personalization_signals: false,
+        });
+      }
+    </script>
+    <link rel="stylesheet" href="landing.css?v=3" />
   </head>
   <body>
     <header class="top">
@@ -44,20 +73,86 @@
         <a href="#fichiers">Fichiers</a>
         <a href="#local">Hors ligne</a>
       </nav>
-      <a
-        class="lang"
-        href="en/"
-        lang="en"
-        hreflang="en"
-        onclick="
-          try {
-            localStorage.setItem('mirmalion-lang', 'en');
-          } catch (e) {
-            return;
-          }
-        "
-        >English</a
-      >
+      <details class="lang">
+        <summary aria-label="Langue">Français</summary>
+        <ul role="list">
+          <li>
+            <a
+              href="en/"
+              lang="en"
+              hreflang="en"
+              onclick="
+                try {
+                  localStorage.setItem('mirmalion-lang', 'en');
+                } catch (e) {
+                  return;
+                }
+              "
+              >English</a
+            >
+          </li>
+          <li>
+            <a
+              href="es/"
+              lang="es"
+              hreflang="es"
+              onclick="
+                try {
+                  localStorage.setItem('mirmalion-lang', 'es');
+                } catch (e) {
+                  return;
+                }
+              "
+              >Español</a
+            >
+          </li>
+          <li>
+            <a
+              href="de/"
+              lang="de"
+              hreflang="de"
+              onclick="
+                try {
+                  localStorage.setItem('mirmalion-lang', 'de');
+                } catch (e) {
+                  return;
+                }
+              "
+              >Deutsch</a
+            >
+          </li>
+          <li>
+            <a
+              href="it/"
+              lang="it"
+              hreflang="it"
+              onclick="
+                try {
+                  localStorage.setItem('mirmalion-lang', 'it');
+                } catch (e) {
+                  return;
+                }
+              "
+              >Italiano</a
+            >
+          </li>
+          <li>
+            <a
+              href="pt/"
+              lang="pt"
+              hreflang="pt"
+              onclick="
+                try {
+                  localStorage.setItem('mirmalion-lang', 'pt');
+                } catch (e) {
+                  return;
+                }
+              "
+              >Português</a
+            >
+          </li>
+        </ul>
+      </details>
     </header>
 
     <main id="top">

@@ -4,8 +4,9 @@
  *
  * Pour chaque page : aucune violation AXE (contraste compris — c'est un navigateur, pas jsdom),
  * un bouton de téléchargement dont l'adresse et le numéro affiché concordent, des ancres qui
- * ciblent une section présente, la langue déclarée, le lien vers l'autre langue, et aucune
- * ressource chargée depuis un autre domaine. Les deux pages doivent annoncer la même version.
+ * ciblent une section présente, la langue déclarée, les liens vers les autres langues, et aucune
+ * ressource chargée depuis un autre domaine que ceux de la mesure d'audience. Toutes les pages
+ * doivent annoncer la même version.
  *
  * ⚠️ Aucune suite ne couvre ce script : lancer `--selftest` avant de croire un vert.
  */
@@ -18,12 +19,31 @@ import { chromium } from 'playwright';
 const AXE_SOURCE = readFileSync(resolve('node_modules/axe-core/axe.min.js'), 'utf8');
 const DMG_URL =
   /^https:\/\/github\.com\/romsau\/mirmalion\/releases\/download\/v(\d+\.\d+\.\d+)\/Mirmalion_(\d+\.\d+\.\d+)_aarch64\.dmg$/;
+/**
+ * Les seuls domaines distants admis : ceux de Google Analytics, appelé par chaque page.
+ *
+ * ⚠️ Volontairement étroit : les pages désactivent les signaux publicitaires, et un appel vers
+ * `doubleclick.net` signifierait qu'ils sont revenus.
+ */
+const ANALYTICS_HOST =
+  /^https:\/\/(www\.googletagmanager\.com|(www|region\d+)\.google-analytics\.com|analytics\.google\.com)\//;
 
-/** Les pages du site, avec la langue que chacune doit déclarer. */
-const PAGES = [
-  { path: 'landing/index.html', lang: 'fr', other: 'en', locale: 'fr-FR' },
-  { path: 'landing/en/index.html', lang: 'en', other: 'fr', locale: 'en-US' },
-];
+/** Les six langues du site, dans l'ordre où elles apparaissent dans le bundle. */
+const LANGS = ['fr', 'en', 'es', 'de', 'it', 'pt'];
+/** Le chemin de la page de chaque langue : `landing/index.html` pour le français, un sous-dossier pour les autres. */
+const PATHS = Object.fromEntries(
+  LANGS.map((lang) => [lang, lang === 'fr' ? 'landing/index.html' : `landing/${lang}/index.html`]),
+);
+/** La locale Playwright de chaque langue. */
+const LOCALES = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE', it: 'it-IT', pt: 'pt-PT' };
+
+/** Les pages du site, avec la langue que chacune doit déclarer et les autres à lier. */
+const PAGES = LANGS.map((lang) => ({
+  path: PATHS[lang],
+  lang,
+  others: LANGS.filter((code) => code !== lang),
+  locale: LOCALES[lang],
+}));
 
 /**
  * Inspecte une page ouverte et rend la liste des fautes (vide si tout va bien) et la version
@@ -79,9 +99,13 @@ async function inspect(page, expected) {
   if (facts.nav.length === 0) faults.push('aucune ancre dans <nav aria-label>');
   for (const href of facts.missingTargets) faults.push(`ancre sans cible : ${href}`);
   if (facts.lang !== expected.lang) faults.push(`lang="${facts.lang}", attendu "${expected.lang}"`);
-  if (!facts.alternates.includes(expected.other))
-    faults.push(`pas de <link rel="alternate" hreflang="${expected.other}">`);
-  for (const url of facts.remote) faults.push(`ressource distante : ${url}`);
+  for (const code of expected.others) {
+    if (!facts.alternates.includes(code))
+      faults.push(`pas de <link rel="alternate" hreflang="${code}">`);
+  }
+  for (const url of facts.remote) {
+    if (!ANALYTICS_HOST.test(url)) faults.push(`ressource distante : ${url}`);
+  }
   return { faults, version };
 }
 
@@ -103,7 +127,7 @@ async function check(pages) {
       });
       const remote = [];
       page.on('request', (r) => {
-        if (!r.url().startsWith('file:')) remote.push(r.url());
+        if (!r.url().startsWith('file:') && !ANALYTICS_HOST.test(r.url())) remote.push(r.url());
       });
       await page.goto(pathToFileURL(resolve(spec.path)).href);
       const { faults, version } = await inspect(page, spec);
@@ -129,7 +153,7 @@ async function check(pages) {
 /** Une page minimale conforme, paramétrée pour fabriquer les fixtures du selftest. */
 function fixture({
   lang,
-  other,
+  others,
   version,
   href,
   span,
@@ -141,7 +165,9 @@ function fixture({
   noAlt,
 }) {
   const download = `<a data-download href="${href}">Get ${span ? `<span data-version>${version}</span>` : version}</a>`;
-  const alternate = noAlternate ? '' : `<link rel="alternate" hreflang="${other}" href="x.html">`;
+  const alternate = noAlternate
+    ? ''
+    : others.map((code) => `<link rel="alternate" hreflang="${code}" href="x.html">`).join('');
   // ⚠️ Chromium ne télécharge une police que si un texte s'en sert : le `<p>` fait partie du cas.
   const face = font
     ? '<style>@font-face{font-family:x;src:url(https://example.com/x.woff2)}</style>'
@@ -241,14 +267,17 @@ async function selftest() {
   try {
     for (const c of cases) {
       mkdirSync(join(dir, c.name, 'en'), { recursive: true });
-      writeFileSync(join(dir, c.name, 'index.html'), fixture({ lang: 'fr', other: 'en', ...c.fr }));
+      writeFileSync(
+        join(dir, c.name, 'index.html'),
+        fixture({ lang: 'fr', others: ['en'], ...c.fr }),
+      );
       writeFileSync(
         join(dir, c.name, 'en', 'index.html'),
-        fixture({ lang: 'en', other: 'fr', ...c.en }),
+        fixture({ lang: 'en', others: ['fr'], ...c.en }),
       );
       const pages = [
-        { path: join(dir, c.name, 'index.html'), lang: 'fr', other: 'en' },
-        { path: join(dir, c.name, 'en', 'index.html'), lang: 'en', other: 'fr' },
+        { path: join(dir, c.name, 'index.html'), lang: 'fr', others: ['en'] },
+        { path: join(dir, c.name, 'en', 'index.html'), lang: 'en', others: ['fr'] },
       ];
       const faults = await check(pages);
       const ok =

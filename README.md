@@ -91,15 +91,15 @@ sauvegarder ailleurs que sur la machine de développement.
 
 Le détail de la notarisation, de l'agrafage et de ce qui n'est délibérément pas agrafé est
 documenté en tête de [`scripts/release.sh`](scripts/release.sh). La page d'accueil se vérifie
-avec `npm run verify:landing`, dans un vrai Chromium ; ses textes vivent dans
-`landing/index.html` et `landing/en/index.html`, et seul le script de publication y écrit le
-numéro de version.
+avec `npm run verify:landing`, dans un vrai Chromium ; elle existe dans les six langues — ses
+textes vivent dans `landing/index.html` pour le français et `landing/<code>/index.html` pour les
+cinq autres —, et seul le script de publication écrit le numéro de version, dans les six.
 
 ## Structure du projet
 
 ```
 src/            Frontend Angular (composants, services dans core/services, routes, locales)
-landing/        Page d'accueil (mirmalion.web.app), HTML et CSS purs, en français et en anglais
+landing/        Page d'accueil (mirmalion.web.app), HTML et CSS purs, en six langues
 src-tauri/      Crate Rust Tauri (lib.rs, commandes IPC, tauri.conf.json, capabilities, icons)
 src-tauri/native/  Paquet SwiftPM : pont vers les briques Apple
 docs/           Maquette UI de référence, cadrage, mesures

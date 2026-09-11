@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mirmalion — dictation and transcription, on your Mac</title>
+    <title>Mirmalion — ditado e transcrição, no teu Mac</title>
     <meta
       name="description"
-      content="Dictation, live transcription and transcription of audio or video files. Everything runs on your Mac, offline: no sound and no text ever leaves the machine."
+      content="Ditado, transcrição em direto e transcrição de ficheiros de áudio ou vídeo. Tudo acontece no teu Mac, sem ligação: nenhum som, nenhum texto sai da máquina."
     />
     <link rel="alternate" hreflang="fr" href="https://mirmalion.web.app/" />
     <link rel="alternate" hreflang="en" href="https://mirmalion.web.app/en/" />
@@ -42,14 +42,14 @@
         </picture>
         Mirmalion
       </a>
-      <nav aria-label="Page sections">
-        <a href="#dictation">Dictation</a>
-        <a href="#live">Live</a>
-        <a href="#files">Files</a>
-        <a href="#local">Offline</a>
+      <nav aria-label="Secções da página">
+        <a href="#ditado">Ditado</a>
+        <a href="#direto">Direto</a>
+        <a href="#ficheiros">Ficheiros</a>
+        <a href="#local">Sem ligação</a>
       </nav>
       <details class="lang">
-        <summary aria-label="Language">English</summary>
+        <summary aria-label="Idioma">Português</summary>
         <ul role="list">
           <li>
             <a
@@ -64,6 +64,21 @@
                 }
               "
               >Français</a
+            >
+          </li>
+          <li>
+            <a
+              href="../en/"
+              lang="en"
+              hreflang="en"
+              onclick="
+                try {
+                  localStorage.setItem('mirmalion-lang', 'en');
+                } catch (e) {
+                  return;
+                }
+              "
+              >English</a
             >
           </li>
           <li>
@@ -111,21 +126,6 @@
               >Italiano</a
             >
           </li>
-          <li>
-            <a
-              href="../pt/"
-              lang="pt"
-              hreflang="pt"
-              onclick="
-                try {
-                  localStorage.setItem('mirmalion-lang', 'pt');
-                } catch (e) {
-                  return;
-                }
-              "
-              >Português</a
-            >
-          </li>
         </ul>
       </details>
     </header>
@@ -138,65 +138,65 @@
             <img
               class="logo"
               src="../img/logo-mark.png"
-              alt="Mirmalion logo"
+              alt="Logótipo do Mirmalion"
               width="168"
               height="80"
             />
           </picture>
-          <h1 id="hero-title">You speak, Mirmalion writes.</h1>
+          <h1 id="hero-title">Tu falas, o Mirmalion escreve.</h1>
           <p class="lede">
-            Dictate in any application, follow a conference in another language with the text live,
-            or transcribe a file. On your Mac, without a network.
+            Dita em qualquer aplicação, acompanha uma conferência noutra língua com o texto em
+            direto, ou transcreve um ficheiro. No teu Mac, sem rede.
           </p>
           <a
             class="download"
             data-download
             href="https://github.com/romsau/mirmalion/releases/download/v0.9.17/Mirmalion_0.9.17_aarch64.dmg"
           >
-            Download Mirmalion <span data-version>0.9.17</span>
+            Descarregar Mirmalion <span data-version>0.9.17</span>
           </a>
           <div class="meta">
-            <p>macOS 26 · Apple Silicon · Free, open source</p>
-            <p>French, English, Spanish, German, Italian, Portuguese.</p>
+            <p>macOS 26 · Apple Silicon · Gratuito, código aberto</p>
+            <p>Francês, inglês, espanhol, alemão, italiano, português.</p>
           </div>
         </div>
         <div class="hero__shots" aria-hidden="true">
           <figure class="feature__shot">
             <div class="win">
-              <img src="../img/dictee-en.png?v=3" alt="" width="900" height="1270" />
+              <img src="../img/dictee-pt.png?v=3" alt="" width="900" height="1270" />
             </div>
           </figure>
           <figure class="feature__shot">
             <div class="win">
-              <img src="../img/direct-en.png?v=3" alt="" width="900" height="1270" />
+              <img src="../img/direct-pt.png?v=3" alt="" width="900" height="1270" />
             </div>
           </figure>
         </div>
       </section>
 
       <section
-        id="dictation"
+        id="ditado"
         class="feature feature--tall feature--reverse"
-        aria-labelledby="dictation-title"
+        aria-labelledby="ditado-title"
       >
         <div class="feature__text">
-          <p class="eyebrow">Dictation</p>
-          <h2 id="dictation-title">You speak, the text lands right where your cursor is.</h2>
+          <p class="eyebrow">Ditado</p>
+          <h2 id="ditado-title">Tu falas, o texto escreve-se exatamente onde está o cursor.</h2>
           <p>
-            One shortcut, <kbd>⌃</kbd><kbd>⌥</kbd>, and you dictate into any application. The text
-            is inserted exactly where you were, punctuated and clean.
+            Um atalho, <kbd>⌃</kbd><kbd>⌥</kbd>, e ditas em qualquer aplicação. O texto insere-se no
+            ponto exato onde estavas, pontuado e limpo.
           </p>
           <p>
-            A second shortcut, <kbd>⌃</kbd><kbd>⌥</kbd><kbd>⌘</kbd>, writes straight into the
-            language of your choice. A personal dictionary learns your names and your trade's
-            vocabulary.
+            Um segundo atalho, <kbd>⌃</kbd><kbd>⌥</kbd><kbd>⌘</kbd>, escreve diretamente na língua
+            que escolheres. Um dicionário pessoal aprende os teus nomes próprios e os termos da tua
+            profissão.
           </p>
         </div>
         <figure class="feature__shot">
           <div class="win">
             <img
-              src="../img/dictee-en.png?v=3"
-              alt="The Dictation screen in Mirmalion: dictation mode, spoken language, translation, rephrasing."
+              src="../img/dictee-pt.png?v=3"
+              alt="O ecrã Ditado do Mirmalion: modo de ditado, idioma falado, tradução, reformulação."
               width="900"
               height="1270"
             />
@@ -204,25 +204,25 @@
         </figure>
       </section>
 
-      <section id="live" class="feature feature--tall" aria-labelledby="live-title">
+      <section id="direto" class="feature feature--tall" aria-labelledby="direto-title">
         <div class="feature__text">
-          <p class="eyebrow">Live</p>
-          <h2 id="live-title">A conference in another language, readable live.</h2>
+          <p class="eyebrow">Direto</p>
+          <h2 id="direto-title">Uma conferência noutra língua, legível em direto.</h2>
           <p>
-            You're following a conference in German, a video call in Spanish, a video in Italian:
-            Mirmalion captures the sound on your Mac and displays the text as it goes, translated
-            into your language if you want.
+            Acompanhas uma conferência em inglês, uma videochamada em espanhol, um vídeo em alemão:
+            o Mirmalion capta o som do teu Mac e mostra o texto à medida que avança, traduzido para
+            a tua língua se quiseres.
           </p>
           <p>
-            At the end, a summary written on your machine by a local language model, and an export
-            of the text.
+            No fim, um resumo redigido na tua máquina por um modelo de linguagem local, e uma
+            exportação do texto.
           </p>
         </div>
         <figure class="feature__shot">
           <div class="win">
             <img
-              src="../img/direct-en.png?v=3"
-              alt="The Live screen in Mirmalion: audio source, spoken language, translation, and the Start Recording button."
+              src="../img/direct-pt.png?v=3"
+              alt="O ecrã Direto do Mirmalion: fonte de áudio, idioma falado, tradução e o botão Começar a gravar."
               width="900"
               height="1270"
               loading="lazy"
@@ -231,20 +231,20 @@
         </figure>
       </section>
 
-      <section id="files" class="feature feature--reverse" aria-labelledby="files-title">
+      <section id="ficheiros" class="feature feature--reverse" aria-labelledby="ficheiros-title">
         <div class="feature__text">
-          <p class="eyebrow">Files</p>
-          <h2 id="files-title">A recording, dropped, transcribed.</h2>
+          <p class="eyebrow">Ficheiros</p>
+          <h2 id="ficheiros-title">Uma gravação, arrastada, transcrita.</h2>
           <p>
-            Drop an audio or video file and get its text back. No link to paste, no upload: the file
-            never leaves your disk.
+            Larga um ficheiro de áudio ou vídeo e recupera o seu texto. Nenhum endereço a colar,
+            nenhum envio: o ficheiro não sai do teu disco.
           </p>
         </div>
         <figure class="feature__shot">
           <div class="win">
             <img
-              src="../img/fichiers-en.png?v=3"
-              alt="The Files panel in Options: drop an audio or video file, or browse your computer."
+              src="../img/fichiers-pt.png?v=3"
+              alt="O painel Ficheiros das Opções: arrasta um ficheiro de áudio ou vídeo, ou procura no computador."
               width="1800"
               height="1270"
               loading="lazy"
@@ -254,31 +254,31 @@
       </section>
 
       <section id="local" class="local" aria-labelledby="local-title">
-        <h2 id="local-title">Nothing leaves your machine.</h2>
+        <h2 id="local-title">Nada sai da tua máquina.</h2>
         <p>
-          Every feature works without a network. No telemetry, no account, no content sent anywhere.
-          The network is only used for two explicit actions: downloading a language, and updating
-          the app.
+          Todas as funções trabalham sem rede. Sem telemetria, sem conta, sem conteúdo enviado para
+          lado nenhum. A rede só serve para dois gestos explícitos: descarregar um idioma, atualizar
+          a aplicação.
         </p>
-        <ul role="list" aria-label="Supported languages">
-          <li>French</li>
-          <li>English</li>
-          <li>Spanish</li>
-          <li>German</li>
-          <li>Italian</li>
-          <li>Portuguese</li>
+        <ul role="list" aria-label="Idiomas suportados">
+          <li>Francês</li>
+          <li>Inglês</li>
+          <li>Espanhol</li>
+          <li>Alemão</li>
+          <li>Italiano</li>
+          <li>Português</li>
         </ul>
       </section>
     </main>
 
     <footer class="foot">
-      <a class="download" href="#top">Download Mirmalion</a>
-      <nav aria-label="Links">
-        <a href="https://github.com/romsau/mirmalion">Source code</a>
-        <a href="https://github.com/romsau/mirmalion/releases">All releases</a>
-        <a href="https://github.com/romsau/mirmalion/blob/main/LICENSE">MIT license</a>
+      <a class="download" href="#top">Descarregar Mirmalion</a>
+      <nav aria-label="Ligações">
+        <a href="https://github.com/romsau/mirmalion">Código-fonte</a>
+        <a href="https://github.com/romsau/mirmalion/releases">Todas as versões</a>
+        <a href="https://github.com/romsau/mirmalion/blob/main/LICENSE">Licença MIT</a>
       </nav>
-      <p>Mirmalion is free software for macOS 26 on Apple Silicon.</p>
+      <p>O Mirmalion é software livre para macOS 26 em Apple Silicon.</p>
     </footer>
   </body>
 </html>

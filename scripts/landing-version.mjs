@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Écrit la version publiée dans la page d'accueil : l'adresse du `.dmg` sur le bouton
- * `[data-download]` et le numéro dans `[data-version]`, dans les deux langues.
+ * `[data-download]` et le numéro dans `[data-version]`, dans les six langues.
  *
  *   node scripts/landing-version.mjs 0.9.17
  *
@@ -14,7 +14,14 @@
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 
-const PAGES = ['landing/index.html', 'landing/en/index.html'];
+const PAGES = [
+  'landing/index.html',
+  'landing/en/index.html',
+  'landing/es/index.html',
+  'landing/de/index.html',
+  'landing/it/index.html',
+  'landing/pt/index.html',
+];
 const VERSION = /^\d+\.\d+\.\d+$/;
 const HREF = /(<a\b[^>]*\bdata-download\b[^>]*\bhref=")[^"]*(")/g;
 const SPAN = /(<span data-version>)[^<]*(<\/span>)/g;
@@ -47,12 +54,12 @@ export function rewrite(source, version) {
 }
 
 /**
- * Réécrit les deux pages pour `version`.
+ * Réécrit toutes les pages pour `version`.
  *
- * ⚠️ Les deux pages sont relues et réécrites en mémoire avant le moindre écrit sur le disque :
- * une page hors gabarit laisse sinon l'autre déjà réécrite, arbre sale au milieu d'une publication.
+ * ⚠️ Toutes les pages sont relues et réécrites en mémoire avant le moindre écrit sur le disque :
+ * une page hors gabarit laisse sinon les autres déjà réécrites, arbre sale au milieu d'une publication.
  *
- * @throws {Error} si l'une des deux pages ne correspond pas au gabarit.
+ * @throws {Error} si l'une des pages ne correspond pas au gabarit.
  */
 function writePages(version) {
   const rewritten = PAGES.map((path) => [path, rewrite(readFileSync(path, 'utf8'), version)]);

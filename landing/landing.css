@@ -172,7 +172,7 @@ kbd {
 }
 
 .top nav a,
-.lang {
+.lang summary {
   padding: 6px 12px;
   border-radius: 999px;
   color: var(--muted);
@@ -181,14 +181,61 @@ kbd {
   text-decoration: none;
 }
 
+/* Le menu de langue est un `<details>` : il s'ouvre et se ferme sans script, et reste lisible
+   au clavier. Son résumé se présente comme une pastille, la liste se déplie dessous. */
 .lang {
+  position: relative;
+}
+
+.lang summary {
   border: 1px solid var(--line);
+  cursor: pointer;
+  list-style: none;
+  white-space: nowrap;
+}
+
+.lang summary::-webkit-details-marker {
+  display: none;
+}
+
+.lang summary::after {
+  content: '▾';
+  margin-inline-start: 6px;
 }
 
 .top nav a:hover,
-.lang:hover {
+.lang summary:hover,
+.lang[open] summary {
   background: var(--surface-soft);
   color: var(--ink);
+}
+
+.lang ul {
+  position: absolute;
+  inset-inline-end: 0;
+  top: calc(100% + 8px);
+  min-width: 160px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 12px 30px var(--shadow-ink);
+}
+
+.lang ul a {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.lang ul a:hover {
+  background: var(--surface-soft);
 }
 
 @media (max-width: 680px) {
