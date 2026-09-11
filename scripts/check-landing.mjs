@@ -21,8 +21,8 @@ const DMG_URL =
 
 /** Les pages du site, avec la langue que chacune doit déclarer. */
 const PAGES = [
-  { path: 'landing/index.html', lang: 'fr', other: 'en' },
-  { path: 'landing/en/index.html', lang: 'en', other: 'fr' },
+  { path: 'landing/index.html', lang: 'fr', other: 'en', locale: 'fr-FR' },
+  { path: 'landing/en/index.html', lang: 'en', other: 'fr', locale: 'en-US' },
 ];
 
 /**
@@ -97,7 +97,10 @@ async function check(pages) {
   const versions = new Map();
   try {
     for (const spec of pages) {
-      const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+      const page = await browser.newPage({
+        viewport: { width: 1280, height: 900 },
+        locale: spec.locale ?? 'fr-FR',
+      });
       const remote = [];
       page.on('request', (r) => {
         if (!r.url().startsWith('file:')) remote.push(r.url());
