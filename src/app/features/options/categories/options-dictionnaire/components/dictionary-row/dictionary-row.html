@@ -1,0 +1,99 @@
+<!--
+  ⚠️ **La ligne est empilée, et ce n'est pas un choix esthétique** : le terme sur sa ligne, les
+  graphies dessous, introduites par
+  « La dictée écrit ». Le reproche auquel elle répond était qu'on ne savait pas **dans quel
+  champ on saisit** — deux colonnes muettes, distinguées par leur seule position.
+
+  ⚠️ **Le libellé est COLLÉ au champ, pas en tête d'un tableau.** C'est ce qui départage cette
+  forme d'une simple ligne d'en-têtes : il reste sous les yeux que la ligne porte une graphie
+  ou huit, alors qu'un en-tête de colonne s'éloigne à mesure que les étiquettes s'accumulent.
+-->
+<div class="dico-stack">
+  <div class="dico-term">{{ entry().term }}</div>
+
+  <div class="dico-field">
+    <!--
+      Le libellé de la sous-ligne. Il nomme ce que sont les étiquettes qui suivent — des
+      graphies FAUTIVES, celles que la dictée produit — et sert de contexte au champ de saisie
+      qui apparaît au bout. ⚠️ Il ne porte pas le nom accessible du champ : il est identique sur
+      toutes les lignes, alors que `addVariantLabel()` nomme le terme concerné.
+-->
+    <span class="dico-said" i18n="@@dictionary.said">La dictée écrit</span>
+
+    @for (variant of entry().variants; track variant.id) {
+      <span class="dico-tag">
+        {{ variant.value }}
+        <button
+          type="button"
+          [attr.aria-label]="removeVariantLabel(variant.value)"
+          (click)="removeVariant.emit(variant.id)"
+        >
+          <app-icon name="close" />
+        </button>
+      </span>
+    }
+
+    <!--
+      ⚠️ Le bouton **se transforme en champ à son emplacement même** — il n'ouvre rien ailleurs.
+      C'est ce qui rend l'édition en ligne lisible : la saisie apparaît là où l'étiquette
+      apparaîtra, et juste après le libellé qui dit ce qu'on attend.
+-->
+    @if (adding()) {
+      <input
+        type="text"
+        class="dico-input"
+        [attr.aria-label]="addVariantLabel()"
+        [attr.aria-invalid]="duplicate() ? 'true' : null"
+        [attr.aria-describedby]="duplicate() ? 'dico-dup-' + entry().id : null"
+        placeholder="mir maléon"
+        i18n-placeholder="@@dictionary.variantPlaceholder"
+        autocomplete="off"
+        spellcheck="false"
+        (keydown.enter)="submit($event)"
+        (keydown.escape)="cancel($event)"
+        (blur)="leave()"
+      />
+    } @else {
+      <button
+        type="button"
+        class="dico-more"
+        [attr.aria-label]="addVariantLabel()"
+        (click)="open()"
+      >
+        <!--
+          ⚠️ **Le bouton ne NOMME rien, et c'est le choix**. Il s'appuie sur
+          la légende « La dictée écrit » qui le précède : « La dictée écrit … + une autre » se lit
+          d'un trait. Il a porté « variante », puis « graphie » — deux mots qui ne disaient rien à
+          personne. Le meilleur nom était de ne pas en mettre. ⚠️ Le nom **accessible**, lui, reste
+          explicite : la légende est identique sur toutes les lignes et ne distinguerait rien.
+-->
+        <span aria-hidden="true">+</span>
+        <span i18n="@@dictionary.addVariant">une autre</span>
+      </button>
+    }
+  </div>
+
+  <!--
+    `role="alert"` : le refus est annoncé sans que le focus quitte le champ, qui garde la saisie
+    pour que l'utilisateur la corrige au lieu de la retaper.
+-->
+  @if (duplicate()) {
+    <p
+      class="dico-dup"
+      [id]="'dico-dup-' + entry().id"
+      role="alert"
+      i18n="@@dictionary.duplicateVariant"
+    >
+      C'est déjà listé sous ce mot.
+    </p>
+  }
+</div>
+
+<button
+  type="button"
+  class="h-act del"
+  [attr.aria-label]="removeTermLabel()"
+  (click)="removeTerm.emit()"
+>
+  <app-icon name="trash" />
+</button>

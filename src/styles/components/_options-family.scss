@@ -1,0 +1,36 @@
+// La phrase d'introduction d'une famille ou d'un sous-écran d'options — `.opt-fam-desc` de la
+// maquette.
+
+// ⚠️ **Globale, et sans préfixe de conteneur, à dessein.** Elle est écrite dans le gabarit de
+// chaque catégorie, donc encapsulée dans un composant différent à chaque fois : une règle posée
+// dans `options.scss` ne l'atteindrait pas, et la recopier dans chaque catégorie la ferait
+// diverger dès la première retouche.
+
+// ⚠️ **Elle fait UNE phrase**, et c'est une règle de contenu, pas de style : les sous-écrans de
+// langues en ont porté jusqu'à quatre — l'exclusion des fichiers, le caractère explicite du
+// téléchargement, l'absence de plafond, la granularité des paires. Toutes vraies, aucune
+// attendue devant une liste à interrupteurs.
+.fam-desc {
+  margin: 10px 0 6px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  // Une mesure de ligne, pour que la phrase ne traverse pas un panneau large d'un bord à
+  // l'autre : au-delà, l'œil perd le début de la ligne suivante.
+  max-width: 62ch;
+  color: var(--muted);
+}
+
+// ⚠️ **CELLE-CI N'EST PAS UNE NOTE, C'EST LA CONSIGNE D'UTILISATION.** À 12,5 px en gris et
+// bornée à 62 caractères, elle se lisait comme une mention légale et se sautait : personne ne
+// comprenait que cet écran sert à corriger ce que la dictée écrit mal. Elle passe à la taille du
+// texte courant, en encre pleine, sur toute la largeur du panneau.
+// ⚠️ **Le sélecteur porte le composant, et cette feuille est globale** : la phrase est écrite
+// dans le gabarit de la catégorie, donc hors de portée d'une règle posée à côté de `.fam-desc`
+// dans un autre composant.
+app-options-dictionnaire .fam-desc {
+  margin: 4px 0 28px;
+  max-width: none;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.55;
+}

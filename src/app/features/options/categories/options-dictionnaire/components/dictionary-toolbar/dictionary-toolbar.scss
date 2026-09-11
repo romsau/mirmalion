@@ -1,0 +1,64 @@
+// La barre du sous-écran — portée depuis `.opt-subtools`, `.opt-search` et `.opt-add` de
+// `docs/ui/ui.html`.
+
+@use 'abstracts/mixins' as *;
+
+// ⚠️ **`.opt-add` n'est PAS porté**, et c'est voulu : la maquette dessinait un bouton à la
+// main, l'application a un composant `Button` dont c'est exactement le patron — fond teinté au
+// repos, inversion au survol, hauteur commune. Reproduire la règle aurait fait un cinquième
+// bouton ad hoc dans un projet qui n'en veut qu'un.
+
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 10px 0 14px;
+}
+
+// ⚠️ **Le motif du champ se pose sur la BOÎTE, pas sur l'`input`** : la loupe est dedans, donc
+// c'est le conteneur qui porte le fond, le filet et le rembourrage. L'`input` n'est plus qu'un
+// texte transparent posé à côté d'elle.
+.opt-search {
+  @include text-field-surface;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  // ⚠️ **Une largeur fixe, et le champ ne s'étire plus** : posé derrière l'action, un champ
+  // pleine largeur promettait qu'on y écrit des phrases quand on y tape un mot.
+  flex: none;
+  width: 190px;
+  min-width: 0;
+
+  app-icon {
+    width: 15px;
+    height: 15px;
+    color: var(--muted);
+    flex: none;
+  }
+
+  input {
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 13px;
+    color: var(--ink);
+    width: 100%;
+    outline: none;
+
+    // ⚠️ **Le texte d'attente se pose ICI, pas sur la boîte** : `::placeholder` ne descend pas
+    // d'un conteneur, et le `&::placeholder` du mixin est donc inerte sur `.opt-search`. Sans
+    // cette règle, ce champ garde le gris par défaut du navigateur, que rien ne mesure.
+    &::placeholder {
+      color: var(--placeholder-ink);
+    }
+  }
+}
+
+// ⚠️ L'anneau de focus se pose sur le CONTENEUR : le champ n'a pas de bordure propre, et un
+// contour sur lui seul flotterait à l'intérieur de la boîte.
+.opt-search:focus-within {
+  border-color: var(--accent-ink);
+  box-shadow: 0 0 0 1px var(--accent-ink);
+}

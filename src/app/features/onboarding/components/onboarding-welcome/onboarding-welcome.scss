@@ -1,0 +1,15 @@
+// L'étape « Bienvenue », portée depuis `.onb-step[data-onb="welcome"]` de `docs/ui/ui.html`.
+
+// Les classes gardent le nom de la maquette (`.onb-*`) : c'est ce qui rend la comparaison
+// possible d'un coup d'œil. La mise en page elle-même a été mutualisée quand l'étape
+// Autorisations en a demandé exactement la même — voir `abstracts/_mixins.scss`.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  @include onboarding-step;
+}
+
+.onb-item {
+  @include onboarding-item;
+}

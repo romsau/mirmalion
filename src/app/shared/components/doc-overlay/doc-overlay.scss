@@ -1,0 +1,44 @@
+// Le voile de travail d'une fenêtre-document — porté depuis `.doc-loading` et `.dl-box` de
+// `docs/ui/ui.html`.
+
+// ⚠️ **`position: absolute`, jamais `fixed`.** C'est ce qui borne le voile à SA fenêtre plutôt
+// qu'au viewport — voir l'en-tête du composant. Il lui faut donc un ancêtre positionné, que
+// l'hôte doit fournir.
+
+// ⚠️ Le voile se construit sur `--surface` et non sur `--overlay-veil` : celui d'une modale est
+// un voile SOMBRE, qui repousse le contenu au second plan. Ici on **blanchit** au contraire ce
+// qu'on recouvre, dans les deux thèmes, parce que le document reste le sujet — on ne l'écarte
+// pas, on le met en attente.
+
+// ⚠️ **Le flou n'est pas un ornement : c'est lui qui rend la barre lisible.** À 70 % de
+// `--surface` et sans boîte, le libellé, la barre et
+// le pourcentage flottaient **directement sur le transcript** : une ligne de texte traversait la
+// barre de progression de part en part, et le pourcentage se lisait par-dessus des mots. Deux
+// couches d'information à la même place, aucune des deux lisible.
+
+// ⚠️ **Le flou plutôt qu'un voile presque opaque, et plutôt qu'une boîte.** Un voile à 94 %
+// effacerait le document — ce serait l'écarter, l'inverse de l'intention ci-dessus. Une boîte
+// opaque rendrait la carte qu'on retire partout ailleurs. Le flou laisse le document **présent
+// comme texture** et **illisible comme texte** : plus rien ne concurrence la barre, et l'on voit
+// toujours sur quoi on travaille.
+
+// ⚠️ **`-webkit-` compris.** Le moteur est WebKit, et lui seul ; la propriété préfixée est celle
+// qu'il honore de façon sûre. La maquette porte déjà les deux, sur le menu du tray.
+:host {
+  position: absolute;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  backdrop-filter: blur(7px);
+  inset: 0;
+  -webkit-backdrop-filter: blur(7px);
+}
+
+// ⚠️ **`max-width` en pourcentage** : la fenêtre-document est redimensionnable, et 240 px de
+// barre dans une fenêtre resserrée toucheraient les deux bords.
+.dl-box {
+  width: 240px;
+  max-width: 55%;
+}

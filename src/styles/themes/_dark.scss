@@ -1,0 +1,144 @@
+// Thème sombre — porté depuis `docs/ui/ui.html`, sélecteur `:root[data-theme="dark"]`.
+
+// Mêmes jetons que le thème clair, valeurs adaptées au fond sombre. Il n'y a pas de mode
+// « Système » : le thème du système ne sert qu'au tout premier lancement à choisir
+// l'état initial ; ensuite, le choix de l'utilisateur fait foi.
+
+// ⚠️ Valeurs **mesurées**, pas ajustées à l'œil — voir l'en-tête de `_light.scss`.
+
+:root[data-theme='dark'] {
+  // Sans lui, le canevas reste blanc jusqu'à la première peinture — un éclair blanc au
+  // démarrage en thème sombre.
+  color-scheme: dark;
+
+  // ---- Accent ---------------------------------------------------------------------------
+  // Le magenta plein tient comme APLAT (blanc dessus, 6,01:1) mais échoue comme ENCRE : d'où
+  // le --accent-ink distinct, plus clair. C'est la même séparation qu'en thème clair, sauf
+  // qu'en clair les deux se confondent.
+
+  // ⚠️ **Deux valeurs s'écartent de la maquette**, et c'est une correction de contraste,
+  // pas un goût :
+  //   --accent-600  #bd4dbd → #b03fb0 : le blanc dessus tombait à 4,23:1 au survol.
+  //   --accent-ink  #cf5fcf → #d36bd3 : 4,45:1 sur --surface-soft, sous le seuil texte.
+
+  // ⚠️ L'encre est passée par #d873d8 avant #d36bd3. Cette première valeur était **huit points
+  // de clarté au-dessus du nécessaire** — posée à la main, elle passait le seuil sans chercher
+  // à rester près de la maquette. Relevée à l'œil à la revue de clôture de la phase 1 (« très
+  // rose »), puis remesurée : #d36bd3 garde la teinte et la saturation de la maquette et prend
+  // la clarté **minimale** qui tient les trois fonds sombres, la surface élevée (#262a33) étant
+  // la plus exigeante. Canal vert 107, contre 95 pour la maquette et 115 pour #d873d8.
+
+  // La correction a un effet de bord heureux : l'encre tient aussi sur les surfaces flottantes.
+  // Il n'y a donc plus **qu'un seul** magenta d'encre, et le mixin `elevated-surface` n'a plus
+  // à le redéfinir.
+  --accent: #a32fa3; // l'APLAT (blanc dessus, 6,01:1)
+  --accent-600: #b03fb0; // l'aplat au survol (blanc dessus, 5,02:1)
+  --accent-50: #2a1a2a; // le fond teinté, au repos
+  --accent-ink: #d36bd3; // l'ENCRE (5,53:1 sur --surface, 4,90:1 sur --surface-soft)
+  --accent-on: #fff; // l'encre POSÉE SUR l'aplat (6,01:1)
+
+  // ---- Neutres --------------------------------------------------------------------------
+  --ink: #eceef4;
+  --muted: #9aa1b2;
+  // Le texte d'attente — voir la note du thème clair, qui porte la règle et sa mesure.
+  --placeholder-ink: color-mix(in srgb, var(--muted) 96%, var(--surface));
+  --line: #2a2d38; // le FILET : sépare. Décoratif, exempté par WCAG 1.4.11
+  // Le trait qui **borde un contrôle** — voir la note du thème clair, qui porte la règle.
+  // ⚠️ **Valeur la plus discrète qui tienne 3:1 sur les deux fonds adjacents** : 3,40:1 sur
+  // `--surface`, 3,02:1 sur `--surface-soft`. En sombre il faut aller **vers le clair**, comme
+  // pour l'élévation — un trait plus noir que le fond ne se voit pas davantage.
+  --line-strong: #6c6f7a;
+  // Le filet des sous-listes — voir la note du thème clair, qui porte la règle de partage.
+  // ⚠️ Calculé, jamais écrit en dur : il s'efface vers la surface, donc il pâlit en clair et
+  // s'assombrit en sombre, sans jamais disparaître.
+  --line-soft: color-mix(in srgb, var(--line) 55%, var(--surface));
+  --surface: #1a1c22;
+  --surface-soft: #23262f; // encarts imbriqués — se détachent au-dessus de la surface
+  --key-bg: #101218;
+
+  // ---- Orange ---------------------------------------------------------------------------
+  // L'aplat est le même qu'en clair, et l'encre foncée dessus aussi : un orange vif reste
+  // vif sur fond sombre. Seuls le TEXTE orange et le fond teinté changent de côté.
+  // ⚠️ **L'exception AA du thème clair ne vaut PAS ici** : sur fond sombre, l'orange vif tient
+  // comme texte (5,61:1 sur --surface). Seul le blanc sur l'aplat reste à 3,04:1 — l'aplat est
+  // le même dans les deux thèmes, un orange vif restant vif sur fond sombre.
+  // ⚠️ Comme en clair, l'orange n'est plus une couleur de BOUTON depuis : ces
+  // jetons ne servent qu'à la signalétique d'état non cliquable.
+  --warning: #eb711d; // l'APLAT
+  --warning-on: #fff; // 3,04:1 — sur une icône seulement, voir _light.scss
+  --warning-ink: #f2a24e; // 8,15:1 sur --surface, 6,89:1 sur --warning-50
+  --warning-600: #d75f0a;
+  --warning-50: #33281b;
+
+  // ⚠️ **Le jeton existe, mais il ne corrige rien ici** : le thème sombre n'a jamais eu le
+  // défaut que `--warning-on-50` répare en clair — `--warning-ink` y vaut déjà 6,89:1 sur ce
+  // fond. Il vaut donc la même valeur, et c'est délibéré : un jeton qui existe dans un thème
+  // et pas dans l'autre est un jeton qui rend une couleur vide la nuit. Voir `_light.scss`.
+  --warning-on-50: #f2a24e; // 6,89:1 sur --warning-50 — inchangé, AA plein
+
+  // ---- Rouge et vert ----------------------------------------------------------------------
+  // Même aplat qu'en thème clair — un rouge assombri reste franchement rouge sur fond sombre,
+  // et le blanc dessus n'a pas à changer de côté. Seules l'encre et le fond teinté basculent.
+  --danger: #c8262c;
+  --danger-on: #fff; // 5,57:1 sur l'aplat
+  --danger-ink: #ff6b70; // 6,15:1 sur --surface, 5,19:1 sur une surface élevée
+  --danger-50: #33191a;
+  --success: #0f6b41;
+  --success-on: #fff; // 6,56:1 sur l'aplat
+  --success-ink: #4ade80; // 9,77:1 sur --surface
+  --success-50: #16301f;
+
+  // ---- Surfaces élevées -------------------------------------------------------------------
+  // ⚠️ **En sombre, on s'élève vers le CLAIR — pas par une ombre.** Mesuré : chaque surface
+  // flottante se peignait en --surface au-dessus d'un fond lui aussi en --surface, soit
+  // 1,00:1, strictement indiscernable. Le voile n'y changeait rien (1,01:1) : assombrir un
+  // fond déjà sombre ne produit rien, et l'ombre portée — seul séparateur des panneaux sans
+  // voile — est invisible sur du noir. En clair les deux mécanismes marchent, ce qui masquait
+  // le défaut.
+
+  // Ces jetons sont réappliqués **sur la surface flottante elle-même** par le mixin
+  // `elevated-surface` : tous ses descendants qui lisent --surface, --surface-soft ou --line
+  // suivent automatiquement, sans reprise un par un. Les encarts internes repassent SOUS la
+  // surface élevée et se lisent donc comme creusés.
+  --elevated-surface: #262a33; // 1,19:1 sur le fond appli ; --ink dessus 12,40:1
+  --elevated-surface-soft: #1b1e25; // encarts : sous la surface élevée, pas au-dessus
+  --elevated-line: #3a3f4d; // filet rehaussé (1,62:1 sur le fond appli, contre 1,24 avant)
+  // ⚠️ **Il a sa propre valeur, et il le faut** : la surface élevée est plus CLAIRE que le
+  // fond de l'application (#262a33 contre #1a1c22), donc le trait de contrôle qui tient 3:1
+  // en bas n'y tient plus. 3,03:1 sur la surface élevée, 3,52:1 sur ses encarts creusés.
+  --elevated-line-strong: #6e7381;
+  --elevated-placeholder-ink: color-mix(in srgb, var(--muted) 96%, var(--elevated-surface));
+  --elevated-line-soft: color-mix(in srgb, var(--elevated-line) 55%, var(--elevated-surface));
+  // Pas de `--elevated-accent-ink` : depuis la correction ci-dessus, --accent-ink vaut #d36bd3
+  // partout et tient sur la surface élevée (4,66:1) comme sur ses encarts creusés (5,32:1).
+  --elevated-shadow: 0 16px 40px -12px rgb(0 0 0 / 78%), 0 2px 8px rgb(0 0 0 / 45%);
+
+  // ---- La barre de notification ------------------------------------------------------------
+  // Rien à corriger ici : la surface élevée se détache déjà du fond de l'application. Ces deux
+  // jetons reprennent donc les valeurs ci-dessus, et le thème clair est le seul à s'en écarter.
+  // ⚠️ Écrits en dur plutôt qu'en `var()` : `check-contrast.mjs` ne mesure que des couples de
+  // jetons littéraux, et un alias les ferait sortir du contrôle.
+  --snack-surface: #262a33;
+  --snack-control: #1b1e25;
+  --snack-control-active: #3a3f4d; // la valeur de `--elevated-line`, survol d'hier
+
+  // Nettement plus opaque et plus noir qu'en clair, pour qu'il assombrisse réellement.
+  --overlay-veil: rgb(6 8 14 / 62%);
+  // Le fond d'un élément survolé, teinté à la couleur d'accent.
+
+  // ⚠️ **Il se construit sur `--accent-ink`, jamais sur `--accent-50`.** Mesuré : en thème
+  // sombre, `--accent-50` (#2a1a2a) est PLUS SOMBRE que `--surface-soft` (#23262f) — un survol
+  // bâti dessus assombrit de 18 %, quand le clair n'assombrit que de 2,7 %. Le résultat est
+  // une tache sale, et surtout un survol qui creuse là où l'élévation doit porter vers le
+  // clair (cf. l'en-tête de ce fichier). L'encre, elle, est sombre en clair et claire en
+  // sombre : la même expression va donc dans le bon sens des deux côtés.
+
+  // Le pourcentage diffère parce que l'écart entre l'encre et la surface n'est pas le même :
+  // 2 % suffisent en clair, il en faut 8 en sombre pour un effet comparable.
+  --hover-tint: color-mix(in srgb, var(--accent-ink) 8%, transparent);
+
+  // Le fond de l'écran Fichiers pendant un glisser — voir `_light.scss` pour le motif. Il faut
+  // ici **16 %** au lieu de 6 : le magenta sombre se fond dans un fond déjà sombre, et la même
+  // dose n'aurait produit aucun retour visible.
+  --drop-tint: color-mix(in srgb, var(--accent) 16%, var(--surface));
+}

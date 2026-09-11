@@ -1,0 +1,51 @@
+<!--
+  ⚠️ **La ligne n'est PAS cliquable**, comme toutes celles à menu déroulant : aucun navigateur
+  n'ouvre une liste déroulante par programme, et une ligne qui réagit sans rien ouvrir est pire
+  qu'une ligne inerte. La maquette ne la rend pas cliquable non plus.
+
+  ⚠️ Le sous-libellé dit **la conséquence** — « les plus anciennes sont supprimées » — et non le
+  mécanisme. « FIFO » ne veut rien dire pour qui règle son historique.
+-->
+<app-option-row
+  passive
+  label="Dictées conservées"
+  i18n-label="@@options.retention.label"
+  sublabel="Par nombre · au-delà, les plus anciennes sont supprimées"
+  i18n-sublabel="@@options.retention.sublabel"
+>
+  <app-select
+    [options]="retentions"
+    [value]="retention()"
+    (valueChange)="pickRetention($event)"
+    ariaLabel="Nombre de dictées conservées"
+    i18n-ariaLabel="@@options.retention.aria"
+  />
+</app-option-row>
+
+<!--
+  ⚠️ **Par durée, et non par nombre — l'inverse des dictées.** Une dictée est une phrase, et ce
+  qui compte est de ne pas en garder mille ; une session est une heure de réunion, dont on dit
+  « je n'ai plus besoin de ce qui date de l'an dernier ». Deux objets, deux façons de compter.
+
+  ⚠️ **La purge des sessions est continue et rétroactive** — au lancement, puis avant chaque
+  lecture de l'historique. Cette rangée n'a donc rien à déclencher, contrairement à celle du
+  dessus : non qu'il n'y ait rien à purger, mais quelqu'un d'autre s'en charge.
+
+  ⚠️ « Reconnaissance des voix » et « Répertoire de voix » sont **retirés du produit**, pas
+  reportés : il n'y a plus une seule donnée biométrique dans l'application.
+-->
+<app-option-row
+  passive
+  label="Sessions conservées"
+  i18n-label="@@options.liveRetention.label"
+  sublabel="Par durée · au-delà, les plus anciennes sont supprimées"
+  i18n-sublabel="@@options.liveRetention.sublabel"
+>
+  <app-select
+    [options]="liveRetentions"
+    [value]="liveRetention()"
+    (valueChange)="pickLiveRetention($event)"
+    ariaLabel="Durée de conservation des sessions"
+    i18n-ariaLabel="@@options.liveRetention.aria"
+  />
+</app-option-row>

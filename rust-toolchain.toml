@@ -1,0 +1,10 @@
+# La chaîne Rust du projet, pour que la machine de développement et celle de livraison ne
+# puissent pas diverger. Sans ce fichier, `rustup` prend le défaut de la machine, et un composant
+# manquant ne se voit qu'au moment où une commande de `npm run verify` échoue.
+#
+# ⚠️ `components` fait installer ce qui manque à la première commande cargo, mais **seulement à
+# travers rustup**. `llvm-tools-preview` sert à `cargo llvm-cov` (`verify:coverage`), qui reste
+# un binaire à installer à part : voir l'en-tête de `scripts/check-coverage.mjs`.
+[toolchain]
+channel = "stable"
+components = ["clippy", "rustfmt", "llvm-tools-preview"]

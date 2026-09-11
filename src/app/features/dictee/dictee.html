@@ -1,0 +1,74 @@
+<!--
+  Le titre réutilise l'identifiant de traduction du header : c'est le même mot pour la même
+  chose — le nom de l'écran. Une seule unité de traduction, deux emplacements.
+-->
+
+<!--
+  ⚠️ **Chaque changement passe par une méthode**, jamais par une liaison à deux sens directe sur
+  les réglages : écrire un réglage est asynchrone, et deux d'entre eux ont un effet de bord — le
+  mode doit atteindre le raccourci en cours d'exécution, et la langue doit d'abord être
+  installée. Une liaison muette les court-circuiterait tous les deux.
+
+-->
+<div class="dictee" [class.is-collapsed]="panel.collapsed()">
+  <!--
+    Le repli, posé sur le filet entre les deux colonnes — la maquette le place ici et non dans
+    le header : c'est l'écran qui a un panneau, pas la fenêtre.
+    `aria-pressed` dit l'état de l'historique : enfoncé = affiché.
+
+    ⚠️ **Il disparaît quand il n'y a rien à ouvrir**, et seulement replié : proposer un panneau
+    vide est une promesse que l'écran ne tient pas. Déplié il reste, sinon on ne pourrait plus
+    replier. `empty()` est faux tant que l'historique n'a pas été LU — c'est ce qui évite que
+    le bouton clignote au démarrage.
+-->
+  @if (!panel.collapsed() || !history.empty()) {
+    <button
+      type="button"
+      class="panel-collapse"
+      [attr.aria-pressed]="!panel.collapsed()"
+      (click)="panel.toggle()"
+      i18n-aria-label="@@history.toggle"
+      aria-label="Replier ou déplier l'historique"
+      i18n-title="@@screen.historique"
+      title="Historique"
+    >
+      <app-icon name="chevron-left" />
+      <span class="pc-label" i18n="@@screen.historique">Historique</span>
+    </button>
+  }
+
+  <div class="col col-left">
+    <!--
+      ⚠️ **Le titre est DANS la colonne, pas au-dessus de la grille.** La maquette l'y place
+      (`.col-title`) pour qu'il s'aligne avec le rond de repli et avec le titre de
+      l'historique — les trois sont sur la même ligne. Sorti de la grille, il poussait tout le
+      reste vers le bas et désalignait le rond.
+-->
+    <h1 class="screen-title">
+      <app-icon name="mic" />
+      <span i18n="@@screen.dictee">Dictée</span>
+    </h1>
+
+    <app-dictee-controls
+      [spokenLanguages]="spokenLanguages()"
+      [translationLanguages]="translationLanguages()"
+      (languageOptionsRequested)="openLanguageOptions($event)"
+      [mode]="mode()"
+      (modeChange)="setMode($event)"
+      [language]="language()"
+      (languageChange)="pickLanguage($event)"
+      [translationTarget]="translationTarget()"
+      (translationTargetChange)="setTranslation($event)"
+      [rephrasingMode]="rephrasingMode()"
+      (rephrasingModeChange)="setRephrasing($event)"
+      [customPrompt]="customPrompt()"
+      (customPromptChange)="setCustomPrompt($event)"
+    />
+  </div>
+
+  @if (!panel.collapsed()) {
+    <div class="col col-right">
+      <app-dictation-history />
+    </div>
+  }
+</div>

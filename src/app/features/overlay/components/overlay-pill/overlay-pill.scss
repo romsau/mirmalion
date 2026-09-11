@@ -1,0 +1,104 @@
+// La pilule elle-même — maquette : `.rec-overlay` de l'écran `overlay`.
+
+// ⚠️ **Elle ne se positionne pas.** Dans la maquette elle est posée en absolu sur un faux
+// bureau ; dans l'application, la fenêtre EST la pilule et c'est macOS qui la place en haut
+// de l'écran. Un positionnement ici se battrait avec celui de la fenêtre.
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 24px;
+  border-radius: 18px;
+  background: var(--accent);
+  color: var(--accent-on);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  // ⚠️ **Aucune ombre ici.** La fenêtre n'étant pas transparente, une ombre CSS se peindrait
+  // À L'INTÉRIEUR de la pilule, en halo sombre le long de ses bords. Celle de la maquette est
+  // rendue par AppKit, qui la dessine autour du calque arrondi de la fenêtre — voir
+  // `mirmalion_configure_overlay_window`.
+}
+
+.ro-ico {
+  width: 25px;
+  height: 25px;
+  flex: none;
+}
+
+// ⚠️ **Le sablier de « Préparation » ne s'anime PAS ici**, et il ne faut pas le remettre :
+// animer `.ro-ico`, c'est faire tourner l'élément hôte, donc une image déjà rastérisée, et le
+// glyphe se met à monter et descendre en tournant (signalé et mesuré — voir
+// `Icon`, qui porte la rotation en vectoriel et l'explication complète).
+// `will-change: transform` a été essayé sur cette règle-ci : il ne corrigeait rien.
+
+.ro-timer {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  opacity: 0.85;
+  padding-left: 2px;
+}
+
+// L'égaliseur de l'état « Écoute ».
+.ro-wave {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 24px;
+  flex: none;
+
+  i {
+    width: 3px;
+    height: 20px;
+    background: var(--accent-on);
+    border-radius: 2px;
+    transform: scaleY(0.35);
+    transform-origin: center;
+    animation: overlay-equalise 1s ease-in-out infinite;
+  }
+
+  // Des retards négatifs, et non positifs : l'animation démarre déjà en cours, donc les
+  // barres sont désordonnées dès la première image plutôt qu'alignées la première seconde.
+  i:nth-child(1) {
+    animation-delay: -0.9s;
+  }
+
+  i:nth-child(2) {
+    animation-delay: -0.6s;
+  }
+
+  i:nth-child(3) {
+    animation-delay: -0.3s;
+  }
+
+  i:nth-child(4) {
+    animation-delay: -0.75s;
+  }
+
+  i:nth-child(5) {
+    animation-delay: -0.15s;
+  }
+}
+
+@keyframes overlay-equalise {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+// ⚠️ **On calme l'agitation, on ne supprime pas le signal.** L'égaliseur cesse de battre —
+// c'est de la décoration. Le sablier, lui, est le seul signe qui distingue « ça travaille »
+// de « c'est planté » : son ralentissement vit désormais dans `Icon`, avec la
+// rotation qu'il modère.
+@media (prefers-reduced-motion: reduce) {
+  .ro-wave i {
+    animation: none;
+    transform: scaleY(0.7);
+  }
+}

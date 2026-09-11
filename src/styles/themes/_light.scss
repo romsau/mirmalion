@@ -1,0 +1,180 @@
+// Thème clair — porté depuis `docs/ui/ui.html`, sélecteur `:root, :root[data-theme="light"]`.
+
+// C'est le thème par défaut : les jetons sont posés sur `:root` seul autant que sur
+// `[data-theme="light"]`, pour que l'application soit peinte même avant que le service de
+// thème n'ait écrit quoi que ce soit.
+
+// ⚠️ **Aucune valeur ne se règle à l'œil.** Elles ont été mesurées au contraste, et
+// `scripts/check-contrast.mjs` les remesure à chaque `npm run verify` en lisant ce fichier.
+// Déplacer une valeur ici, c'est déplacer une mesure — pas un goût.
+
+:root,
+:root[data-theme='light'] {
+  // Fait suivre au navigateur ce que l'application a décidé : fond de canevas avant que la
+  // feuille de style ne soit peinte, contrôles de formulaire natifs, sélection de texte.
+  color-scheme: light;
+
+  // ---- Accent ---------------------------------------------------------------------------
+  // Cinq jetons, et c'est par eux seuls que passe le choix de teinte de l'utilisateur :
+  // le service de thème les réécrit sur `:root` à chaud. Aucun
+  // composant ne doit donc peindre une couleur d'accent en dur — il perdrait la teinte choisie.
+  --accent: #002fa7; // l'APLAT (blanc dessus, 10,69:1)
+  --accent-600: #0a3bc0; // l'aplat au survol (blanc dessus, 8,75:1)
+  --accent-50: #eef1fb; // le fond teinté, au repos
+  --accent-ink: #002fa7; // l'ENCRE : texte, icônes, anneau de focus (10,69:1 sur --surface)
+  // L'encre POSÉE SUR l'aplat, comme --danger-on l'est sur --danger. Elle vaut du blanc dans
+  // les deux thèmes, mais elle est nommée : trois composants la peignaient en dur, et une
+  // couleur en dur ne survit pas à un changement de teinte d'accent.
+  --accent-on: #fff;
+
+  // ---- Neutres --------------------------------------------------------------------------
+  --ink: #14161c;
+  --muted: #6b7080;
+
+  // Le texte d'attente d'un champ de saisie : `--muted` **éclairci vers la surface du champ**,
+  // pour qu'on ne le lise pas comme une valeur déjà saisie.
+  // ⚠️ **96 %, et pas un point de moins** : un texte d'attente EST du texte, donc 4,5:1 (WCAG
+  // 1.4.3). `--muted` sur blanc ne tient que 4,94:1 — il n'y a que 4 points de dilution
+  // disponibles, et 95 % tombe déjà à 4,47:1. C'est mesuré par `check-contrast.mjs`.
+  --placeholder-ink: color-mix(in srgb, var(--muted) 96%, var(--surface));
+  --line: #e4e6ee; // le FILET : sépare. Décoratif, exempté par WCAG 1.4.11
+  // ⚠️ Trois jetons de trait, et leur partage est une règle : `--line` sépare deux RÉGLAGES,
+  // `--line-strong` cerne un CONTRÔLE que rien d'autre ne signale, `--line-soft` sépare deux
+  // lignes d'un MÊME réglage. Un champ vide n'a ni texte, ni icône, ni fond distinct (1,04:1) :
+  // son trait est seul à dire qu'il est là, et WCAG 1.4.11 exige alors 3:1.
+
+  // ⚠️ Relever `--line` lui-même a été écarté : un trait à 3:1 sous chaque ligne de réglage
+  // aurait fait de l'application un quadrillage pour corriger huit contrôles.
+
+  // ⚠️ Valeur la plus discrète qui tienne 3:1 sur les trois fonds adjacents, pas un choix à
+  // l'œil : 3,40:1 sur `--surface`, 3,18:1 sur `--surface-soft`, 3,01:1 sur `--accent-50`.
+  // L'éclaircir d'un cran la fait tomber sous le seuil.
+
+  // ⚠️ Un select n'en porte pas, et ce n'est pas un oubli : son chevron le signale à 9,98:1, et
+  // il n'est jamais vide. Le raisonnement est au-dessus de la bordure dans `select.scss`.
+  --line-strong: #898b93;
+
+  // Le filet qui sépare deux lignes d'un MÊME réglage — les prompts personnalisés du Direct.
+  // ⚠️ Le dictionnaire n'en est PAS : chacune de ses lignes est un mot, donc un réglage à part
+  // entière, et elles se séparent par `--line` comme deux rangées d'Options.
+  // ⚠️ Calculé depuis `--line` et `--surface`, jamais écrit en dur : les deux changent en
+  // sombre et sur une surface élevée, et une valeur figée y serait fausse sans que rien ne le
+  // dise. Décoratif, donc exempté par WCAG 1.4.11 comme `--line`.
+  --line-soft: color-mix(in srgb, var(--line) 55%, var(--surface));
+  --surface: #fff;
+  --surface-soft: #f6f7fb;
+  --key-bg: #dbe0ea; // fond des touches de raccourci (kbd)
+
+  // ---- Orange ---------------------------------------------------------------------------
+  // ⚠️ Couleur de signalétique, plus jamais couleur de bouton : elle ne sert qu'à ce qui signale
+  // un état sans être cliquable — snackbar d'erreur, tag « à autoriser », encart de
+  // confidentialité, icône d'avertissement. Voir le type `ButtonVariant`.
+
+  // Quatre rôles séparés, comme `--accent` : `--warning` l'aplat, `--warning-on` le texte posé
+  // dessus, `--warning-ink` le texte orange sur fond clair, `--warning-50` le fond teinté.
+
+  // ⚠️ Exception délibérée à WCAG AA, bornée et remesurée par `scripts/check-contrast.mjs`. Un
+  // orange vif est une couleur claire ; mesuré sur #eb711d en thème clair :
+  //   - en texte sur fond clair ........ 3,04:1   (AA texte exige 4,5:1)
+  //   - en aplat, blanc dessus ......... 3,04:1   (AA texte exige 4,5:1)
+  //   - en aplat, encre foncée dessus .. 5,95:1   ✓
+  //   - en texte sur fond sombre ....... 5,61:1   ✓  (aucune exception en thème sombre)
+
+  // ⚠️ Les deux voies conformes ont été construites puis refusées : un orange assombri jusqu'à
+  // porter le blanc (#BF4E00, 4,88:1) et une encre foncée sur l'aplat vif. Terni, l'orange ne
+  // remplit plus son office d'avertissement. L'écart reste au-dessus de 3:1, seuil AA des
+  // icônes et des grands textes.
+
+  // ⚠️ Périmètre réduit : l'exception ne porte plus que sur `--warning-ink` en texte, donc le
+  // tag « à autoriser ». Celle du blanc sur orange est close — son seul emploi restant est un
+  // glyphe, que WCAG 1.4.11 admet à 3:1. Ne pas la rouvrir.
+  --warning: #eb711d; // l'APLAT
+  --warning-on: #fff; // le texte dessus — plus employé sur un bouton
+  --warning-ink: #eb711d; // le TEXTE orange au repos — 3,04:1, exception ci-dessus
+  --warning-50: #ffeadb; // fond teinté : snackbar d'erreur, encarts
+
+  // ⚠️ Sur fond teinté, l'exception ci-dessus ne tient plus : `--warning-ink` posé sur
+  // `--warning-50` ne vaut que **2,61:1**, sous le seuil de 3:1 qu'elle se donne pour limite.
+  // Le fond teinté rapproche la teinte du texte au lieu de l'en éloigner.
+
+  // ⚠️ L'orange d'alerte n'a pas été terni pour autant : les rôles sont séparés, et le texte
+  // posé sur un aplat teinté reçoit son encre à lui.
+
+  // ⚠️ Le nom suit `--warning-on` : `--warning-on-50` est le texte posé sur `--warning-50`. Ne
+  // pas s'en servir sur `--surface`, où il paraîtrait inutilement sombre.
+  --warning-on-50: #a8410b; // 5,27:1 sur --warning-50 — AA plein, aucune exception
+  --warning-600: #d75f0a; // aplat plus soutenu, si un jour un orange doit s'assombrir
+
+  // ---- Rouge et vert ----------------------------------------------------------------------
+  // La maquette n'a pas de jeton pour eux : elle pose `#e5484d` et `#157a4b` en dur. Ces deux
+  // familles suivent la même structure à trois rôles que l'accent (décision du,
+  // décision du), mais **gardent le blanc** sur l'aplat — le patron unifié des boutons
+  // (« inversion au survol = fond plein + texte blanc ») reste donc intact, contrairement à
+  // l'orange qui a dû y renoncer.
+
+  // ⚠️ L'aplat rouge est **assombri** par rapport à la maquette : #e5484d ne portait le blanc
+  // qu'à 3,91:1. À #c8262c il le porte à 5,57:1.
+  --danger: #c8262c;
+  --danger-on: #fff; // 5,57:1 sur l'aplat
+  --danger-ink: #b3141a; // 6,93:1 sur --surface, 6,06:1 sur --danger-50
+  --danger-50: #fdecec;
+  --success: #0f6b41;
+  --success-on: #fff; // 6,56:1 sur l'aplat
+  --success-ink: #157a4b; // 5,36:1 sur --surface (valeur de la maquette, inchangée)
+  --success-50: #e7f5ee;
+
+  // ---- Surfaces élevées -------------------------------------------------------------------
+  // En thème clair, une surface flottante s'élève par son ombre : les jetons ne changent pas.
+  // Ces alias existent pour que le mixin `elevated-surface` ait la même forme dans les deux
+  // thèmes — c'est le thème sombre qui leur donne des valeurs distinctes, et lui seul.
+  --elevated-surface: #fff;
+  --elevated-surface-soft: #f6f7fb;
+  --elevated-line: #e4e6ee;
+  --elevated-line-strong: #898b93;
+  --elevated-placeholder-ink: color-mix(in srgb, var(--muted) 96%, var(--elevated-surface));
+  --elevated-line-soft: color-mix(in srgb, var(--elevated-line) 55%, var(--elevated-surface));
+  --elevated-shadow: 0 30px 70px -20px rgb(20 30 80 / 50%);
+
+  // ---- La barre de notification ------------------------------------------------------------
+  // ⚠️ **Elle ne suit pas la règle d'élévation, et c'est ce que le thème clair impose.** Une
+  // surface flottante s'y élève par son ombre, donc en restant BLANCHE — et la barre se
+  // retrouvait blanche sur une fenêtre blanche, seule pièce du dessin dans ce cas. Elle prend
+  // la couleur des cartes creusées : celle du choix de mode de dictée, celle de l'indice des
+  // touches. Le thème sombre, lui, n'a rien à corriger — sa surface élevée se détache déjà.
+  // ⚠️ Ses contrôles neutres remontent d'un cran, sans quoi « Plus tard » se peindrait de la
+  // couleur exacte de la barre qui le porte.
+  --snack-surface: #f6f7fb;
+  // ⚠️ **Plus foncé que la barre, jamais plus clair** : le neutre est un fond teinté POSÉ SUR sa
+  // surface — c'est ce que fait « Annuler » d'une confirmation, #f6f7fb sur une boîte blanche.
+  // Blanc sur la barre, la relation s'inversait et le bouton s'effaçait.
+  --snack-control: #e4e6ee;
+  // Le survol du même bouton. ⚠️ **Il lui faut son propre jeton** : le neutre prend `--line` au
+  // survol, et `--line` vaut #e4e6ee — le survol ne bougeait plus. Un neutre dont le survol ne se
+  // voit pas a déjà été rendu et refusé.
+  --snack-control-active: #d7dae5;
+
+  // Le voile posé derrière une modale.
+  --overlay-veil: rgb(20 26 45 / 38%);
+  // Le fond d'un élément survolé, teinté à la couleur d'accent.
+
+  // ⚠️ **Il se construit sur `--accent-ink`, jamais sur `--accent-50`.** Mesuré : en thème
+  // sombre, `--accent-50` (#2a1a2a) est PLUS SOMBRE que `--surface-soft` (#23262f) — un survol
+  // bâti dessus assombrit de 18 %, quand le clair n'assombrit que de 2,7 %. Le résultat est
+  // une tache sale, et surtout un survol qui creuse là où l'élévation doit porter vers le
+  // clair (cf. l'en-tête de ce fichier). L'encre, elle, est sombre en clair et claire en
+  // sombre : la même expression va donc dans le bon sens des deux côtés.
+
+  // Le pourcentage diffère parce que l'écart entre l'encre et la surface n'est pas le même :
+  // 2 % suffisent en clair, il en faut 8 en sombre pour un effet comparable.
+  --hover-tint: color-mix(in srgb, var(--accent-ink) 2%, transparent);
+
+  // Le fond de l'écran Fichiers pendant qu'un fichier est glissé au-dessus de la fenêtre.
+
+  // ⚠️ **Opaque, et non un voile transparent** : il remplace la surface, il ne se pose pas
+  // dessus. C'est ce que fait la maquette (`color-mix(… , var(--surface))`), et c'est ce qui
+  // garantit que le texte du dessus garde son contraste mesuré.
+
+  // Le pourcentage diffère d'un thème à l'autre — 6 % ici, 16 % en sombre : un aplat sombre
+  // posé sur du blanc se voit tout de suite, l'inverse demande beaucoup plus de matière.
+  --drop-tint: color-mix(in srgb, var(--accent) 6%, var(--surface));
+}

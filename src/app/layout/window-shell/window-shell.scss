@@ -1,0 +1,27 @@
+// La coquille : un header de hauteur fixe, et l'écran qui remplit ce qui reste.
+
+// ⚠️ **Ni bordure, ni rayon, ni ombre**, contrairement au `.window` de la maquette. Là-bas, ces
+// trois règles simulent une fenêtre Mac posée sur un bureau ; ici la fenêtre est réelle et
+// macOS s'en charge. Les reproduire donnerait un cadre dans le cadre et une double ombre.
+
+// ⚠️ **Rien ici ne peut styliser l'écran affiché.** Le composant inséré par le routeur ne fait
+// pas partie de ce gabarit : l'encapsulation émulée ne lui pose pas l'attribut de portée, et un
+// sélecteur `router-outlet + *` ne l'atteindrait jamais. C'est chaque écran qui prend sa
+// hauteur, via le mixin `screen-body`.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+// ⚠️ **Le repère reprend EXACTEMENT le cadre d'un écran** — c'est ce qui le rend invisible en
+// mise en page. Il s'intercale entre la coquille et le composant routé, qui portait déjà
+// `screen-frame` sur son `:host` : sans ces quatre propriétés, le `flex: 1` de l'écran n'aurait
+// plus de colonne à remplir et tous les écrans se replieraient sur leur contenu.
+.shell-main {
+  @include screen-frame;
+}

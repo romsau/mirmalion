@@ -1,0 +1,124 @@
+// La liste de langues, portée depuis `.lang-list` / `.lang-row` de `docs/ui/ui.html`.
+
+:host {
+  display: block;
+}
+
+// ⚠️ **`fill` : la liste prend toute la hauteur et ses rangées s'y répartissent.** Sans fond ni
+// liseré, des lignes serrées formaient un pavé de texte ; l'air entre elles est ce qui les rend
+// dénombrables d'un coup d'œil. C'est `align-content` et non un `gap` fixe, parce que la place
+// restante varie avec la longueur du sous-titre traduit.
+
+// ⚠️ `space-evenly` et NON `space-between` : ce dernier colle la première rangée en haut et la
+// dernière en bas, avec tout l'air coincé au milieu — la liste paraît alors écartelée plutôt
+// qu'aérée. `space-evenly` donne le MÊME intervalle partout, extrémités comprises.
+:host(.is-filling) {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+
+  .lang-list {
+    flex: 1;
+    align-content: space-evenly;
+  }
+}
+
+// ⚠️ L'écart horizontal est plus large que le vertical : c'est lui qui sépare DEUX COLONNES, et
+// deux langues côte à côte doivent se lire comme deux listes, pas comme une rangée.
+
+// ⚠️ **L'écart vertical reste celui-ci partout.** L'onboarding l'élargit chez lui, en
+// répartissant les rangées sur la hauteur qui lui reste ; les Options, dont le panneau est
+// nettement plus haut, ont essayé et sont revenues en arrière — la liste y paraissait diluée.
+// C'est la hauteur disponible qui diffère, pas le composant : ne pas « harmoniser » les deux.
+.lang-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 20px;
+}
+
+// ⚠️ **LA CARTE EST DE RETOUR, et c'est la conclusion d'un essai** (maquette,) : une
+// version sans fond ni liseré a été rendue, regardée, et écartée. Sans surface, rien ne
+// rattachait un nom à son interrupteur à l'autre bout de la ligne, et les deux colonnes se
+// lisaient comme un tableau de mots. Ne pas redénuder ces lignes.
+.lang-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 13px;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  cursor: pointer;
+  transition: border-color 0.12s ease;
+
+  &:hover {
+    border-color: var(--accent-ink);
+  }
+
+  // Une ligne figée ne s'annonce plus comme cliquable — mais son nom garde son encre pleine :
+  // on ne délave jamais une langue, on retire l'action.
+  &.is-locked {
+    cursor: default;
+
+    &:hover {
+      border-color: var(--line);
+    }
+  }
+}
+
+.lang-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+// L'infobulle d'une ligne figée. ⚠️ Elle DOUBLE le nom accessible de l'interrupteur, elle ne le
+// remplace pas : un contrôle inerte doit dire pourquoi, y compris à qui ne survole rien.
+.lang-row[data-hint] {
+  position: relative;
+
+  &::after {
+    content: attr(data-hint);
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 7px);
+    transform: translateX(-50%);
+    z-index: 5;
+    width: max-content;
+    max-width: 208px;
+    padding: 7px 10px;
+    background: var(--ink);
+    color: var(--surface);
+    border-radius: 8px;
+    font-size: 11.5px;
+    line-height: 1.45;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.12s ease;
+  }
+
+  &:hover::after {
+    opacity: 1;
+  }
+}
+
+// La seule marque visible de la liste. ⚠️ Elle ne paraît QUE sur une langue choisie dont les
+// ressources ont disparu : l'interrupteur reflète le choix de l'utilisateur, pas l'état du
+// moteur, et resté allumé sur un pack supprimé il promet une transcription qui ne viendra pas.
+// Une langue simplement non installée n'en porte pas — l'allumer EST le téléchargement.
+
+// ⚠️ `--warning-on-50` et non `--warning-ink` : sur le fond teinté, l'encre orange au repos ne
+// vaut que 2,61:1.
+.lang-missing {
+  flex: none;
+  padding: 2px 7px;
+  border-radius: 7px;
+  background: var(--warning-50);
+  color: var(--warning-on-50);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}

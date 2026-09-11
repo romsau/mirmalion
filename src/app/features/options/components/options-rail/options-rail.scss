@@ -1,0 +1,91 @@
+// Le rail des Options, porté depuis `.opt-rail` / `.opt-title` / `.opt-nav` de la maquette.
+
+// ⚠️ **Un troisième motif de bouton, et il est légitime.** Repos transparent, survol
+// légèrement teinté, actif en **aplat d'accent plein**. Le bouton unifié (`Button`)
+// fait l'inverse — teinté au repos, plein au survol — et l'employer ici donnerait un rail qui
+// s'allume au passage de la souris comme s'il était sélectionné. Ce n'est pas une exception au
+// « un seul bouton » : ce n'est pas un bouton, c'est de la navigation.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  display: block;
+  width: 216px;
+  flex: none;
+  padding: 10px;
+  overflow-y: auto;
+  border-right: 1px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.rail-title {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px 12px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 8px;
+  color: var(--ink);
+  font-family: var(--font-brand);
+  font-size: 18px;
+  font-weight: 700;
+  gap: 9px;
+  letter-spacing: 0.01em;
+  opacity: 0.62;
+}
+
+.rail-title app-icon {
+  width: 19px;
+  height: 19px;
+  flex: none;
+}
+
+.nav {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  padding: 9px 11px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  gap: 10px;
+  text-align: left;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.nav + .nav {
+  margin-top: 2px;
+}
+
+.nav app-icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  color: var(--muted);
+}
+
+.nav:hover:not(.is-current) {
+  background: var(--hover-tint);
+}
+
+.nav:focus-visible {
+  @include focus-ring;
+}
+
+// L'élément actif : aplat plein et texte blanc. L'icône suit — sans cette reprise elle
+// resterait `--muted`, illisible sur l'accent.
+.nav.is-current {
+  background: var(--accent);
+  color: var(--accent-on);
+  font-weight: 600;
+}
+
+.nav.is-current app-icon {
+  color: #fff;
+}

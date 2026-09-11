@@ -1,0 +1,80 @@
+// Le titre renommable — porté depuis `.done-title-row`, `.done-title`, `.title-rename` et
+// `.done-title-input` de `docs/ui/ui.html`.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  display: block;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+// ⚠️ **`cursor: pointer` tient une promesse** : la maquette rend le titre lui-même cliquable.
+// L'enlever laisserait le crayon comme seule cible, ce qui n'est pas ce qui est dessiné.
+.title {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-brand);
+  font-size: 19px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+// Le crayon est **toujours visible** : c'est lui, et lui seul, qui dit qu'un titre de document
+// se renomme. En `--muted`, il annonce sans peser sur un en-tête qu'on ne fait que lire.
+
+// ⚠️ **NE PAS LE RENDRE À NOUVEAU DÉPENDANT DU SURVOL PAR L'OPACITÉ.** Une opacité nulle ne
+// retire pas de l'ordre de tabulation : la cible restait atteignable, l'anneau de focus se
+// dessinait dans le vide, et il fallait une règle de plus pour la révéler au clavier.
+.title-rename {
+  display: inline-flex;
+  padding: 4px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    color 0.12s ease,
+    background 0.12s ease;
+
+  &:hover {
+    background: var(--surface-soft);
+    color: var(--accent-ink);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  app-icon {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+// Le champ prend exactement la place du titre : même police, même graisse, même corps. C'est ce
+// qui fait que l'édition en ligne ne déplace rien autour d'elle.
+
+// ⚠️ **La bordure devient transparente au focus, elle ne disparaît pas** : sa largeur reste
+// occupée, sinon le champ se décalerait d'un pixel au moment où l'on clique dedans.
+.title-input {
+  padding: 3px 9px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-brand);
+  font-size: 19px;
+  font-weight: 700;
+  outline: none;
+
+  &:focus {
+    border-color: transparent;
+    box-shadow: 0 0 0 1px var(--accent-ink);
+  }
+}

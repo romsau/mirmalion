@@ -1,0 +1,875 @@
+// Les motifs de rendu qui doivent être écrits **une seule fois**.
+
+// Un composant les consomme ainsi (le chemin est court grâce à `stylePreprocessorOptions`
+// dans `angular.json`, qui ajoute `src/styles` aux chemins de recherche Sass) :
+
+//     @use 'abstracts/mixins' as *;
+//     .ma-modale { @include elevated-surface; }
+
+// Ces mixins n'émettent **aucune couleur littérale** : ils ne font que consommer les jetons
+// des fichiers de thème. C'est ce qui permet à `scripts/check-contrast.mjs` de tout mesurer
+// en ne lisant que `themes/`.
+
+/// Une surface qui **flotte au-dessus** de l'application : modale, panneau de menu, popover,
+/// snackbar.
+///
+/// En thème clair, une ombre suffit à détacher la surface. En sombre elle est invisible : on
+/// s'élève alors **vers le clair**, en redéfinissant les jetons *sur la surface elle-même*.
+/// Tous les descendants qui lisent `--surface`, `--surface-soft` ou `--line` suivent
+/// automatiquement, sans reprise un par un — c'est tout l'intérêt du mécanisme, et la raison
+/// pour laquelle il faut l'inclure plutôt que recopier ses valeurs.
+///
+/// Le détail de la mesure est en tête de `themes/_dark.scss`.
+@mixin elevated-surface {
+  --surface: var(--elevated-surface);
+  --surface-soft: var(--elevated-surface-soft);
+  --line: var(--elevated-line);
+  // ⚠️ **`--line-strong` suit, et l'oublier serait un défaut MUET** : un champ posé dans une
+  // modale garderait le trait calculé pour le fond de l'application, qui est plus sombre — il
+  // repasserait sous 3:1 sans que rien ne le dise. `check-contrast.mjs` mesure les deux jeux.
+  --line-strong: var(--elevated-line-strong);
+  // ⚠️ **`--line-soft` aussi, et pour la même raison** : un filet de sous-liste posé dans une
+  // modale garderait la valeur calculée pour le fond de l'application.
+  --line-soft: var(--elevated-line-soft);
+  // ⚠️ **Le texte d'attente aussi** : il est calculé sur la surface du champ, et un `color-mix`
+  // écrit sur `:root` est résolu là-bas — le redéfinir plus bas ne le recalcule pas.
+  --placeholder-ink: var(--elevated-placeholder-ink);
+
+  background: var(--surface);
+  box-shadow: var(--elevated-shadow);
+}
+
+/// L'anneau de focus au clavier, identique partout.
+///
+/// Il suit `--accent-ink` — donc la teinte choisie par l'utilisateur — et **jamais**
+/// `--accent` : sur une surface claire, l'aplat n'est pas assez contrasté pour marquer un
+/// focus. La couleur unique évite qu'un composant décide d'un anneau à lui.
+@mixin focus-ring($width: 1px, $offset: 2px) {
+  outline: $width solid var(--accent-ink);
+  outline-offset: $offset;
+}
+
+/// Un contrôle **inerte** : encre estompée et curseur qui le dit.
+///
+/// Trois contrôles le portent — le `<select>` natif, le select à liste stylée et le champ
+/// « nombre de locuteurs ». C'est la deuxième occurrence qui l'a fait remonter ici, pas la
+/// cinquième.
+///
+/// ⚠️ **Le fond ne change pas.** Un contrôle désactivé garde sa boîte : c'est son encre qui dit
+/// qu'il ne répond plus. Assombrir le fond en plus l'aurait fait passer pour un champ rempli.
+@mixin disabled-control {
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+/// Le **patron visuel unifié des boutons** : fond teinté au repos, inversion pleine au survol.
+///
+/// ⚠️ Tous les boutons prennent l'accent, sans exception : ni rouge ni orange, quelle que soit
+/// la gravité du geste. Arrêter une session est le déroulement normal, pas un accident.
+/// ⚠️ La hauteur vit ici, et une exception se pose sur **deux niveaux de sélecteur**
+/// (`.live-actions .rec-stop`), jamais dans la règle de base : à spécificité égale, le dernier
+/// écrit gagne et l'exception disparaît sans qu'aucun test ne rougisse.
+/// ⚠️ Le blanc du survol vient de `--accent-on` : un `#fff` en dur casserait la bascule de teinte.
+@mixin unified-button {
+  display: inline-flex;
+  min-height: var(--btn-h);
+  box-sizing: border-box;
+  align-items: center;
+  border: 0;
+  border-radius: 10px;
+  background: var(--accent-50);
+  color: var(--accent-ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--accent);
+    color: var(--accent-on);
+  }
+
+  // ⚠️ **`focus-ring` DANS `:focus-visible`, jamais à la racine du mixin.** Posé à la racine, il
+  // peignait un liseré d'accent **au repos** autour de chaque bouton qui l'incluait — la seule
+  // chose de l'application à en porter un — et il ne restait plus rien pour marquer le focus.
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  // ⚠️ **`progress` et non `not-allowed`** : ces boutons ne sont désactivés que le temps d'un
+  // geste en vol, jamais parce qu'ils seraient interdits.
+  &:disabled {
+    cursor: progress;
+    opacity: 0.6;
+  }
+}
+
+/// Rend un contenu sélectionnable, à l'inverse du réglage par défaut de l'application.
+///
+/// Voir `base/_base.scss` : le chrome n'est pas sélectionnable, comme dans une app native.
+/// Seul le **contenu produit** l'est — transcripts, comptes rendus, champs de saisie.
+@mixin selectable {
+  cursor: auto;
+  user-select: text;
+}
+
+/// La **place** d'un écran sous le header : il remplit ce qui reste de la fenêtre, sans
+/// déborder.
+///
+/// Posé sur le `:host` de chaque composant d'écran, et non dans la coquille : le composant
+/// inséré par `<router-outlet>` ne fait pas partie du gabarit de la coquille, et
+/// l'encapsulation émulée l'y rendrait inatteignable.
+@mixin screen-frame {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+/// Le titre d'un écran — icône, puis nom du mode. Porté depuis `.col-title` de la maquette,
+/// qui l'écrit quatre fois : Dictée, Session, et deux états de Fichiers.
+///
+/// Il vit sur un `<h1>` : c'est déjà ce que fait la maquette, et un écran a besoin d'un titre
+/// de premier niveau pour qu'un lecteur d'écran sache où il a atterri.
+///
+/// ⚠️ **L'écran Options n'en a pas.** Son titre est en tête du rail, et le panneau de droite
+/// n'affiche délibérément aucun titre — c'est le rail qui dit où l'on est.
+@mixin screen-title {
+  display: flex;
+  align-items: center;
+  margin: 0 0 20px;
+  color: var(--ink);
+  font-family: var(--font-brand);
+  font-size: 20px;
+  font-weight: 700;
+  gap: 10px;
+  letter-spacing: 0.01em;
+  opacity: 0.62;
+
+  app-icon {
+    width: 21px;
+    height: 21px;
+    flex: none;
+  }
+}
+
+/// La place **et** les marges d'un écran ordinaire — porté depuis `.body` de la maquette.
+///
+/// L'écran Options prend `screen-frame` seul : il se rend **bord à bord**, sans marge ni carte,
+/// comme les Réglages Système. Séparer les deux mixins évite qu'il ait à annuler une
+/// marge — ne pas la poser ne demande aucune exception, l'annuler en aurait demandé une.
+@mixin screen-body {
+  @include screen-frame;
+
+  padding: 22px var(--screen-pad-x) 16px;
+}
+
+/// Une **étape** du premier lancement — porté depuis `.onb-step` de la maquette.
+///
+/// Titre, sous-titre, liste centrée, pied collé en bas : la mise en page est identique pour
+/// Bienvenue et pour Autorisations, et elle l'était déjà dans la maquette, qui l'écrit deux
+/// fois. C'est la deuxième occurrence qui la fait remonter ici, pas la cinquième.
+///
+/// ⚠️ **Aucune dimension de fenêtre.** La largeur et la hauteur vivent côté Rust
+/// (`src-tauri/src/commands/window.rs`) ; une étape remplit ce qu'on lui donne.
+@mixin onboarding-step {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  padding: 34px 40px 30px;
+
+  .onb-h {
+    margin: 4px 0 12px;
+    color: var(--ink);
+    font-family: var(--font-brand);
+    font-size: 29px;
+    font-weight: 800;
+    line-height: 1.1;
+    text-align: center;
+  }
+
+  .onb-sub {
+    max-width: 330px;
+    margin: 9px auto 14px;
+    color: var(--muted);
+    font-size: 14.5px;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  // Les blocs se répartissent entre le sous-titre et le pied plutôt que de se tasser en
+  // haut : `justify-content: center` sur un conteneur en `flex: 1`. C'est la maquette.
+  .onb-list {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    gap: 50px;
+  }
+
+  // Pied de l'étape : les boutons sont collés en bas, alignés à droite.
+
+  // ⚠️ **Exception de TAILLE, pas de comportement**. L'appel à l'action de
+  // l'onboarding est plus haut que les boutons ordinaires ; ses couleurs et son inversion au
+  // survol restent celles de sa variante. C'est exactement à cela que sert le jeton : on le
+  // redéfinit sur le bouton, on ne crée pas une variante.
+  .onb-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: auto;
+    padding-top: 24px;
+    gap: 10px;
+
+    app-button {
+      --btn-h: 42px;
+    }
+  }
+}
+
+/// Une étape d'onboarding qui porte une **LISTE DE LANGUES** — Langues parlées, Traduction.
+///
+/// Les deux sont rigoureusement identiques : c'est cette seconde occurrence qui fait remonter le
+/// motif ici, pas la cinquième.
+///
+/// ⚠️ Elle complète [`onboarding-step`], elle ne le remplace pas.
+@mixin onboarding-language-step {
+  // ⚠️ Moins d'espace au-dessus du titre qu'aux deux premières étapes : celle-ci porte une
+  // LISTE, pas trois blocs centrés. En contrepartie le sous-titre respire avant elle — sans
+  // quoi la consigne et les neuf lignes formaient un seul pavé.
+  padding-top: 22px;
+
+  // ⚠️ Centré, et non espacé par une marge : la place restante dépend de la longueur du
+  // sous-titre traduit, donc une valeur fixe donnerait un bloc collé en haut dans une langue et
+  // en bas dans une autre.
+  .lang-block {
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+/// Un **bloc** d'une étape d'onboarding — pastille ronde, titre, description.
+///
+/// Séparé de [`onboarding-step`] parce que les deux étapes ne rendent pas leurs blocs au même
+/// endroit : Bienvenue les écrit dans son propre gabarit, Autorisations les délègue à
+/// `app-permission-row`. L'encapsulation émulée coupe les styles à la frontière du composant —
+/// une seule règle `.onb-item` dans l'étape n'atteindrait jamais l'intérieur de la ligne.
+@mixin onboarding-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+
+  // La pastille ronde derrière l'icône. `--accent-ink` sur `--accent-50` est le seul couple
+  // qui tienne le contraste dans les deux thèmes et sur les 16 teintes (mesuré) ; le
+  // script de contraste le remesure à chaque `npm run verify`.
+  .onb-ico {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--accent-50);
+    color: var(--accent-ink);
+    place-items: center;
+
+    app-icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .onb-it {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .onb-it-title {
+    margin: 0 0 3px;
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .onb-it-desc {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.45;
+  }
+}
+
+/// Le petit titre en capitales qui coiffe une section — « MICRO », « DERNIÈRES DICTÉES ».
+///
+/// ⚠️ Un mixin, et surtout pas une règle globale sur `.label` : `Button` et la ligne de réglage
+/// portent le même nom de classe, et hériteraient de la casse, de la police et du `min-height`.
+/// Ce qui se partage ici est le style, jamais le sélecteur.
+/// ⚠️ La `min-height` n'est pas décorative : elle aligne le libellé sur le rond de repli et sur
+/// le titre de la colonne voisine, tous trois sur la même ligne.
+@mixin section-label {
+  display: flex;
+  min-height: 26px;
+  align-items: center;
+  margin: 0 0 5px;
+  color: var(--ink);
+  font-family: var(--font-brand);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  opacity: 0.68;
+  text-transform: uppercase;
+}
+
+/// La largeur du sélecteur « Exporter » d'une fenêtre-document.
+///
+/// ⚠️ **Une largeur mesurée sur la maquette** (`style="width: 190px"` de `#fd-export` et de
+/// `#done-export`), et **la même dans les deux fenêtres** : ce sont deux vues du même geste, et
+/// deux largeurs se verraient au premier aller-retour entre elles. Elle est remontée ici à sa
+/// deuxième occurrence, comme la règle du projet le demande.
+@mixin document-export-select {
+  width: 190px;
+}
+
+/// Le cadre d'un panneau ancré — select custom, contrôle unifié, et ce qui suivra.
+///
+/// La position vient de la directive `appPopover`, qui la calcule à partir du déclencheur — de
+/// même que la largeur du **conteneur**. Ce mixin ne pose que l'aspect… et le remplissage de ce
+/// conteneur.
+///
+/// ⚠️ `width: 100%` n'est pas décoratif : la directive donne sa largeur au conteneur du CDK,
+/// mais sans cette ligne le panneau garde la sienne à l'intérieur et paraît plus étroit que le
+/// champ qui l'ouvre. Mesuré sur la liste des langues : 118 pt de panneau pour un champ de 188.
+@mixin popover-panel {
+  @include elevated-surface;
+
+  box-sizing: border-box;
+  width: 100%;
+  max-height: inherit;
+  padding: 6px;
+  overflow-y: auto;
+  // ⚠️ **Sans cela, arriver en butée de la liste fait défiler la PAGE.** WebKit poursuit le
+  // geste sur l'ancêtre défilant dès que le panneau ne peut plus avancer (*scroll chaining*) :
+  // la page bougeait derrière un panneau ancré, et son `scroll` le faisait disparaître. Le
+  // geste s'arrête maintenant au bord de la liste, comme dans un menu natif.
+  overscroll-behavior: contain;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  animation: popover-in 0.12s ease;
+}
+
+/// La **surface** d'un champ : le fond, le filet, le rayon. Ni taille ni espacement intérieur,
+/// qui dépendent de ce qu'on y met.
+///
+/// ⚠️ Le déclencheur d'un `combo-select` et la carte à interrupteur du Direct doivent se
+/// ressembler **exactement** : c'est ce qui fait lire une colonne de champs comme une colonne.
+/// ⚠️ `--line` et non `--line-strong`, comme le select : ses trois porteurs ont de quoi se
+/// signaler sans leur trait — chevron, libellé, interrupteur. Aucun n'est un champ vide, et le
+/// raisonnement complet est au-dessus de la bordure dans `select.scss`.
+@mixin field-surface {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-soft);
+}
+
+@mixin field-group {
+  margin-bottom: 30px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/// Le libellé posé AU-DESSUS d'un champ — `.of-label` de la maquette.
+///
+/// @param {Length} $gap [5px] - Ce qui le sépare du champ. 5 px est la valeur de la maquette ;
+///   le dictionnaire en pose 4, ses deux champs étant serrés côte à côte dans une rangée.
+///
+/// ⚠️ À ne pas confondre avec `section-label`, qui titre une SECTION : celui-ci nomme un champ,
+/// il est plus petit et prend l'accent parce qu'il se lit dans une boîte, pas dans une colonne.
+@mixin field-label($gap: 5px) {
+  display: block;
+  margin-bottom: $gap;
+  color: var(--accent-ink);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/// La rangée d'issues d'une modale, en bas de son contenu.
+///
+/// @param {Length} $gap [10px] - Entre les deux boutons. La valeur des modales de formulaire ;
+///   la maquette en pose 8 sur `.pm-actions`, et l'écart lui est antérieur.
+/// @param {Length} $top [14px] - Ce qui la décolle du contenu ; une confirmation en met plus.
+///
+/// ⚠️ **Le sélecteur reste chez l'appelant**, comme pour `section-label`.
+/// ⚠️ `flex: none` n'y est pas : c'est à une modale au corps étiré de le poser.
+@mixin modal-actions($gap: 10px, $top: 14px) {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: $top;
+  gap: $gap;
+}
+
+/// Ce qu'un formulaire répond quand une saisie est refusée — `.of-err` de la maquette.
+///
+/// ⚠️ **`--danger-ink`, jamais `--danger`** : le second est l'aplat d'un bouton, mesuré pour
+/// porter du blanc ; c'est `--danger-ink` qui est mesuré comme encre sur `--surface`.
+/// ⚠️ **Le sélecteur reste chez l'appelant** — `.field-error` : ce qui se partage ici est le
+/// style, jamais le nom, comme pour `section-label`.
+@mixin field-error {
+  margin: 10px 0 0;
+  color: var(--danger-ink);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+/// L'indice qui montre un raccourci : encadré, touches, phrase. Attend le balisage de
+/// `docs/ui/ui.html` — `.hint > .keys > .key > .sym` et `.hint > .hint-txt`.
+///
+/// ⚠️ `$compact` efface le bloc et repeint le symbole en `--ink` : sous l'opacité, `--muted`
+/// tombe à 2,9:1, que la règle de contraste d'AXE ne voit pas. Plancher mesuré : `0.7`.
+@mixin shortcut-hint($compact: false) {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-soft);
+  color: var(--ink);
+
+  @if $compact {
+    margin-top: 8px;
+    padding: 8px 10px;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 9px;
+    opacity: 0.7;
+  } @else {
+    height: 92px;
+    flex: 1;
+    padding: 12px 16px;
+    gap: 8px;
+  }
+
+  .keys {
+    display: inline-flex;
+    gap: if($compact, 3px, 8px);
+  }
+
+  // ⚠️ **Carrée par construction, pas par une largeur devinée.** `aspect-ratio: 1` fait suivre la
+  // hauteur à la largeur, et la largeur n'est PAS choisie : elle vient du nom de la touche rendu
+  // dans la police du système. Un `width` en dur parierait sur les métriques d'une fonte, et le
+  // pari se perdrait sur une machine réglée autrement.
+  .key {
+    position: relative;
+    display: flex;
+    min-width: if($compact, 20px, 40px);
+    align-items: flex-end;
+    justify-content: center;
+    padding: if($compact, 2px 3px, 5px 4px);
+    aspect-ratio: 1;
+    border: 1px solid var(--line);
+    border-radius: if($compact, 5px, 8px);
+    background: var(--key-bg);
+    color: var(--ink);
+    font-size: if($compact, 7px, 10px);
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .sym {
+    position: absolute;
+    top: if($compact, 2px, 4px);
+    right: if($compact, 3px, 5px);
+    color: if($compact, var(--ink), var(--muted));
+    font-size: if($compact, 7px, 11px);
+  }
+
+  .hint-txt {
+    font-size: if($compact, 11px, 11.5px);
+    line-height: 1.35;
+    text-align: center;
+    // ⚠️ Le retour à la ligne n'est rendu qu'à l'indice compact : sa phrase porte un nom de
+    // langue, et « Traduit en portugais » déborderait d'une colonne étroite au lieu de passer
+    // à la ligne. Celle du sélecteur de mode tient sur une ligne par construction.
+    white-space: if($compact, normal, nowrap);
+  }
+}
+
+/// La boîte d'un champ où l'on SAISIT du texte — input d'une ligne, zone de prompt, recherche.
+///
+/// ⚠️ **Fond `--surface`, pas `--surface-soft`** : le fond doux est bleuté (#f6f7fb), et l'air
+/// « bleu » des champs venait de lui, pas du trait — un gris neutre.
+/// ⚠️ **Trait `--line`, et c'est la règle** : WCAG 1.4.11 n'exige 3:1 que de ce qui SIGNALE un
+/// contrôle, or ces champs portent tous un texte d'attente. **Un champ qui le perdrait exigerait
+/// `--line-strong`**, et rien ne garde cette porte.
+/// ⚠️ **Aucune couleur calculée ici** : `check-contrast.mjs` ne lit que `themes/`, d'où le jeton.
+/// ⚠️ Rayon 7 px : il y en avait quatre — 7, 8, 9 et 10 — pour le même objet.
+@mixin text-field-surface {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  appearance: none;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+
+  &::placeholder {
+    color: var(--placeholder-ink);
+  }
+
+  &:focus {
+    border-color: var(--accent-ink);
+  }
+}
+
+/// La zone de saisie d'un prompt libre — sous « Reformulation » en dictée, sous « Type de
+/// compte rendu » en session.
+///
+/// ⚠️ **Le sélecteur reste chez l'appelant** : `input` en dictée, `textarea` en session.
+///
+/// N'ajoute au motif commun que ce qui lui est propre : la largeur, la marge qui le décolle de
+/// son libellé, et l'interligne d'un texte qui peut courir sur plusieurs lignes.
+@mixin prompt-field {
+  @include text-field-surface;
+
+  width: 100%;
+  margin-top: 12px;
+  line-height: 1.5;
+}
+
+// L'écran à deux colonnes — contrôles à gauche, historique contextuel à droite.
+
+// ⚠️ Ce sont les **valeurs** qui se partagent, pas les sélecteurs : chaque écran garde sa classe
+// racine — `.dictee`, `.direct` — et compose ces mixins. Revendiquer un sélecteur commun
+// obligerait à réécrire le gabarit d'écrans déjà livrés, pour un gain nul.
+
+/// La grille de l'écran, panneau déplié.
+@mixin split-columns {
+  display: grid;
+  height: 100%;
+  flex: none;
+  grid-template-columns: 1fr 1fr;
+  // Le bouton de repli est posé en absolu sur le filet : la grille est son repère.
+  position: relative;
+}
+
+/// La même, panneau replié — une seule colonne, la fenêtre étant étroite en conséquence.
+///
+/// ⚠️ `WindowShell` lit le même état côté natif : garder deux colonnes laisserait une moitié
+/// vide dans une fenêtre de 450 px.
+@mixin split-columns-collapsed {
+  grid-template-columns: 1fr;
+}
+
+/// Le rond de repli, centré sur le filet et aligné avec les titres.
+@mixin panel-collapse-button {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--accent-50);
+  border: 1px solid var(--line);
+  color: var(--accent-ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 7%);
+  transition:
+    color 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease;
+
+  &:hover {
+    background: var(--accent);
+    color: var(--accent-on);
+    border-color: var(--accent);
+  }
+
+  &:hover .pc-label {
+    color: var(--accent-on);
+    opacity: 1;
+  }
+
+  app-icon {
+    width: 15px;
+    height: 15px;
+    flex: none;
+    transition: transform 0.2s ease;
+  }
+}
+
+/// Le même bouton, écran replié : il glisse à droite et s'allonge pour porter son étiquette —
+/// c'est alors le seul rappel que le panneau existe.
+///
+/// ⚠️ **Aligné sur le dernier bouton du header**, pas sur le bord de l'écran. Les deux marges
+/// diffèrent — 24 px pour le corps, 16 px pour le header — et un `right` en dur laissait le
+/// bouton 8 px en retrait, ce que la maquette reproduisait. L'écart des
+/// deux jetons rend l'alignement garanti plutôt que constaté.
+@mixin panel-collapse-button-collapsed {
+  left: auto;
+  right: calc(var(--header-pad-x) - var(--screen-pad-x));
+  transform: none;
+  width: auto;
+  height: 28px;
+  border-radius: 14px;
+  padding: 0 12px 0 9px;
+
+  app-icon {
+    transform: rotate(180deg);
+  }
+
+  .pc-label {
+    display: inline;
+  }
+}
+
+/// L'étiquette qui n'apparaît que sur le bouton replié.
+@mixin panel-collapse-label {
+  display: none;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--ink);
+  opacity: 0.62;
+}
+
+/// La colonne de droite : le filet qui la sépare, et le fondu qui l'accompagne.
+///
+/// ⚠️ Le fondu accompagne la fenêtre, il ne la remplace pas : ce qui bouge au repli est la
+/// fenêtre macOS — 450 px contre 900 —, animée côté natif, et aucune transition CSS ne peut
+/// l'atteindre. La durée est calée sur celle du mouvement.
+/// ⚠️ L'animation `panel-in` vit dans `base/_base.scss` : les `@keyframes` échappent à
+/// l'encapsulation émulée d'Angular, et une copie par écran donnerait deux définitions du même
+/// nom.
+@mixin split-panel {
+  border-left: 1px solid var(--line);
+  padding-left: 28px;
+  display: flex;
+  flex-direction: column;
+  animation: panel-in 0.13s ease-out 0.03s both;
+
+  // ⚠️ Le mouvement disparaît pour qui n'en veut pas — le contenu, lui, reste identique.
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+/// Le CONTENU de l'invitation d'un historique vide — icône, titre, phrase.
+///
+/// ⚠️ **Le cadre n'est pas ici** : `.hist-empty` appartient au panneau générique, qui centre et
+/// dimensionne. Ce mixin ne pose que ce qui est projeté dedans, et c'est ce partage qui permet à
+/// la dictée et à la session d'écrire chacune sa propre phrase.
+///
+/// ⚠️ **Deuxième occurrence, donc il remonte** — `dictation-history.scss` l'avait annoncé mot
+/// pour mot en le gardant chez lui « jusqu'à ce que la session projette la sienne ».
+@mixin history-empty-content {
+  app-icon {
+    width: 40px;
+    height: 40px;
+    color: var(--line);
+  }
+
+  .he-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    opacity: 0.62;
+  }
+
+  .he-text {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--muted);
+    max-width: 230px;
+  }
+}
+
+/// La coquille commune aux deux **fenêtres-documents** — transcription de fichier et session.
+///
+/// ⚠️ **REMONTÉ À LA DEUXIÈME OCCURRENCE, PAS À LA CINQUIÈME.** La maquette dessine le même
+/// objet des deux côtés : une barre de titre de hauteur fixe, un corps qui remplit le reste, un
+/// en-tête titre + méta, et un contenu qui défile seul sous un filet. Ce qui **diffère** — la
+/// barre d'actions du compte rendu, les participants — reste chez qui le porte.
+///
+/// ⚠️ **`position: relative` sur `.done` n'est pas cosmétique** : c'est lui qui borne
+/// `app-doc-overlay` à la fenêtre. Le voile se pose en `position: absolute` ; sans ancêtre
+/// positionné il remonterait jusqu'au bloc de contenu initial et couvrirait la page entière.
+@mixin document-window {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+
+  .done {
+    @include screen-body;
+
+    position: relative;
+  }
+}
+
+/// La charpente d'un **panneau** de fenêtre-document : tête, méta, contenu défilant.
+///
+/// ⚠️ **SÉPARÉE DE `document-window` PARCE QUE L'ENCAPSULATION D'ANGULAR L'IMPOSE**.
+/// La fenêtre-session monte deux panneaux dans des **composants enfants** ; une règle écrite dans
+/// la coquille se compile avec l'attribut de la coquille et n'atteint donc rien de ce qu'ils
+/// rendent. Ce qui reste commun est ici, et les trois hôtes — `filedoc`, `direct-recording`,
+/// `direct-document` — l'incluent chacun chez eux.
+///
+/// ⚠️ **Ne pas la refondre dans `document-window`** en trouvant qu'il y a deux mixins pour une
+/// fenêtre : la refonte remettrait exactement le défaut qu'elle répare.
+@mixin document-panel {
+  // L'en-tête : titre renommable et ligne d'informations. `space-between` pousse au bord droit ce
+  // que le panneau y met — la bascule vers le transcript, pour le panneau document.
+  .done-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    // ⚠️ **8, et la maquette le dit** (,) : la valeur avait dérivé à 14.
+    padding-bottom: 8px;
+  }
+
+  // Le titre et ce qui l'accompagne — le crayon, et pour la session le minuteur.
+
+  // ⚠️ **Remonté ici en** : les deux panneaux de la fenêtre-session l'écrivaient chacun de
+  // leur côté, avec la **même** valeur fausse (12 au lieu de 8). Deux copies d'un même dessin
+  // dérivent ensemble ou séparément, jamais elles ne se corrigent l'une l'autre.
+  .done-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  // La barre d'actions, sous l'en-tête. Les trois panneaux la portent.
+
+  // ⚠️ `min-height` figée, en `content-box` : c'est la hauteur des sélecteurs. Sans elle, le
+  // filet du contenu remonte dès que la barre porte un contrôle plus court, et il bouge d'une
+  // fenêtre-document à l'autre. `flex-wrap` la laisse passer à deux lignes sur une fenêtre
+  // resserrée, qui est redimensionnable.
+  // ⚠️ Ce qui reste chez l'hôte : l'enregistrement d'une session pose ses deux groupes aux deux
+  // bords et les centre. Lui seul.
+  .done-subbar {
+    display: flex;
+    min-height: 44px;
+    box-sizing: content-box;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 12px 0 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  // ⚠️ `inline-flex` et non `block` : l'icône et le texte sont une seule ligne, et la boîte ne
+  // doit pas s'étendre à toute la largeur — sinon la zone survolable dépasserait de loin le
+  // texte. `align-items: center` plutôt qu'un alignement de ligne de base : une horloge ronde
+  // alignée sur la base flotte visuellement au-dessus des chiffres.
+  .done-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 12.5px;
+
+    // L'icône suit la taille du texte plutôt qu'une valeur figée : elle reste proportionnée si
+    // la ligne change de corps, et elle ne perce jamais l'interligne.
+    app-icon {
+      width: 1.1em;
+      height: 1.1em;
+      flex: none;
+    }
+  }
+
+  // Le contenu, et lui seul, défile. Le titre reste en place — c'est ce qui permet d'agir sur le
+  // document sans avoir à remonter en haut.
+  .done-content {
+    min-height: 0;
+    flex: 1;
+    padding: 18px 4px 6px;
+    border-top: 1px solid var(--line);
+    overflow-y: auto;
+  }
+}
+
+/// La **boîte** d'une snackbar : surface élevée, filet, rayon, ombre, apparition.
+///
+/// Deux composants la portent, et ils n'ont en commun **que** cette boîte : `SnackbarItem`, qui
+/// est un `<button>` entier et s'efface au bout de six secondes, et `UpdateSnackbar`, qui est un
+/// `<div>` persistant portant ses propres boutons — on n'imbrique pas un bouton dans un bouton.
+/// C'est la deuxième occurrence qui l'a fait remonter ici, pas la cinquième.
+///
+/// ⚠️ **Ce qui n'y est PAS est aussi délibéré** : ni `cursor`, ni `:hover`, ni `align-items`, ni
+/// le remplissage. Les deux en décident à l'opposé — l'une invite au clic sur toute sa surface,
+/// l'autre ne veut surtout pas qu'on la prenne pour un bouton.
+@mixin snack-shell {
+  @include elevated-surface;
+
+  // ⚠️ **La seule surface flottante qui ne se peint pas comme les autres.** En thème clair,
+  // `elevated-surface` la laissait blanche sur une fenêtre blanche ; `--snack-surface` lui donne
+  // la couleur des cartes creusées. En sombre, les deux jetons valent l'élévation ordinaire.
+  // ⚠️ `--surface-soft` est réécrit APRÈS le mixin, et il le faut : les contrôles neutres posés
+  // dessus le lisent pour leur fond, et ils se peindraient sinon de la couleur exacte de la
+  // barre qui les porte.
+  --surface-soft: var(--snack-control);
+
+  display: flex;
+  max-width: 92%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--snack-surface);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  box-shadow: 0 5px 14px rgb(0 0 0 / 11%);
+  animation: snack-in 0.18s ease;
+
+  // ⚠️ **C'EST ICI QUE LA BARRE REDEVIENT CLIQUABLE, ET NULLE PART AILLEURS.** Sa couche est
+  // transparente aux clics (`snack-layer`) pour laisser l'écran utilisable à côté ; il faut donc
+  // la rendre à la barre elle-même. ⚠️ **Écrite dans le mixin et non chez l'hôte** parce que
+  // l'encapsulation émulée d'Angular enferme un style dans SON composant : un `.snack` posé
+  // depuis la coquille ou depuis `styles.scss` n'atteindrait rien — il y était, il a été
+  // déplacé ici, et la barre montée dans la coquille avalait les clics du bouton en dessous.
+  pointer-events: auto;
+}
+
+/// La rangée interne d'une barre de notification : elle centre la barre et lui donne sa marge
+/// latérale. Les deux barres la portent à l'identique — c'est la deuxième occurrence qui l'a
+/// fait remonter.
+@mixin snack-row {
+  display: flex;
+  justify-content: center;
+  padding: 0 16px;
+}
+
+/// La couche qui PORTE une barre de notification, sur toute la largeur de la fenêtre.
+///
+/// Deux hôtes s'en servent, et ils n'ont rien d'autre en commun : le panneau d'overlay du CDK
+/// pour les notifications transitoires, et la coquille de la fenêtre principale pour la barre de
+/// mise à jour, qui est déclarative parce qu'elle survit à la navigation.
+///
+/// ⚠️ **`pointer-events: none` est la raison d'être du mixin** : sans lui, une bande invisible en
+/// bas de la fenêtre avalerait les clics sur toute sa largeur. `snack-shell` les rend à la barre.
+@mixin snack-layer {
+  max-width: 100%;
+  pointer-events: none;
+}

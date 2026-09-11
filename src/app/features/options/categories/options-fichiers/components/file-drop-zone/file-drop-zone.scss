@@ -1,0 +1,57 @@
+// Porté depuis `.drop-zone`, `.dz-title` et `.dz-title-drop` de `docs/ui/ui.html`.
+
+// La maquette écrit ces règles en deux temps — une base `.drop-zone`, puis un jeu de
+// surcharges `.fi-drop-wrap .drop-zone` — parce que la zone y était prévue à deux échelles.
+// L'application n'en connaît qu'une, celle de l'écran d'import : les deux blocs sont donc
+// **fusionnés ici**, avec les valeurs de la surcharge (padding 20/18, gap 6). Garder les deux
+// étages aurait conservé une souplesse dont plus rien ne se sert, et une base morte.
+
+:host {
+  // `flex: 1` : la zone occupe tout ce que `.fi-drop-wrap` lui laisse au-dessus de la phrase
+  // des langues. C'est ce qui en fait une grande cible plutôt qu'un encadré.
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 18px;
+  border-radius: 14px;
+  gap: 6px;
+  text-align: center;
+  // ⚠️ **Aucune bordure, aucun fond au repos** — et c'est le point de l'écran : la cible du
+  // glisser est toute la fenêtre, pas ce rectangle. Un pointillé dessinerait une frontière que
+  // le comportement dément.
+
+  // Le `cursor: pointer` n'est pas décoratif : toute la zone est cliquable (voir l'en-tête du
+  // composant), il annonce donc quelque chose de vrai.
+  cursor: pointer;
+}
+
+app-icon {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  margin-bottom: 8px;
+  color: var(--accent-ink);
+}
+
+// ⚠️ **La marge par défaut du `<p>` est CONSERVÉE**, comme dans la maquette : ni elle ni
+// l'application ne remettent les marges de paragraphe à zéro, et `.dz-title` — contrairement à
+// `.dz-langs`, qui les annule explicitement — les garde. L'écrire ici la rend visible plutôt
+// que dépendante du navigateur.
+.dz-title {
+  margin: 1em 0;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+
+  // Pendant le glisser, le titre passe à l'encre d'accent. La maquette le fait en changeant de
+  // paragraphe ; ici c'est le même nœud qui change de couleur — voir l'en-tête du composant.
+  &.is-drop {
+    color: var(--accent-ink);
+  }
+}
+
+app-button {
+  margin-top: 2px;
+}

@@ -1,0 +1,32 @@
+// Le transcript d'un média — porté depuis `.tr-raw` et `.cr-p` de `docs/ui/ui.html`.
+
+// ⚠️ **Il portait aussi `.tr-list`, `.tline`, `.spk` et `.tline-txt`** : le rendu par locuteur,
+// retiré avec les locuteurs eux-mêmes. Le mixin `transcript-lines` qu'il partageait
+// avec le transcript live est parti pour la même raison.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  display: block;
+}
+
+// ⚠️ **La maquette ne donnait AUCUN écart à `.tr-raw`** (ses `.cr-p` sont à `margin: 0`, sans
+// conteneur qui les espace) : ses deux paragraphes se touchaient. Corrigé ici et dans la
+// maquette.
+.tr-raw {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+// ⚠️ **Justifié** : le transcript se lit comme un texte suivi, et les paragraphes tiennent toute
+// la largeur.
+.cr-p {
+  @include selectable;
+
+  margin: 0;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.55;
+  text-align: justify;
+}

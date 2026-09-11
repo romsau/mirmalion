@@ -1,0 +1,22 @@
+// ⚠️ **Ce fichier ne porte presque plus rien, et c'est le but.** `.label`, `.group` et
+// l'indice de raccourci vivent dans `src/styles/` : ce sont des motifs partagés, pas des
+// particularités de cette colonne.
+
+@use 'abstracts/mixins' as *;
+
+.group {
+  @include field-group;
+}
+
+.label {
+  @include section-label;
+}
+
+// L'indice du second raccourci, sous le champ Traduction. Même motif que celui du sélecteur
+// de mode, à son échelle réduite.
+//
+// ⚠️ `.is-compact` n'est pas décoratif : `app-mode-selector`, enfant de cette colonne, porte un
+// `.hint` lui aussi. L'encapsulation sépare les styles, pas les sélecteurs d'un test.
+.hint.is-compact {
+  @include shortcut-hint($compact: true);
+}

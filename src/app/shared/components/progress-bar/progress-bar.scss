@@ -1,0 +1,98 @@
+// Le bloc de progression, porté depuis `.fprog` et `.dl-bar` de `docs/ui/ui.html` — deux
+// implémentations de la même idée, réunies ici.
+
+// ⚠️ **Aucun fond, aucune bordure, aucun titre.** Ce composant se pose dans un écran plein,
+// dans une modale ou dans un overlay sans retouche : c'est ce qui l'a fait exister plutôt que
+// d'être recopié trois fois. Lui donner une boîte reviendrait à annuler cette propriété.
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.label {
+  margin: 0;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 700;
+  word-break: break-all;
+}
+
+.bar {
+  width: 100%;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--surface-soft);
+
+  // Le remplissage passe par `--fill`, posé par le gabarit, plutôt que par une largeur en
+  // ligne : un style en ligne l'emporterait sur la règle du mode indéterminé, qui a besoin de
+  // fixer sa propre largeur de segment.
+  > i {
+    display: block;
+    width: var(--fill, 0%);
+    height: 100%;
+    border-radius: 999px;
+    background: var(--accent);
+    transition: width 0.12s linear;
+  }
+}
+
+// Durée inconnue : un segment glisse au lieu de se remplir.
+.bar.indeterminate {
+  position: relative;
+
+  > i {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 38%;
+    transition: none;
+    animation: bar-slide 1.15s ease-in-out infinite;
+  }
+}
+
+@keyframes bar-slide {
+  from {
+    left: -42%;
+  }
+
+  to {
+    left: 100%;
+  }
+}
+
+// ⚠️ **La règle globale de mouvement réduit ne suffit pas ici.** Elle fige les animations sur
+// leur dernière image : le segment s'immobiliserait à `left: 100%`, c'est-à-dire **hors de la
+// barre**. On perdrait l'information au lieu de calmer le mouvement. On remplit donc la barre,
+// en retrait, pour dire « en cours » sans rien faire bouger.
+@media (prefers-reduced-motion: reduce) {
+  .bar.indeterminate > i {
+    left: 0;
+    width: 100%;
+    opacity: 0.45;
+  }
+}
+
+.percent {
+  margin: -5px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.detail {
+  max-width: 78%;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+  word-break: break-all;
+}
+
+app-button {
+  margin-top: 6px;
+}

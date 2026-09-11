@@ -1,0 +1,126 @@
+<!--
+  L'ordre est celui de la maquette, et il suit l'ordre de la décision : avec quoi on capte,
+  comment on déclenche, dans quelle langue, puis ce qu'on fait du texte.
+
+  ⚠️ Le libellé visible et le nom accessible sont écrits **deux fois**, avec le même `@@id` —
+  donc une seule unité à traduire, mais une duplication réelle. C'est le motif déjà retenu pour
+  les lignes de réglage ; la dette est notée dans la fiche de phase et se tranchera en
+  plus tard, quand une dizaine de réglages réels seront en main.
+-->
+<!--
+  ⚠️ **Pas de choix du micro ici** : il vit dans **Options ▸ Général** — un seul micro pour toute
+  l'application depuis. *(Cette note a dit « Options ▸ Dictée » jusqu'au
+   ; cette famille n'existe plus depuis.)* Ce n'est pas une décision
+  qu'on reprend à chaque dictée — la règle le disait déjà « réglage dans les options »,
+  et c'est la maquette qui l'avait posé sur cet écran. Le garder ici remplissait la colonne
+  d'une information sans usage quotidien.
+-->
+<div class="group">
+  <p class="label" i18n="@@dictee.mode">Mode de dictée</p>
+  <app-mode-selector [(mode)]="mode" />
+</div>
+
+<!--
+  ⚠️ **Une ligne chacun**, et non deux colonnes côte à côte comme le faisait la maquette. Deux
+  champs à mi-largeur donnaient des listes trop étroites pour les noms de langue, et le lien
+  entre « langue parlée » et « traduction » se lit mieux de haut en bas — on parle dans l'une,
+  on obtient l'autre.
+-->
+<!--
+  ⚠️ **Les deux menus sont des select custom** : « Traduction » porte une dernière ligne séparée
+  par un filet, et une liste native ne se style pas — le cas que la documentation d'`app-select`
+  renvoie au custom.
+
+  ⚠️ **`[(value)]` est légitime ici** : `ComboSelect` ne retient rien, et la banane-en-boîte vaut
+  partout où accepter est la seule issue. Là où un choix peut être refusé, on écrit les deux
+  liaisons à la main — voir `filedoc.html`.
+-->
+<div class="group">
+  <p class="label" i18n="@@dictee.language">Langue parlée</p>
+  <app-combo-select
+    [options]="languageOptions()"
+    [(value)]="language"
+    [actionLabel]="actionLabel"
+    (action)="languageOptionsRequested.emit('spoken')"
+    ariaLabel="Langue parlée"
+    i18n-ariaLabel="@@dictee.language"
+  />
+</div>
+
+<div class="group">
+  <p class="label" i18n="@@dictee.translation">Traduction</p>
+  <app-combo-select
+    [options]="translationOptions()"
+    [(value)]="translationTarget"
+    [actionLabel]="actionLabel"
+    (action)="languageOptionsRequested.emit('translation')"
+    ariaLabel="Traduire vers"
+    i18n-ariaLabel="@@common.translateTo"
+  />
+  <!--
+    ⚠️ **Le seul endroit où ⌃⌥⌘ s'apprend.** Le raccourci ne s'annonce nulle part ailleurs : ni
+    menu, ni palette, ni réglage. Retirer ce bloc rend la fonction invisible, pas discrète.
+
+    ⚠️ **Absent quand il n'y a rien à traduire** — un anglophone sans cible réglée. Le raccourci
+    existe toujours, il ne fait simplement rien de plus que ⌃⌥ : l'annoncer promettrait une
+    différence qui n'existe pas.
+
+    ⚠️ Le symbole et le nom ne sont PAS deux informations : « ⌘ » et « command » désignent la
+    même touche. Le symbole est décoratif ; c'est le nom qui est lu.
+  -->
+  @if (translatedInto(); as into) {
+    <div class="hint is-compact">
+      <span class="keys">
+        <kbd class="key">
+          <span class="sym" aria-hidden="true">⌃</span>
+          control
+        </kbd>
+        <kbd class="key">
+          <span class="sym" aria-hidden="true">⌥</span>
+          option
+        </kbd>
+        <kbd class="key">
+          <span class="sym" aria-hidden="true">⌘</span>
+          command
+        </kbd>
+      </span>
+      <span class="hint-txt" i18n="@@dictee.translation.hint">Traduit en {{ into }}</span>
+    </div>
+  }
+</div>
+
+<div class="group">
+  <p class="label" i18n="@@dictee.rephrasing">Reformulation</p>
+  <!--
+    ⚠️ **Custom, comme les deux au-dessus** : rien ici ne l'exigeait, c'est la cohérence de la
+    colonne qui l'exige — deux rendus de liste côte à côte se voient au premier coup d'œil.
+
+    ⚠️ **`placement="above"`, le seul de l'application, et il est mérité.** Dernier champ d'une
+    fenêtre à hauteur fixe : ouvert vers le bas, il ne laissait voir que deux de ses sept lignes.
+    Un webview ne dessine rien au-delà de sa fenêtre, là où le `<select>` natif le pouvait — c'est
+    ce qu'on a échangé contre la cohérence.
+-->
+  <app-combo-select
+    [options]="rephrasingOptions()"
+    [(value)]="rephrasingMode"
+    placement="above"
+    ariaLabel="Reformulation"
+    i18n-ariaLabel="@@dictee.rephrasing"
+  />
+
+  <!--
+    ⚠️ Le champ n'est pas seulement masqué, il n'existe pas : un champ caché reste tabulable
+    dans certains navigateurs, et il serait annoncé alors qu'il ne s'applique à rien.
+-->
+  @if (showsPrompt()) {
+    <app-prompt-field
+      class="prompt-input"
+      [value]="customPrompt()"
+      placeholder="Écrivez votre prompt de reformulation…"
+      i18n-placeholder="@@dictee.rephrasing.prompt"
+      ariaLabel="Prompt de reformulation"
+      i18n-ariaLabel="@@dictee.rephrasing.promptAria"
+      (valueChange)="writePrompt($event)"
+    />
+  }
+</div>

@@ -1,0 +1,78 @@
+// Le contenu de la modale de mise à jour, porté depuis `.up-body` de `docs/ui/ui.html`.
+
+// ⚠️ **Rien de la boîte n'est écrit ici** : le voile, la carte, l'ombre et la marge intérieure
+// viennent de `Modal` et de `ModalContainer`, et la largeur de 360 px se demande à l'ouverture
+// (`width`). Ce qui est propre à ce contenu, c'est son empilement centré.
+
+:host {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  text-align: center;
+
+  // ⚠️ S'AJOUTE aux 30 px de `.pmodal-body`, il ne les remplace pas : une rangée de boutons
+  // butait sur le bas du cadre, relevé à l'écran. Le conteneur garde sa marge, celle-ci
+  // n'appartient qu'à ce contenu.
+  padding-bottom: 10px;
+}
+
+// ⚠️ L'icône et le message sur une seule ligne, centrée d'un bloc — voir le gabarit.
+// `align-items: center` et non `baseline` : l'icône est un carré de 18 px, pas une lettre, et
+// l'aligner sur la ligne de base la ferait flotter au-dessus du texte.
+.up-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.up-ico {
+  display: grid;
+  place-items: center;
+  color: var(--accent-ink);
+}
+
+// L'icône se dimensionne depuis son parent — voir l'en-tête d'`Icon`.
+app-icon {
+  width: 18px;
+  height: 18px;
+}
+
+// Sans en-tête de modale, ce message est le seul titre de la boîte : c'est ce que dit sa graisse.
+.up-msg {
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+// ⚠️ **5 px et un rayon de 3 px** — ce n'est pas la barre de `ProgressBar`, qui en fait 8 avec
+// un rayon plein. Les deux sont dessinées distinctes dans la maquette : celle-ci est un filet
+// sous une phrase, l'autre est le sujet de son écran.
+.up-prog {
+  display: block;
+  overflow: hidden;
+  width: 100%;
+  height: 5px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface-soft));
+
+  // Le remplissage passe par `--fill`, posé par le gabarit — même motif que `ProgressBar`.
+  > i {
+    display: block;
+    width: var(--fill, 0%);
+    height: 100%;
+    border-radius: 3px;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+}
+
+// ⚠️ `wrap` et non une largeur figée : « Redémarrer maintenant » et « Plus tard » côte à côte
+// dépassent les 360 px de la boîte dans les langues les plus longues, et la paire passe alors
+// sur deux lignes plutôt que de sortir du cadre.
+.up-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}

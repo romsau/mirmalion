@@ -1,0 +1,46 @@
+<div class="mode-row">
+  <div class="mode-card" role="group" aria-label="Mode de dictée" i18n-aria-label="@@dictee.mode">
+    <button
+      type="button"
+      class="mode-btn"
+      [class.is-active]="mode() === 'hold'"
+      [attr.aria-pressed]="mode() === 'hold'"
+      (click)="mode.set('hold')"
+    >
+      <app-icon name="mode-hold" />
+      <ng-container i18n="@@dictee.mode.hold">Maintenir</ng-container>
+    </button>
+    <button
+      type="button"
+      class="mode-btn"
+      [class.is-active]="mode() === 'toggle'"
+      [attr.aria-pressed]="mode() === 'toggle'"
+      (click)="mode.set('toggle')"
+    >
+      <app-icon name="mode-handsfree" />
+      <ng-container i18n="@@dictee.mode.toggle">Mains libres</ng-container>
+    </button>
+  </div>
+
+  <!--
+    Le raccourci est FIXE : il s'affiche, il ne se règle pas. Les touches sont dans
+    des `<kbd>` — c'est l'élément qui les désigne, et un lecteur d'écran le sait.
+
+    ⚠️ Le symbole et le nom ne sont PAS deux informations : « ⌃ » et « control » désignent la
+    même touche, et les annoncer tous les deux la ferait entendre en double. Le symbole est
+    donc décoratif ; c'est le nom qui est lu.
+  -->
+  <div class="hint">
+    <span class="keys">
+      <kbd class="key">
+        <span class="sym" aria-hidden="true">⌃</span>
+        control
+      </kbd>
+      <kbd class="key">
+        <span class="sym" aria-hidden="true">⌥</span>
+        option
+      </kbd>
+    </span>
+    <span class="hint-txt">{{ hint() }}</span>
+  </div>
+</div>

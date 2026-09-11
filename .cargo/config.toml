@@ -1,0 +1,14 @@
+# Signe les binaires de développement avant de les lancer — voir
+# `src-tauri/scripts/sign-and-run.sh` pour le pourquoi. S'applique à `cargo run` (donc à
+# `tauri dev`) et à `cargo test`.
+#
+# ⚠️ **À la racine du dépôt, pas dans `src-tauri/`.** Cargo cherche sa configuration depuis le
+# **répertoire courant** et remonte — pas depuis le manifeste. Placée dans `src-tauri/`, elle
+# serait ignorée par un `cargo test --manifest-path src-tauri/Cargo.toml` lancé depuis la
+# racine : le binaire ne serait pas signé, et les tests du trousseau se figeraient sur une
+# demande d'autorisation. Ici, elle s'applique d'où qu'on lance cargo dans le dépôt.
+#
+# Le chemin du runner est relatif à ce fichier de configuration (à son parent, `.cargo/`
+# retiré), et non au répertoire courant.
+[target.aarch64-apple-darwin]
+runner = "./src-tauri/scripts/sign-and-run.sh"

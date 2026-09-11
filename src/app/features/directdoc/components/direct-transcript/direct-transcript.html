@@ -1,0 +1,73 @@
+@if (isEmpty()) {
+  <!--
+    ⚠️ **La maquette ne dessine pas cet état, et il est pourtant nécessaire** : elle fige un
+    instant de session déjà bien avancée. Sans lui, l'écran reste vide les premières secondes
+    — le moment exact où l'utilisateur se demande si quelque chose s'est passé.
+  -->
+  <p class="lt-empty" i18n="@@direct.transcript.empty">
+    La transcription s'affichera ici dès les premiers mots.
+  </p>
+}
+
+<!--
+  ⚠️ **UNE COLONNE OU DEUX, ET LA SECONDE N'EXISTE PAS QUAND ELLE EST FERMÉE.** Masquée en CSS
+  elle resterait dans l'arbre d'accessibilité, et un lecteur d'écran annoncerait **deux fois**
+  chaque réplique. D'où le `@if`, et non une classe.
+
+  ⚠️ **`is-single` n'est pas la même chose que « pas de traduction »** : la grille passe à une
+  colonne dès que l'original est refermé, y compris sur une session traduite.
+  -->
+<div class="tr-cols" [class.is-single]="!split()">
+  <div class="tr-col">
+    <!--
+      ⚠️ **Les en-têtes disent la LANGUE, pas « traduction » / « original »** : au milieu d'une
+      session on cherche « où est l'anglais ». Le rôle suit, en gris, pour lever l'ambiguïté quand
+      les deux langues se ressemblent à l'œil. Ils sont **collants** — sans cela, on ne sait plus
+      quelle colonne on lit dès le premier défilement.
+  -->
+    @if (headings(); as heads) {
+      <p class="tr-col-head">
+        {{ heads.translated }} <span i18n="@@direct.transcript.roleTranslated">traduction</span>
+      </p>
+    }
+
+    <!--
+      ⚠️ **UN FLUX DE TEXTE, COUPÉ AUX SILENCES — PAS UNE LIGNE PAR SEGMENT.** Sans étiquette de
+      locuteur, un retour à la ligne par segment n'a plus de sens : le moteur découpe au gré de
+      ses respirations, et deux flux qui ne se coordonnent pas donnent un texte qui a l'air
+      cassé. Ce qui garde un sens, c'est la pause : quand personne ne parlait, le texte respire
+      aussi.
+  -->
+    @for (paragraph of leading(); track paragraph.id) {
+      <p class="tpar">{{ paragraph.text }}</p>
+    }
+
+    <!--
+      ⚠️ **LE PROVISOIRE SE VOIT COMME PROVISOIRE.** C'est la pratique du domaine — définitif en
+      plein, hypothèse en atténué. Une transcription en direct révise ce qu'elle affiche ; sans
+      cette distinction, un doublon transitoire se lit comme un bug, alors qu'il est le
+      fonctionnement normal d'un système qui se stabilise.
+
+      ⚠️ **L'HYPOTHÈSE N'EST JAMAIS TRADUITE**, et elle reste donc dans la langue
+      parlée, y compris dans la colonne de traduction. Traduire du texte qui va être révisé
+      rendrait une traduction qui se réécrit toute seule — et l'atténué dit déjà que ce n'est pas
+      définitif.
+  -->
+    @for (line of live(); track line.id) {
+      <p class="tpar tpar-live">{{ line.text }}</p>
+    }
+  </div>
+
+  @if (split()) {
+    <div class="tr-col">
+      @if (headings(); as heads) {
+        <p class="tr-col-head">
+          {{ heads.original }} <span i18n="@@direct.transcript.roleOriginal">original</span>
+        </p>
+      }
+      @for (paragraph of settled(); track paragraph.id) {
+        <p class="tpar">{{ paragraph.text }}</p>
+      }
+    </div>
+  }
+</div>

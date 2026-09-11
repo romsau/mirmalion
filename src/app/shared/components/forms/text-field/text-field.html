@@ -1,0 +1,21 @@
+<input
+  type="text"
+  class="field-input"
+  [attr.maxlength]="maxLength()"
+  [value]="value()"
+  [disabled]="disabled()"
+  [attr.placeholder]="placeholder()"
+  [attr.aria-label]="ariaLabel()"
+  [attr.aria-invalid]="invalid() ? 'true' : null"
+  [attr.aria-describedby]="describedBy()"
+  (input)="onInput($event)"
+/>
+
+<!--
+  ⚠️ **`aria-hidden`, et c'est délibéré** : annoncé, ce compteur parlerait à chaque touche et
+  couvrirait la frappe. La borne est déjà portée par `maxlength`, que les lecteurs d'écran
+  annoncent à la prise de focus.
+-->
+@if (showCounter()) {
+  <span class="field-count" aria-hidden="true">{{ count() }}</span>
+}

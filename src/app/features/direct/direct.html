@@ -1,0 +1,81 @@
+<!--
+  Même mise en page qu'en dictée — deux colonnes, le rond de repli posé sur le filet — et c'est
+  la maquette qui la veut à l'identique. Les valeurs de style sont partagées par des mixins ;
+  seuls les noms de classe sont propres à cet écran.
+-->
+<div class="direct" [class.is-collapsed]="panel.collapsed()">
+  <!--
+    ⚠️ **Il disparaît quand il n'y a rien à ouvrir**, et seulement replié : proposer un panneau
+    vide est une promesse que l'écran ne tient pas. Déplié il reste, sinon on ne pourrait plus
+    replier. `empty()` est faux tant que l'historique n'a pas été LU — c'est ce qui évite que le
+    bouton clignote au démarrage. **Même règle qu'en dictée**, rebranchée avec les données par
+     ; elle attendait celles-ci pour ne pas supprimer le seul moyen de replier la fenêtre.
+-->
+  @if (!panel.collapsed() || !history.empty()) {
+    <button
+      type="button"
+      class="panel-collapse"
+      [attr.aria-pressed]="!panel.collapsed()"
+      (click)="panel.toggle()"
+      i18n-aria-label="@@history.toggle"
+      aria-label="Replier ou déplier l'historique"
+      i18n-title="@@screen.historique"
+      title="Historique"
+    >
+      <app-icon name="chevron-left" />
+      <span class="pc-label" i18n="@@screen.historique">Historique</span>
+    </button>
+  }
+
+  <div class="col col-left">
+    <!--
+      ⚠️ **Le titre est DANS la colonne, pas au-dessus de la grille** — même raison qu'en
+      dictée : il s'aligne avec le rond de repli et avec le titre de l'historique, les trois
+      étant sur la même ligne. Sorti de la grille, il pousse tout le reste vers le bas.
+
+      Le titre réutilise l'identifiant de traduction du header : c'est le même mot pour la même
+      chose — le nom de l'écran.
+-->
+    <h1 class="screen-title">
+      <app-icon name="screen-wave" />
+      <span i18n="@@screen.direct">Direct</span>
+    </h1>
+
+    <!--
+      ⚠️ **CET ÉCRAN NE PORTE PLUS LA SESSION, IL LA DÉCLENCHE**. Le transcript en
+      direct et la ligne d'enregistrement vivent dans la **fenêtre-session**, qui s'ouvre au
+      démarrage. Ici, le formulaire reste **visible et inactif** pendant toute la session : on doit
+      pouvoir relire ce qu'on a choisi sans arrêter d'enregistrer.
+
+      ⚠️ **Chaque changement passe par une méthode**, jamais par une liaison à deux sens directe
+      sur les réglages : écrire un réglage est asynchrone, et la source ne va pas du tout dans
+      les réglages. Une liaison muette effacerait cette distinction.
+-->
+    <app-direct-config
+      [sources]="store.sources()"
+      [spokenLanguages]="spokenLanguages()"
+      [translationLanguages]="translationLanguages()"
+      [sourceId]="store.sourceId()"
+      (sourceIdChange)="pickSource($event)"
+      [includeMicrophone]="includeMicrophone()"
+      (includeMicrophoneChange)="setIncludeMicrophone($event)"
+      [language]="language()"
+      (languageChange)="setLanguage($event)"
+      [translationTarget]="translationTarget()"
+      (translationTargetChange)="setTranslationTarget($event)"
+      [canStart]="store.canStart()"
+      [recording]="store.recording()"
+      [busy]="store.busy()"
+      [elapsedSeconds]="elapsedSeconds()"
+      (start)="start()"
+      (stop)="stop()"
+      (languageOptionsRequested)="openLanguageOptions($event)"
+    />
+  </div>
+
+  @if (!panel.collapsed()) {
+    <div class="col col-right">
+      <app-direct-history />
+    </div>
+  }
+</div>

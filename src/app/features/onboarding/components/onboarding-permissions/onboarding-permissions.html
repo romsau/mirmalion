@@ -1,0 +1,31 @@
+<h1 class="onb-h" i18n="@@onboarding.permissions.title">Autorisations</h1>
+
+<!--
+  Sous-titre **transversal** : il ne liste pas les permissions, il pose le principe. Le
+  détail est dans les lignes, et le répéter ici ne ferait que ralentir la lecture.
+-->
+<p class="onb-sub" i18n="@@onboarding.permissions.subtitle">
+  Accordez-les une par une — rien ne s'active sans votre accord.
+</p>
+
+<!--
+  `aria-live="polite"` : l'Accessibilité et l'audio s'accordent **hors de l'application**, et
+  « Revérifier » est le seul moment où l'écran l'apprend. Sans région live, un lecteur d'écran
+  ne dirait rien du changement — l'utilisateur cliquerait sans jamais savoir si cela a marché.
+-->
+<div class="onb-list" aria-live="polite">
+  @for (row of rows(); track row.key) {
+    <app-permission-row [row]="row" (act)="act.emit($event)" />
+  }
+</div>
+
+<div class="onb-footer">
+  <app-button variant="neutral" (click)="recheck.emit()" i18n="@@onboarding.permissions.recheck"
+    >Revérifier</app-button
+  >
+  <!--
+    ⚠️ **Jamais désactivé** (règle « non bloquant ») : on continue avec zéro, une, deux
+    ou trois autorisations. Ce sont les fonctions qui se désactivent, pas le parcours.
+-->
+  <app-button (click)="finish.emit()" i18n="@@common.continue">Continuer</app-button>
+</div>

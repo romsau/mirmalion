@@ -1,0 +1,24 @@
+// La fenêtre d'onboarding, portée depuis `.onboarding-window` de `docs/ui/ui.html`.
+
+// ⚠️ **Aucune largeur ni hauteur ici.** Les dimensions de la fenêtre vivent côté Rust
+// (`src-tauri/src/commands/window.rs`), avec celles de la fenêtre principale : deux tables de
+// nombres finiraient par diverger d'un pixel et personne ne saurait laquelle fait foi. Ici on
+// remplit ce qu'on nous donne.
+
+:host {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  flex-direction: column;
+}
+
+// Le corps prend tout ce qui reste sous la barre de titre. `overflow: hidden` reprend la
+// maquette : une étape ne défile pas, elle tient dans la fenêtre — c'est ce qui garantit que
+// le bouton de pied est toujours visible sans avoir à chercher.
+.onb-body {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+}

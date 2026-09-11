@@ -1,0 +1,37 @@
+// La fenêtre-document d'une transcription de fichier — portée depuis `.done`, `.done-head`,
+// `.done-meta`, `.done-subbar` et `.done-content` de `docs/ui/ui.html` (écran `filedoc`).
+
+// ⚠️ **Aucune dimension de fenêtre ici.** La largeur, la hauteur et les minimums vivent côté
+// Rust (`src-tauri/src/lifecycle.rs`, `geometry`) : cette fenêtre est **redimensionnable**,
+// contrairement à la principale, et rien de ce qui suit ne doit supposer une largeur.
+
+@use 'abstracts/mixins' as *;
+
+// ⚠️ **La coquille est partagée avec la fenêtre-session** : `document-shell` porte la barre de
+// titre, le corps, l'en-tête, la ligne de méta et le contenu qui défile. La maquette dessine le
+// même objet des deux côtés ; ce qui suit est ce qui est **propre au fichier** — la barre
+// d'actions et ses sélecteurs.
+:host {
+  @include document-window;
+  @include document-panel;
+}
+
+// Les largeurs des deux sélecteurs de droite. Écrites en ligne dans la maquette
+// (`style="width: 185px"` et `190px`) : c'est de la mise en page, elle appartient donc à qui pose
+// les contrôles, pas au composant générique.
+.translate {
+  width: 185px;
+}
+
+.export {
+  @include document-export-select;
+}
+
+// ⚠️ **`.fd-right` de la maquette, et c'est lui qui fait tout l'alignement à droite.** La marge
+// automatique absorbe l'espace libre de la barre et pousse « Traduire » **et** « Exporter » au
+// bord — un seul des deux la porte, l'autre suit. Sur une fenêtre resserrée, `flex-wrap` reprend
+// la main et la marge devient sans effet : c'est le comportement voulu, la fenêtre est
+// redimensionnable.
+.fd-right {
+  margin-left: auto;
+}

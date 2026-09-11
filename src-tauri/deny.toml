@@ -1,0 +1,78 @@
+# La veille sur les 550 crates transitifs : vulnérabilités, licences, provenance.
+#
+# Lancé par `npm run verify:deps`.
+#
+# ⚠️ `cargo deny` plutôt que `cargo audit` seul, et pour une raison précise : `Cargo.lock` décrit
+# **toutes** les plateformes, `cargo audit` les scanne toutes, et Mirmalion est livré pour macOS
+# Apple Silicon uniquement. Sans filtre de cible, la sortie est noyée sous les avertissements de
+# `gtk`, `gdk`, `glib` et `atk` — les liaisons GTK3 de Tauri, non maintenues, et **jamais
+# compilées ici**. Un rapport où le bruit domine est un rapport que plus personne ne lit.
+
+[graph]
+# ⚠️ La seule cible livrée. C'est elle qui écarte tout l'arbre Linux et Windows de l'analyse.
+targets = [{ triple = "aarch64-apple-darwin" }]
+
+[advisories]
+# Une version retirée de crates.io est un refus, jamais un avertissement.
+yanked = "deny"
+
+# ⚠️ **Chaque ligne ici est une dette assumée, pas un avis écarté.** Une entrée ne s'ajoute
+# qu'avec la raison pour laquelle on ne peut pas agir, et la condition qui la fera disparaître.
+#
+# Ces cinq crates ne sont pas des vulnérabilités : ils sont **non maintenus**, ce qui est un
+# risque à terme et non une faille. Ils arrivent tous par le même chemin, et il ne nous appartient
+# pas — `urlpattern` → `tauri-utils` → `tauri`. La seule action possible de notre côté serait de
+# retirer Tauri.
+#
+# ⚠️ Ne pas remplacer cette liste par `unmaintained = "workspace"`, qui ferait taire la catégorie
+# entière : un SIXIÈME crate non maintenu qui entrerait dans l'arbre doit faire échouer
+# `verify:deps`. C'est une information, même quand on ne peut pas agir dessus.
+#
+# ⚠️ À relire à chaque montée de version de Tauri : le jour où `urlpattern` sort de l'arbre, ces
+# cinq lignes doivent partir avec lui.
+ignore = [
+  { id = "RUSTSEC-2025-0081", reason = "unic-char-property, via urlpattern → tauri-utils" },
+  { id = "RUSTSEC-2025-0075", reason = "unic-char-range, via urlpattern → tauri-utils" },
+  { id = "RUSTSEC-2025-0080", reason = "unic-common, via urlpattern → tauri-utils" },
+  { id = "RUSTSEC-2025-0100", reason = "unic-ucd-ident, via urlpattern → tauri-utils" },
+  { id = "RUSTSEC-2025-0098", reason = "unic-ucd-version, via urlpattern → tauri-utils" },
+]
+
+[licenses]
+# ⚠️ `app` lui-même porte `LicenseRef-Proprietary` et `publish = false`. Sans ceci, la seule
+# licence refusée de tout l'arbre serait la nôtre — un rapport rouge qui ne dit rien.
+private = { ignore = true }
+
+# ⚠️ Établie en lançant `cargo deny check licenses` sur l'arbre réel, jamais recopiée d'ailleurs :
+# chaque entrée correspond à une dépendance présente. L'application est propriétaire
+# (`LicenseRef-Proprietary`) — une dépendance copyleft transitive serait un problème juridique,
+# pas technique, et c'est ce que cette liste rend impossible à introduire sans s'en apercevoir.
+allow = [
+  "Apache-2.0",
+  "Apache-2.0 WITH LLVM-exception",
+  "BSD-2-Clause",
+  "BSD-3-Clause",
+  "BSL-1.0",
+  "CC0-1.0",
+  "ISC",
+  "MIT",
+  "MIT-0",
+  "MPL-2.0",
+  "OpenSSL",
+  "Unicode-3.0",
+  "Unlicense",
+  "Zlib",
+]
+
+[bans]
+# Deux versions du même crate ne sont pas une faute — l'arbre de Tauri en produit — mais elles
+# gonflent le binaire, et les voir passer est le seul moyen de ne pas les accumuler.
+multiple-versions = "warn"
+wildcards = "deny"
+
+[sources]
+# ⚠️ Rien ne doit entrer d'ailleurs que de crates.io. Un dépôt git dans l'arbre de dépendances
+# d'une application « rien ne sort de la machine » est une décision, pas un détail — et elle
+# doit se prendre en modifiant ce fichier.
+unknown-registry = "deny"
+unknown-git = "deny"

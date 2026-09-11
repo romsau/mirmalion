@@ -1,0 +1,70 @@
+// Feuille de style globale — **l'ordre compte**.
+
+//  1. les jetons hors thème (dimensions, polices) ;
+//  2. les jetons de couleur, clair puis sombre — le sélecteur sombre est plus spécifique,
+//     il l'emporte dès que `data-theme="dark"` est posé sur `<html>` ;
+//  3. la remise à plat, qui consomme déjà `--line` et `--muted` ;
+//  4. la typographie et la peinture du document.
+
+// `abstracts/mixins` n'émet **aucune règle** : l'importer ici ne pèse rien, et les composants
+// l'incluent chacun de leur côté (`@use 'abstracts/mixins' as *;`). Cette feuille s'en sert pour
+// la seule couche de notification qu'elle porte elle-même, celle de l'overlay du CDK.
+
+// ⚠️ **Pas de duplication de CSS entre composants.** Un motif écrit une deuxième fois est un
+// motif qui doit remonter ici — mixin dans `abstracts/_mixins.scss` s'il se paramètre, règle
+// dans `base/_base.scss` s'il s'applique partout. On mutualise à la deuxième occurrence, pas
+// à la cinquième.
+
+// Les styles STRUCTURELS du CDK Overlay : positionnement de l'hôte et du voile, rien de visuel.
+// Sans eux, l'overlay se rend en flux, en haut à gauche de la page.
+@use '@angular/cdk/overlay-prebuilt.css';
+
+@use 'styles/abstracts/mixins' as *;
+@use 'styles/abstracts/variables';
+@use 'styles/themes/light';
+@use 'styles/themes/dark';
+@use 'styles/base/reset';
+@use 'styles/base/base';
+// Les motifs partagés par plusieurs composants, définis SANS préfixe de conteneur — c'est ce
+// qui garantit qu'ils restent identiques d'une liste à l'autre.
+@use 'styles/components/history-actions';
+@use 'styles/components/options-family';
+
+// Le voile des modales. Il n'assombrit que **son** document — dans l'application, chaque
+// fenêtre est son propre webview, donc sa propre modale. Sa couleur est un jeton de thème :
+// en sombre il doit être nettement plus opaque, sinon il n'assombrit rien du tout.
+
+// ⚠️ **Il commence sous la barre de titre et ne la couvre jamais.** Ce qu'un voile y ferait
+// perdre, ce ne sont pas les pastilles — macOS les peint par-dessus le webview, voir
+// `header.scss` —, c'est la **zone de déplacement**, elle bien en DOM : Tauri compare la cible
+// exacte du clic, et le voile posé devant devient cette cible. La fenêtre cesse de se déplacer.
+// ⚠️ Le décalage se pose ICI, jamais sur `.cdk-overlay-container` : cet hôte porte aussi les
+// popovers, en coordonnées de viewport, et la snackbar ancrée à son bas.
+// ⚠️ Le `+ 1px` est le filet sous la barre : `--header-h` vaut la barre seule.
+.cdk-overlay-backdrop.modal-veil {
+  top: calc(var(--header-h) + 1px);
+  background: var(--overlay-veil);
+}
+
+// L'hôte de l'overlay reçoit la boîte : il ne doit ni la contraindre ni l'élargir.
+
+// ⚠️ La marge haute n'est pas un espacement : c'est elle qui recentre la boîte dans la bande que
+// le voile épargne. Le centrage du CDK porte sur la boîte marges comprises, donc une modale haute
+// cesse de glisser sous la barre de titre — et `--modal-max-h` retranche exactement la même
+// bande, filet compris, sans quoi la boîte y remonterait par le débordement.
+.cdk-overlay-pane.modal-panel {
+  margin-top: calc(var(--header-h) + 1px);
+  max-width: calc(100% - 48px);
+  max-height: var(--modal-max-h);
+}
+
+// La snackbar flotte au-dessus du contenu, en bas de la fenêtre. Elle ne capte pas les clics
+// hors de la barre elle-même : le reste de l'écran doit rester utilisable pendant qu'elle
+// s'affiche.
+
+// ⚠️ **La contrepartie — rendre les clics à la barre — est dans `snack-shell`**, et non ici : un
+// `.snack` écrit dans cette feuille globale atteindrait le composant, mais la barre de mise à
+// jour est montée **hors overlay**, dans la coquille, où ce sélecteur ne s'applique pas.
+.cdk-overlay-pane.snackbar-panel {
+  @include snack-layer;
+}

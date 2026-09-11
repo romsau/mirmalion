@@ -1,0 +1,76 @@
+// Le contenu de la modale d'un prompt — porté depuis `.pmodal-body--fill`, `.of-field`,
+// `.of-label` et `.pm-actions` de `docs/ui/ui.html`.
+
+@use 'abstracts/mixins' as *;
+
+// ⚠️ **La colonne est ici, et c'est elle qui donne sa hauteur au champ de prompt.** Sans
+// `flex-direction: column` sur l'hôte, le champ garde la hauteur de son contenu : le corps de
+// la modale dépasse alors sa hauteur maximale et se met à défiler, les marges basses passent
+// sous la ligne de flottaison et les boutons touchent le bord. Le symptôme se lit comme un
+// défaut de marge ; la cause est un débordement.
+:host {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.rp-field {
+  display: flex;
+  flex-direction: column;
+}
+
+// ⚠️ **Le champ fait la longueur de ce qu'on peut y écrire** : un champ pleine largeur pour
+// 40 caractères promet une phrase et n'en accepte pas une.
+// ⚠️ **`--chars` est posé par le gabarit, à partir du `maxLength` du champ** : écrit ici, le
+// nombre existerait à deux endroits, et la largeur mentirait au premier changement de borne.
+.rp-field--sized {
+  width: calc(var(--chars) * 1ch + 26px);
+  max-width: 100%;
+}
+
+// ⚠️ `min-height: 0` : sans lui, un enfant flexible refuse de descendre sous la hauteur de son
+// contenu, et le débordement revient silencieusement.
+.rp-field--grow {
+  min-height: 0;
+  flex: 1;
+  margin-top: 16px;
+}
+
+.rp-field--grow app-prompt-field {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+// ⚠️ **`::ng-deep`, parce que la zone de texte appartient à `PromptField`** : l'encapsulation
+// émulée l'enferme, et c'est bien une contrainte de BOÎTE — la hauteur que la modale lui
+// laisse —, pas un style que le champ devrait porter partout.
+// ⚠️ **`resize: none` parce que la poignée mentirait ici** : le champ prend déjà toute la
+// hauteur de la modale et se redimensionne avec elle.
+// ⚠️ **Le défilement interne reste**, et c'est ce qui rend le retrait acceptable : 2 000
+// caractères dépassent la hauteur visible, et un `overflow: hidden` les rendrait inatteignables.
+:host ::ng-deep .rp-field--grow .prompt-input {
+  min-height: 96px;
+  flex: 1;
+  margin-top: 0;
+  overflow-y: auto;
+  resize: none;
+}
+
+.rp-label {
+  @include field-label;
+}
+
+.field-error {
+  @include field-error;
+}
+
+// ⚠️ `flex: none` en plus du motif : le corps de cette modale est une colonne étirée, et sans
+// lui la rangée se laisse comprimer par le champ de prompt qui prend la hauteur.
+.rp-actions {
+  @include modal-actions;
+
+  flex: none;
+}

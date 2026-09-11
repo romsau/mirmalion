@@ -1,0 +1,148 @@
+@if (empty()) {
+  <!--
+    L'historique n'a jamais rien contenu : l'invitation occupe toute la colonne, et l'entête
+    comme la recherche disparaissent — chercher dans le vide n'a pas de sens.
+  -->
+  <div class="hist-empty">
+    <ng-content select="[emptyState]" />
+  </div>
+} @else {
+  <div class="hist-head-row">
+    <!--
+      ⚠️ **Pas de compteur.** La maquette affichait « (12/200) » : le nombre exact n'aide à
+      aucune décision, et le plafond est un RÉGLAGE — sa place est dans les Options, pas dans
+      un panneau qu'on ouvre pour relire une dictée. La règle a déjà tranché ainsi pour les
+      contrôles unifiés, « on n'affiche PAS de compteur X sur N ».
+  -->
+    <div class="head-left">
+      <p class="label">{{ label() }}</p>
+      <!--
+        ⚠️ `aria-expanded`, et non `aria-pressed` : la loupe DÉPLIE une zone, elle ne bascule
+        pas un état. C'est aussi ce qui justifie qu'elle ne reste pas enfoncée à l'œil.
+  -->
+      <app-button
+        class="search-toggle"
+        [iconOnly]="true"
+        icon="search"
+        [ariaLabel]="searchLabel()"
+        [expanded]="searching()"
+        (click)="toggleSearch()"
+      />
+    </div>
+    <button type="button" class="clear-all" (click)="clearAll.emit()">
+      <app-icon name="trash" />
+      <span i18n="@@common.deleteAll">Tout supprimer</span>
+    </button>
+  </div>
+
+  @if (searching()) {
+    <div class="hist-search">
+      <app-icon class="rs-ico" name="search" />
+      <input
+        #searchField
+        type="search"
+        class="hist-search-input"
+        [value]="search()"
+        (input)="onSearch($event)"
+        [attr.aria-label]="searchLabel()"
+        [attr.placeholder]="searchPlaceholder()"
+        autocomplete="off"
+        spellcheck="false"
+      />
+    </div>
+  }
+
+  @if (entries().length === 0) {
+    <!-- `role="status"` : le résultat d'une frappe doit être annoncé, sans voler le focus. -->
+    <p class="hist-noresult" role="status">{{ noResultLabel() }}</p>
+  } @else if (itemSize(); as size) {
+    <!--
+      ⚠️ **Le virtual scroll est optionnel, et il ne vaut que pour des lignes de hauteur fixe.**
+
+      Les sessions le sont — un titre sur **une** ligne coupée à l'ellipse, une méta sous lui —,
+      les dictées **ne le sont pas** : leur texte s'étale sur une ou deux lignes selon sa longueur.
+      Y brancher une stratégie à taille fixe couperait une dictée sur deux. D'où l'entrée plutôt
+      qu'un branchement d'office, et d'où les deux branches ci-dessous.
+
+      ⚠️ **La hauteur descend d'ici vers le style** (`--hist-item-h`) : `itemSize` est la seule
+      valeur, et le CSS s'y conforme. L'écrire des deux côtés les ferait diverger sans qu'aucun
+      test ne s'en aperçoive — le décalage ne se voit qu'après plusieurs centaines de lignes.
+  -->
+    <!--
+      ⚠️ **`--hist-total-h` n'est pas décoratif : sans lui, la liste est invisible.** La CDK pose
+      `contain: strict` sur son viewport, donc un confinement de taille : avec une hauteur `auto`
+      l'élément s'effondre à **0 px** et les lignes rendues sont rognées. Mesuré dans un
+      navigateur : viewport 539 × 0, trois lignes présentes dans le DOM, et l'écran vide.
+
+      ⚠️ Le CSS seul ne peut pas la calculer — elle vaut *nombre de lignes × `itemSize`*, et
+      `itemSize` ne vit qu'ici. On la descend, comme `--hist-item-h`.
+  -->
+    <cdk-virtual-scroll-viewport
+      class="hist"
+      [itemSize]="size"
+      [style.--hist-item-h.px]="size"
+      [style.--hist-total-h.px]="entries().length * size"
+    >
+      <div class="hist-item" *cdkVirtualFor="let entry of entries(); trackBy: byId">
+        <ng-container [ngTemplateOutlet]="row" [ngTemplateOutletContext]="{ $implicit: entry }" />
+      </div>
+    </cdk-virtual-scroll-viewport>
+  } @else {
+    <div class="hist">
+      @for (entry of entries(); track entry.id) {
+        <div class="hist-item">
+          <ng-container [ngTemplateOutlet]="row" [ngTemplateOutletContext]="{ $implicit: entry }" />
+        </div>
+      }
+    </div>
+  }
+}
+
+<!--
+  Le contenu d'une ligne, **partagé par les deux branches**. Recopié, il aurait divergé à la
+  première correction — et c'est le genre de divergence qu'on ne voit que dans l'une des deux
+  listes.
+  -->
+<ng-template #row let-entry>
+  @if (entry.meta) {
+    <!--
+      Deux lignes : le titre, puis la méta. ⚠️ **Pas une concaténation dans `text`** — la maquette
+      leur donne deux graisses et deux tailles, et un lecteur d'écran doit pouvoir les distinguer.
+
+      ⚠️ **C'EST UN VRAI `<button>`, PAS UNE LIGNE CLIQUABLE.** La maquette rend l'item entier
+      cliquable ; un `<div (click))` n'est ni tabulable, ni annoncé, ni déclenché par Entrée, et
+      il porterait ici deux autres boutons — imbrication interdite. Le bouton s'arrête donc au
+      titre et à sa méta, et copier / supprimer restent ses **frères**. Son nom accessible est son
+      propre contenu : « Session du 5 août à 16:12, 5 août 16:30 · 48 min ».
+  -->
+    <button type="button" class="rhist-main" (click)="open.emit(entry.id)">
+      <span class="rhist-title">{{ entry.text }}</span>
+      <span class="rhist-meta">{{ entry.meta }}</span>
+    </button>
+  } @else {
+    <span class="txt">{{ entry.text }}</span>
+  }
+  <!--
+    ⚠️ `.h-act`, PAS `app-button` : aucun fond au repos, inversion au survol. Le style
+    est global (`styles/components/_history-actions.scss`) — c'est ce qui garantit que
+    les trois listes de l'application restent identiques.
+  -->
+  <button
+    type="button"
+    class="h-act copy"
+    (click)="copy.emit(entry.id)"
+    i18n-aria-label="@@history.copy"
+    aria-label="Copier dans le presse-papier"
+  >
+    <app-icon name="copy" />
+  </button>
+  <button
+    type="button"
+    class="h-act del"
+    (click)="remove.emit(entry.id)"
+    i18n-aria-label="@@history.delete"
+    aria-label="Supprimer"
+  >
+    <app-icon name="trash" />
+  </button>
+</ng-template>

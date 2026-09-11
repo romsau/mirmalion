@@ -1,0 +1,117 @@
+<!--
+  ⚠️ **« Indicateur visuel », pas « pilule »**. « Pilule » est notre mot de
+  code — celui du composant, du code Rust et de `CLAUDE.md` — et il ne dit rien à qui lit un écran
+  de réglages. Il reste à l'intérieur ; l'interface, elle, nomme la chose par ce qu'elle est.
+
+  ⚠️ **Pas de sous-titre** : le libellé se suffit.
+-->
+<app-option-row
+  label="Afficher l'indicateur visuel pendant un direct"
+  i18n-label="@@options.direct.overlay"
+  (activate)="toggleOverlay()"
+>
+  <app-switch
+    [checked]="overlayVisible()"
+    (checkedChange)="setOverlay($event)"
+    ariaLabel="Afficher l'indicateur visuel pendant un direct"
+    i18n-ariaLabel="@@options.direct.overlay"
+  />
+</app-option-row>
+
+<!--
+  ⚠️ **Sans sous-titre non plus, ce qui libère de la largeur pour le sélecteur** : les intitulés de
+  compte rendu sont longs (« Cours / conférence ») et se tronquaient dans 210 px.
+
+  ⚠️ **`passive`, comme toute ligne à menu déroulant** : aucun navigateur n'ouvre une liste par
+  programme, et une ligne qui s'allume sans rien ouvrir est pire qu'une ligne inerte.
+
+  ⚠️ **`app-combo-select`, jamais `app-select`** : `reportTypeOptions()` pose un `group` sur chaque
+  type, et un `<select>` natif ne lit pas `option.group`. Il rendait la liste à plat, quand la
+  fenêtre-session range le même choix en cascade.
+-->
+<app-option-row
+  passive
+  label="Type de compte rendu par défaut"
+  i18n-label="@@options.direct.reportType"
+>
+  <app-combo-select
+    class="report-field"
+    [options]="reportTypes()"
+    [lockedGroups]="lockedGroups()"
+    [value]="reportType()"
+    (valueChange)="pickReportType($event)"
+    ariaLabel="Type de compte rendu par défaut"
+    i18n-ariaLabel="@@options.direct.reportType"
+  />
+</app-option-row>
+
+<!--
+  ⚠️ **Le bloc est un FRÈRE des rangées, jamais leur contrôle**, et c'est ce qui lui donne toute la
+  largeur du panneau : dans la colonne de droite il serait borné aux 330 px du sélecteur.
+
+  ⚠️ **CES PROMPTS SONT DU CONTENU UTILISATEUR** — leur titre nomme un client aussi sûrement que
+  leur texte — et ils vivent donc dans la **base chiffrée**, jamais dans le fichier de réglages.
+
+  ⚠️ **La liste ne montre QUE les titres** : un prompt fait plusieurs phrases, et quatre pavés de
+  prose empilés ne se parcourent pas. Il ne se lit qu'ouvert, dans la modale.
+-->
+<div class="cp-head">
+  <!--
+    ⚠️ Cet intitulé NOMME la liste : c'est lui que `aria-labelledby` désigne. Sans lui, un
+    lecteur d'écran annonce « liste, 3 éléments » sans dire de quoi.
+  -->
+  <div class="cp-head-lbl" [id]="listLabelId" i18n="@@direct.prompt.listLabel">
+    Prompts personnalisés
+  </div>
+  <app-button icon="plus" [disabled]="full()" (click)="addPrompt()">{{ addLabel }}</app-button>
+</div>
+
+<!--
+  ⚠️ **Les deux boutons de bout de ligne sont des `.h-act`**, comme l'historique et le
+  Dictionnaire : pas un `Button`, dont l'aplat teinté ferait un damier sur une colonne de lignes.
+  Et pas de corbeille rouge — c'est la modale de confirmation qui protège d'une suppression.
+-->
+<!--
+  ⚠️ **Une vraie liste, `<ul>` et `<li>`** : le rendu est celui de la maquette au pixel près, mais
+  un lecteur d'écran annonce alors « liste » et son nombre d'éléments — l'information même qui
+  manque quand on ne voit pas la pile.
+
+  ⚠️ L'état vide est **hors** de la liste : une liste d'un élément qui dit « il n'y en a aucun »
+  s'annoncerait comme un contenu.
+-->
+@if (empty()) {
+  <!--
+    L'état vide : une phrase, pas une illustration. La liste est un réglage, et le bouton
+    « Ajouter » juste au-dessus dit déjà quoi faire.
+  -->
+  <p class="cp-empty" role="status" i18n="@@direct.prompt.empty">
+    Aucun prompt personnalisé. Ajoutez-en un pour le retrouver dans la rubrique « Personnalisé » du
+    menu ci-dessus.
+  </p>
+} @else {
+  <ul class="cp-list" [attr.aria-labelledby]="listLabelId">
+    @for (prompt of prompts.prompts(); track prompt.id) {
+      <li class="cp-row">
+        <div class="cp-title">{{ prompt.title }}</div>
+        <div class="cp-acts">
+          <button
+            type="button"
+            class="h-act copy"
+            [attr.aria-label]="editLabel(prompt)"
+            (click)="editPrompt(prompt)"
+          >
+            <app-icon name="pencil" />
+          </button>
+          <button
+            type="button"
+            class="h-act del"
+            [attr.aria-label]="removeLabel(prompt)"
+            (click)="removePrompt(prompt)"
+          >
+            <app-icon name="trash" />
+          </button>
+        </div>
+      </li>
+    }
+  </ul>
+}

@@ -1,0 +1,47 @@
+// Jetons **indépendants du thème** — dimensions, rayons, familles de police.
+
+// Portés depuis `docs/ui/ui.html`, second bloc `:root`. Les couleurs, elles, vivent dans
+// `themes/_light.scss` et `_dark.scss` : rien de coloré ici, sinon la bascule de thème aurait
+// deux endroits où oublier une valeur.
+
+// ⚠️ **Deux jetons de la maquette ne sont volontairement pas portés** : `--backdrop` et
+// `--window-shadow`. Ils peignent le *bureau simulé* autour de la fenêtre, pour comparer les
+// deux thèmes sur un même fond de référence. Dans l'application il n'y a pas de bureau : la
+// fenêtre EST la surface, et son ombre est dessinée par macOS. Les reproduire donnerait une
+// double ombre.
+
+:root {
+  --radius: 10px;
+  --btn-h: 32px; // hauteur commune à TOUS les boutons (réf. = boutons de nav du header)
+
+  // La barre de titre : 9 px au-dessus d'un bouton, 9 px en dessous. Exactement `HEADER_HEIGHT`
+  // dans `src-tauri/src/commands/window.rs`, la bande sur laquelle le code natif centre les
+  // pastilles de macOS — et rien de plus, le filet qui la souligne n'en fait pas partie.
+  // ⚠️ Le `calc` porte l'arithmétique que `window.rs` verrouille de son côté (`assert!`) et la
+  // rattache à `--btn-h` : changer la hauteur d'un bouton déplace la barre, ici comme là-bas.
+  // Un 50 en dur laisserait les deux moitiés diverger en silence.
+  --header-h: calc(9px * 2 + var(--btn-h));
+
+  // La hauteur maximale d'une modale : la fenêtre, moins la barre de titre et son filet — que le
+  // voile épargne —, moins les 48 px de respiration qui bornent aussi sa largeur.
+  // ⚠️ En `vh` et non en `%` : le `%` d'une boîte de modale se résout contre l'hôte de l'overlay,
+  // qui n'a aucune hauteur définie, et retombe alors à `none` sans rien dire. Mesuré : une boîte
+  // de 2 140 px sortait par le bas de la fenêtre, sa borne étant morte.
+  --modal-max-h: calc(100vh - var(--header-h) - 1px - 48px);
+  --screen-h: 544px; // hauteur utile d'un écran (corps de la fenêtre)
+
+  // Les deux marges latérales de la fenêtre. Elles diffèrent — le header serre plus que le
+  // corps —, et **c'est leur écart qui compte** : tout ce qui doit s'aligner sur un bouton du
+  // header depuis l'intérieur d'un écran se pose à `calc(var(--header-pad-x) -
+  // var(--screen-pad-x))`. Écrites en dur, elles produisaient un décalage de 8 px que rien ne
+  // signalait (bouton « Historique » replié, corrigé).
+  --screen-pad-x: 24px;
+  --header-pad-x: 16px;
+
+  // La police de l'interface est celle du système : c'est ce qui fait qu'une app a l'air
+  // native. Montserrat est réservée à la marque et aux titres — cf. --font-brand.
+  --font: -apple-system, blinkmacsystemfont, 'SF Pro Text', system-ui, sans-serif;
+  // La maquette écrit `font-family: "Montserrat", var(--font)` à quatorze endroits. Un jeton
+  // évite la quinzième occasion de se tromper de repli.
+  --font-brand: 'Montserrat', var(--font);
+}

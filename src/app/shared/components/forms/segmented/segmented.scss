@@ -1,0 +1,58 @@
+// Le contrôle segmenté, porté depuis `.seg` / `.seg-btn` de `docs/ui/ui.html`.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  display: inline-flex;
+}
+
+.seg {
+  display: inline-flex;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 9px;
+  background: var(--surface-soft);
+}
+
+.seg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 15px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+
+  // Même règle que `.mode-btn` du mode de dictée : c'est le même motif de contrôle, et il ne
+  // peut pas avoir deux survols. Voir l'en-tête de `mode-selector.scss` pour le raisonnement.
+  &:hover:not(.is-active) {
+    background: var(--accent-50);
+    color: var(--accent-ink);
+  }
+
+  // La pastille : elle remonte du rail creusé vers la surface, et son liseré lui donne l'arête
+  // que l'ombre ne peut pas donner en thème sombre — même raisonnement que l'élévation.
+  &.is-active {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+app-icon {
+  width: 15px;
+  height: 15px;
+  flex: none;
+}

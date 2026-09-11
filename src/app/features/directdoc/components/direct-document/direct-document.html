@@ -1,0 +1,131 @@
+<!--
+  ⚠️ **LA BASCULE EST SORTIE DE LA LIGNE DE TITRE**, une fois les
+  locuteurs retirés : collée au titre elle donnait un bloc de gauche déséquilibré et un large vide
+  à droite. En enfant direct de la tête, le `space-between` la pousse au bord — **le même bord que
+  le sélecteur d'export** de la barre en dessous. Les deux commandes de droite tombent donc sur une
+  seule verticale.
+-->
+<div class="done-head">
+  <div>
+    <div class="done-title-row">
+      <app-inline-title
+        [value]="title()"
+        [fallback]="title()"
+        [renameLabel]="renameLabel"
+        [fieldLabel]="fieldLabel"
+        (renamed)="renamed.emit($event)"
+      />
+    </div>
+    <span class="done-meta">{{ meta() }}</span>
+  </div>
+
+  <!--
+    ⚠️ **Elle n'existe QUE s'il y a un compte rendu.** Sans lui, elle mènerait à un panneau vide en
+    promettant qu'il y a quelque chose à voir.
+-->
+  @if (hasReport()) {
+    <app-button
+      class="tr-toggle"
+      [icon]="showing() === 'report' ? 'transcript' : 'chevron-left'"
+      [expanded]="showing() === 'transcript'"
+      (click)="toggle()"
+    >
+      {{ toggleLabel() }}
+    </app-button>
+  }
+</div>
+
+<!--
+  ⚠️ **LA BARRE RESTE VISIBLE SUR LE TRANSCRIPT**. L'ancienne règle « transcript =
+  aucune action » valait quand le transcript n'était qu'une vue de vérification d'un document dont
+  les actions appartenaient au compte rendu. Depuis que la fenêtre s'ouvre **sur** lui, la même vue
+  aurait porté ses contrôles ou non selon d'où l'on venait — le même document, deux comportements.
+-->
+<div class="done-subbar">
+  <div class="cr-row">
+    <!--
+        ⚠️ **CHOISIR UN TYPE *EST* LE GESTE QUI LANCE LA GÉNÉRATION**, et c'est
+        pourquoi il n'y a plus de bouton « Générer ». Le composant émet sur **toute sélection**,
+        pas sur un changement de valeur : rechoisir le même type relance, ce qui est exactement ce
+        qui remplace le bouton. ⚠️ **Ne pas y ajouter de `distinctUntilChanged`** — il casserait la
+        relance sans casser aucun test.
+-->
+    <app-combo-select
+      class="cr-kind"
+      [options]="kinds()"
+      [value]="kind()"
+      [lockedGroups]="lockedGroups"
+      [disabled]="busy()"
+      ariaLabel="Type de compte rendu"
+      i18n-ariaLabel="@@direct.document.kind"
+      (valueChange)="kindChange.emit($event)"
+    />
+    <!--
+        ⚠️ **GROUPÉ AVEC LE TYPE, ET C'EST LA MAQUETTE QUI LE DIT** : les
+        deux disent ce que le document **EST** — sa forme, sa langue — quand « Exporter » dit ce
+        qu'on en **fait**. C'est ce qui justifie que seul l'export file au bord droit.
+
+        ⚠️ **Il porte sur la vue où l'on est**, comme tout ce que cette barre contient : son nom
+        accessible et le libellé du voile changent avec elle.
+
+        ⚠️ **Un CHAMP, pas une commande** — contrairement à « Exporter » : il garde la valeur
+        choisie, parce qu'elle dit la langue de ce qu'on lit. C'est la coquille qui la lui rend
+        quand la traduction n'aboutit pas.
+-->
+    <app-combo-select
+      class="cr-translate"
+      [options]="translationOptions"
+      [value]="translationTarget()"
+      [disabled]="busy()"
+      [ariaLabel]="translateLabel()"
+      (valueChange)="pickTranslation($event)"
+    />
+  </div>
+
+  <!--
+    ⚠️ **Une commande, et elle porte sur la vue où l'on est.** `headLabel` tient le déclencheur
+    sur « Exporter » quoi qu'il arrive, si bien que le menu y retombe après chaque action.
+
+    ⚠️ Pas de sélecteur « quoi partager », pas d'archive `.zip` : la barre est partagée par le
+    transcript et le compte rendu, et chaque contrôle veut dire ce qu'il dit pour la vue
+    courante. Un troisième choix redemanderait ce que l'écran affiche déjà.
+-->
+  <app-combo-select
+    class="export"
+    [options]="exportOptions()"
+    [value]="exportValue"
+    [headLabel]="exportLabel"
+    [disabled]="busy()"
+    [ariaLabel]="exportLabel"
+    (valueChange)="pickExport($event)"
+  />
+</div>
+
+<div class="done-content">
+  @if (showing() === 'report') {
+    @for (section of sections(); track section.heading) {
+      <div class="cr-section">
+        <h2 class="cr-h">{{ section.heading }}</h2>
+        @if (section.bullets) {
+          <ul class="cr-list">
+            @for (line of section.lines; track line) {
+              <li>{{ line }}</li>
+            }
+          </ul>
+        } @else {
+          @for (line of section.lines; track line) {
+            <p class="cr-p">{{ line }}</p>
+          }
+        }
+      </div>
+    }
+  } @else if (isEmpty()) {
+    <!--
+      ⚠️ **Une session sans un mot n'est pas une panne** : on peut lancer un enregistrement et
+      n'entendre que du silence. L'écran le dit plutôt que de laisser du blanc.
+-->
+    <p class="doc-empty" i18n="@@direct.document.empty">Cette session n'a produit aucun texte.</p>
+  } @else {
+    <app-transcript-view [lines]="lines()" />
+  }
+</div>

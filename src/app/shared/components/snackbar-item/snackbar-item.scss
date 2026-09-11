@@ -1,0 +1,63 @@
+// La barre de notification, portée depuis `.snack` de `docs/ui/ui.html`.
+
+@use 'abstracts/mixins' as *;
+
+.snackbar {
+  @include snack-row;
+}
+
+.snack {
+  @include snack-shell;
+
+  align-items: center;
+  gap: 10px;
+  padding: 11px 13px 11px 14px;
+  cursor: pointer;
+  transition: background 0.12s ease;
+
+  // ⚠️ `--surface-soft` ne vaut pas ici ce qu'il vaut ailleurs : `snack-shell` le réécrit en
+  // `--snack-control`, le cran au-dessus de la barre. Le survol s'éclaircit donc en thème clair
+  // et s'assombrit en sombre — dans les deux cas, il s'écarte du repos, qui est ce qu'on lui
+  // demande.
+  &:hover {
+    background: var(--surface-soft);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+.snack-ico {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+.snack-msg {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+// ---- Tons -------------------------------------------------------------------------------------
+// L'erreur est **orange**, et non rouge : dans cette application le rouge dit « enregistrement
+// en cours » et « action destructrice ». L'orange dit « quelque chose n'a pas marché ».
+
+:host(.tone-error) .snack {
+  border-color: color-mix(in srgb, var(--warning) 35%, var(--line));
+  background: var(--warning-50);
+
+  &:hover {
+    background: color-mix(in srgb, var(--warning) 14%, var(--surface));
+  }
+}
+
+:host(.tone-error) .snack-ico {
+  color: var(--warning-on-50);
+}
+
+:host(.tone-success) .snack-ico {
+  color: var(--success-ink);
+}

@@ -1,0 +1,23 @@
+<!--
+  ⚠️ **L'ACTION D'ABORD, LA RECHERCHE ENSUITE** : on ouvre le dictionnaire pour y ajouter un mot,
+  pas pour en chercher un parmi dix. La recherche pleine largeur, posée en tête, promettait qu'on
+  y écrit des phrases.
+-->
+<app-button icon="plus" (click)="add.emit()" i18n="@@dictionary.add"
+  >Ajouter un nouveau mot</app-button
+>
+
+<div class="opt-search">
+  <app-icon name="search" />
+  <input
+    type="search"
+    [value]="query()"
+    (input)="onInput($event)"
+    aria-label="Rechercher un mot"
+    i18n-aria-label="@@dictionary.searchLabel"
+    placeholder="Rechercher un mot…"
+    i18n-placeholder="@@dictionary.searchPlaceholder"
+    autocomplete="off"
+    spellcheck="false"
+  />
+</div>

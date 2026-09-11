@@ -1,0 +1,46 @@
+<!--
+  ⚠️ **Le champ REMPLACE la rangée, il ne se glisse pas dedans.** La maquette masque
+  `.done-title-row` et insère le champ à sa place : le titre et son crayon disparaissent
+  ensemble, sinon le crayon resterait cliquable pendant l'édition et ouvrirait un second champ.
+
+  ⚠️ `[value]` et non `[(ngModel)]` : la valeur affichée appartient à l'hôte, et ce qui est saisi
+  n'est lu qu'au moment de valider. Lier les deux ferait remonter une frappe à chaque touche.
+-->
+@if (editing()) {
+  <input
+    type="text"
+    class="title-input"
+    autocomplete="off"
+    spellcheck="false"
+    [value]="value()"
+    [attr.aria-label]="fieldLabel()"
+    (keydown.enter)="submit($event)"
+    (keydown.escape)="cancel()"
+    (blur)="leave($event)"
+  />
+} @else if (value() !== '') {
+  <!--
+    ⚠️ **Rien n'est rendu tant qu'il n'y a pas de titre, et ce n'est pas de la prudence.**
+    Les deux hôtes passent `document()?.title ?? ''` : entre l'ouverture
+    de la fenêtre et le retour du backend, `value()` vaut la **chaîne vide**, et le `<h1>` était
+    rendu vide. Un lecteur d'écran arrivant dans la fenêtre annonçait « titre de niveau 1 »
+    suivi de rien — la pire première phrase possible pour un document.
+    ⚠️ **Le crayon part avec lui**, et c'est voulu : on ne renomme pas un document qui n'est pas
+    encore chargé. ⚠️ Mesuré dans un vrai navigateur ; jsdom ne pouvait pas le voir, la règle
+    `empty-heading` d'AXE n'ayant rien à signaler tant que le spec fournit un titre.
+-->
+  <div class="title-row">
+    <!--
+      Le titre de la fenêtre-document. C'est le `<h1>` de sa page : un lecteur d'écran doit
+      pouvoir dire de quel document il s'agit dès l'arrivée.
+
+      ⚠️ Le clic est un **raccourci à la souris**, pas la voie d'accès : le titre n'est ni
+      focalisable ni annoncé comme un contrôle. Voir l'en-tête du composant.
+-->
+    <h1 class="title" (click)="edit()">{{ value() }}</h1>
+
+    <button type="button" class="title-rename" [attr.aria-label]="renameLabel()" (click)="edit()">
+      <app-icon name="pencil" />
+    </button>
+  </div>
+}

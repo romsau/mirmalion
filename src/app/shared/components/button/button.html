@@ -1,0 +1,20 @@
+<!--
+  Le `<span class="label">` est toujours présent, même vide. C'est lui qui permet au CSS de
+  reconnaître un bouton en icône seule — `:has(.label:empty)` — et de le rendre carré, sans
+  qu'une entrée de plus ait à le déclarer. Angular retire les nœuds de texte vides à la
+  compilation (`preserveWhitespaces` est faux par défaut), donc `:empty` ne se fait pas piéger
+  par une indentation.
+-->
+<button
+  class="button"
+  [attr.type]="type()"
+  [disabled]="disabled()"
+  [attr.aria-label]="ariaLabel()"
+  [attr.aria-pressed]="selected()"
+  [attr.aria-expanded]="expanded()"
+>
+  @if (icon(); as name) {
+    <app-icon [name]="name" [spin]="iconSpin()" />
+  }
+  <span class="label"><ng-content /></span>
+</button>

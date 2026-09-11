@@ -1,0 +1,19 @@
+<app-subscreen-header
+  title="Langues de traduction"
+  i18n-title="@@languages.list.translation"
+  backLabel="Retour à Langues"
+  i18n-backLabel="@@options.languages.back"
+  (back)="back()"
+/>
+
+<!-- ⚠️ UNE PHRASE, même règle que le sous-écran des langues parlées. -->
+<p class="fam-desc" i18n="@@options.languages.translation.desc">
+  Les langues proposées comme cible de traduction.
+</p>
+
+<!--
+  ⚠️ `installed` reste à `null` — et ce n'est pas la même chose qu'une liste vide, qui dirait
+  « aucune n'est là ». La traduction s'installe par PAIRES ORDONNÉES : prétendre un état par
+  langue mentirait sur la granularité.
+-->
+<app-language-list purpose="translation" [selected]="targets()" (toggled)="toggle($event)" />

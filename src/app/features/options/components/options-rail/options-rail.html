@@ -1,0 +1,119 @@
+<!--
+  Les six entrées sont écrites en toutes lettres plutôt que parcourues en boucle : le balisage
+  i18n doit vivre dans le gabarit. Une table de libellés en TypeScript obligerait à passer par
+  `$localize`, loin du reste des textes — c'est le même choix que dans le header.
+
+  ⚠️ **SIX entrées pour SEPT familles** : `moteurs` existe et reste atteignable par son URL,
+  mais le rail ne la montre pas. Le pourquoi est dans `OPTIONS_RAIL_CATEGORIES` ; le
+  commentaire ci-dessous en marque la place.
+
+  `aria-current="page"` plutôt qu'un simple état visuel : c'est ce qui annonce la catégorie
+  active à un lecteur d'écran, et c'est la seule indication puisque le panneau de droite ne
+  porte aucun titre.
+-->
+<div class="rail-title">
+  <app-icon name="sliders" />
+  <span i18n="@@screen.options">Options</span>
+</div>
+
+<button
+  type="button"
+  class="nav"
+  [class.is-current]="current() === 'general'"
+  [attr.aria-current]="current() === 'general' ? 'page' : null"
+  (click)="select.emit('general')"
+>
+  <app-icon name="menu" />
+  <span i18n="@@options.category.general">Général</span>
+</button>
+
+<!--
+  ⚠️ **ELLE A ÉTÉ SUPPRIMÉE PUIS RÉTABLIE LE MÊME JOUR**. Elle avait été
+  vidée le matin — ses réglages étaient montés en Général —, et elle revient le soir avec deux
+  entrées qui n'ont de sens **que** pour le Direct : l'indicateur visuel, qui peut rester deux
+  heures à l'écran là où une dictée en dure trois secondes, et le type de compte rendu par défaut,
+  qui n'existe nulle part ailleurs. Voir `OPTIONS_CATEGORIES`.
+-->
+<button
+  type="button"
+  class="nav"
+  [class.is-current]="current() === 'direct'"
+  [attr.aria-current]="current() === 'direct' ? 'page' : null"
+  (click)="select.emit('direct')"
+>
+  <app-icon name="screen-wave" />
+  <span i18n="@@screen.direct">Direct</span>
+</button>
+
+<!--
+  ⚠️ **CE N'EST PAS UNE FAMILLE DE RÉGLAGES, C'EST LA FONCTION ELLE-MÊME.** Son panneau porte
+  l'écran d'import en entier — zone de dépôt, progression, refus. Elle a quitté l'en-tête parce
+  que les premiers testeurs n'utilisaient que Dictée et Direct.
+  ⚠️ Sa place suit les fonctions — Direct, puis Fichiers —, avant les deux transverses.
+-->
+<button
+  type="button"
+  class="nav"
+  [class.is-current]="current() === 'fichiers'"
+  [attr.aria-current]="current() === 'fichiers' ? 'page' : null"
+  (click)="select.emit('fichiers')"
+>
+  <app-icon name="document" />
+  <span i18n="@@screen.fichiers">Fichiers</span>
+</button>
+
+<!--
+  ⚠️ **SEPTIÈME famille, et sa place est voulue** : elle ouvre les deux
+  familles **transverses**, JUSTE AVANT Langues. Le dictionnaire est global — son modèle n'a pas
+  de champ de langue —, il s'applique donc quelle que soit la langue, quand « Langues » est
+  précisément l'écran où l'on délimite ce que l'application traite : on va de ce qui vaut partout
+  à ce qui se restreint. Et il vient là parce que le laisser sous « Dictée » aurait rattaché à
+  une fonctionnalité ce qui les sert toutes — il corrige aussi les fichiers, et les sessions en
+  phase 4.
+-->
+<button
+  type="button"
+  class="nav"
+  [class.is-current]="current() === 'dictionnaire'"
+  [attr.aria-current]="current() === 'dictionnaire' ? 'page' : null"
+  (click)="select.emit('dictionnaire')"
+>
+  <app-icon name="book" />
+  <span i18n="@@options.category.dictionnaire">Dictionnaire</span>
+</button>
+
+<button
+  type="button"
+  class="nav"
+  [class.is-current]="current() === 'langues'"
+  [attr.aria-current]="current() === 'langues' ? 'page' : null"
+  (click)="select.emit('langues')"
+>
+  <app-icon name="bubbles" />
+  <span i18n="@@options.category.langues">Langues</span>
+</button>
+
+<!--
+  ⚠️ **« MOTEURS & MODÈLES » N'A PAS D'ENTRÉE ICI NON PLUS** : son contenu
+  — remplacer chaque moteur par un modèle MLX — part en **v2** avec le socle adaptatif, et un
+  panneau vide ne dit rien de ce report. La famille reste atteignable par son URL, et retrouvera
+  cette place quand il existera un second moteur à choisir.
+-->
+
+<button
+  type="button"
+  class="nav"
+  [class.is-current]="current() === 'historique'"
+  [attr.aria-current]="current() === 'historique' ? 'page' : null"
+  (click)="select.emit('historique')"
+>
+  <app-icon name="clock" />
+  <!--
+    ⚠️ **Elle s'est appelée « Historique & confidentialité ».** Le second mot venait des deux
+    lignes qui réglaient la conservation d'**empreintes vocales** ; elles sont parties avec les
+    locuteurs, et il ne reste que deux rétentions — des dictées et des sessions. Un intitulé qui
+    annonce un sujet absent envoie chercher pour rien.
+    ⚠️ **L'identifiant de traduction ne bouge pas** : il nomme l'emplacement, pas le texte.
+-->
+  <span i18n="@@screen.historique">Historique</span>
+</button>

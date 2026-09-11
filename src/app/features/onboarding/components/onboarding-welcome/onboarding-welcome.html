@@ -1,0 +1,21 @@
+<h1 class="onb-h" i18n="@@onboarding.welcome.title">Écrivez à voix haute.</h1>
+
+<p class="onb-sub" i18n="@@onboarding.welcome.subtitle">
+  Tout reste sur votre Mac — rien ne part dans le cloud.
+</p>
+
+<div class="onb-list">
+  @for (use of uses; track use.icon) {
+    <div class="onb-item">
+      <span class="onb-ico"><app-icon [name]="use.icon" /></span>
+      <div class="onb-it">
+        <p class="onb-it-title">{{ use.title }}</p>
+        <p class="onb-it-desc">{{ use.description }}</p>
+      </div>
+    </div>
+  }
+</div>
+
+<div class="onb-footer">
+  <app-button (click)="start.emit()" i18n="@@onboarding.welcome.start">Commencer</app-button>
+</div>

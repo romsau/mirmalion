@@ -1,0 +1,90 @@
+@use 'abstracts/mixins' as *;
+
+// Le retrait latéral du bloc de contrôles — celui de la colonne dans la maquette, descendu
+// d'un cran ici pour que le conteneur qui défile ne rogne pas ce qu'il encadre.
+$col-pad-left: 6px;
+
+:host {
+  @include screen-body;
+}
+
+.screen-title {
+  @include screen-title;
+
+  // ⚠️ **Aligné sur la PREMIÈRE PASTILLE de la fenêtre, pas sur le bord de l'écran.** Le titre
+  // est le pendant gauche des boutons du header ; il se posait plus à droite qu'eux, ce qui se
+  // voyait. Le décalage est la différence des deux marges qui l'en
+  // séparent — il suit donc tout seul si l'une d'elles bouge.
+
+  // ⚠️ **Conséquence assumée** : le titre n'est plus aligné sur les libellés des champs qui le
+  // suivent. C'est le choix demandé — l'aplomb du header prime.
+  margin-left: calc(var(--header-pad-x) - var(--screen-pad-x));
+}
+
+// La fenêtre principale se divise en deux moitiés égales : contrôles à gauche,
+// historique contextuel à droite.
+
+// ⚠️ **Une seule colonne quand le panneau est replié**, et la fenêtre est étroite en
+// conséquence — `WindowShell` lit le même état. Garder deux colonnes laisserait une moitié
+// vide dans une fenêtre de 450 px.
+.dictee {
+  @include split-columns;
+
+  &.is-collapsed {
+    @include split-columns-collapsed;
+  }
+}
+
+// Le rond de repli, centré sur le filet et aligné avec les titres. Replié, il glisse à droite
+// et s'allonge pour porter son étiquette — c'est alors le seul rappel que l'historique existe.
+.panel-collapse {
+  @include panel-collapse-button;
+
+  .dictee.is-collapsed & {
+    @include panel-collapse-button-collapsed;
+  }
+}
+
+.pc-label {
+  @include panel-collapse-label;
+}
+
+.col-right {
+  @include split-panel;
+}
+
+.col {
+  min-width: 0;
+  min-height: 0;
+}
+
+// ⚠️ **28 px à droite quand le panneau est déplié**, pour écarter la colonne du filet — mais
+// 6 px dès qu'il est replié. Les supprimer décalait toute la colonne de 8 px par rapport à la
+// maquette, mesuré.
+
+// ⚠️ **Le défilement est sur les CONTRÔLES, pas sur la colonne** — et ce n'est pas un détail de
+// mise en page. Un `overflow` rogne au bord de sa boîte : posé ici, il coupait l'icône du
+// titre, que sa marge négative fait dépasser à gauche pour l'aligner sur les pastilles de la
+// fenêtre (constaté). Le titre reste donc hors du conteneur qui défile — ce qui
+// est de toute façon ce qu'on veut : un titre d'écran ne s'en va pas quand on descend.
+.col-left {
+  display: flex;
+  flex-direction: column;
+
+  // ⚠️ **Les marges latérales sont posées sur le conteneur QUI DÉFILE, pas sur la colonne.**
+  // Un `overflow` rogne au bord de sa boîte : sans rembourrage, le clip tombait pile sur la
+  // bordure des champs, qui perdaient un pixel de chaque côté (constaté). Le
+  // rembourrage tient le clip à distance de ce qu'il encadre.
+  app-dictee-controls {
+    display: block;
+    min-height: 0;
+    flex: 1;
+    padding-right: 28px;
+    padding-left: $col-pad-left;
+    overflow-y: auto;
+
+    .dictee.is-collapsed & {
+      padding-right: 6px;
+    }
+  }
+}

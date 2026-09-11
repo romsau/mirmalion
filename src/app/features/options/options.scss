@@ -1,0 +1,20 @@
+@use 'abstracts/mixins' as *;
+
+// ⚠️ `screen-frame` et **pas** `screen-body` : les Options se rendent bord à bord, sans marge
+// ni carte, comme les Réglages Système. Le cadrage vient du panneau, pas de l'écran.
+// `row` renverse la direction pose par le mixin : ici le rail et le panneau sont côte à côte.
+:host {
+  @include screen-frame;
+
+  flex-direction: row;
+  overflow: hidden;
+}
+
+// Les marges de la maquette (`.opt-content`). Elles vivent ici et non dans chaque catégorie :
+// c'est le panneau qui cadre son contenu, et une catégorie n'a pas à s'en soucier.
+.content {
+  flex: 1;
+  min-width: 0;
+  padding: 18px 24px;
+  overflow-y: auto;
+}

@@ -1,0 +1,90 @@
+<!--
+  Les trois entrées sont écrites en toutes lettres plutôt que parcourues en boucle : le
+  balisage i18n doit vivre dans le gabarit, et une table de libellés en TypeScript obligerait à
+  passer par `$localize`, loin du reste des textes. L'ordre fixe reproduit exactement celui de
+  la maquette, écran par écran — il suffit d'en retirer l'écran courant.
+
+  Chaque entrée porte le **même `@@id`** sur son libellé et sur son `ariaLabel` : une seule
+  unité de traduction, deux emplacements. C'est ce qui permet au nom accessible d'Options de
+  survivre au mode compact, où son libellé n'est plus rendu du tout.
+
+  ⚠️ **Seul Options se réduit à son icône en fenêtre repliée.** Les deux destinations gardent
+  leur mot dans les deux modes : ce sont elles qu'on cherche. `docs/ui/ui.html:1324` les réduit
+  toutes — l'écart à la maquette est délibéré, et `header.scss` dit ce qui tient la largeur.
+-->
+<!--
+  `data-tauri-drag-region` sur chacun de ces éléments, et pas seulement sur l'hôte : Tauri
+  compare la **cible exacte** du clic, donc un enfant sans l'attribut ne déplace rien. Posé
+  ainsi, tout le fond du header est saisissable et les boutons restent cliquables.
+-->
+<!--
+  ⚠️ **Le nom n'est pas `aria-hidden`, contrairement au logo** : c'est le nom accessible de
+  l'application dans cette fenêtre. Il n'est pas traduit non plus — « Mirmalion » est une marque.
+  Il n'apparaît qu'une fois l'application ouverte, le logo suffisant à l'onboarding.
+
+  ⚠️ En mode compact il quitte le **gabarit**, pas seulement l'affichage : le masquer en CSS le
+  laisserait dans l'arbre d'accessibilité d'une fenêtre où il n'est plus visible.
+-->
+<div class="tb-left" data-tauri-drag-region>
+  <span class="traffic-space" aria-hidden="true" data-tauri-drag-region></span>
+  <span class="brand" data-tauri-drag-region>
+    <span class="mark" aria-hidden="true" data-tauri-drag-region></span>
+    @if (current() !== null && !compact()) {
+      <span class="brand-name" data-tauri-drag-region>Mirmalion</span>
+    }
+  </span>
+</div>
+
+<!--
+  ⚠️ **`inert` pendant une modale, et posé sur la navigation SEULE.** Le voile s'arrête sous la
+  barre de titre pour lui rendre sa zone de déplacement ; les trois entrées passent donc devant
+  lui et resteraient cliquables — une modale `blocking` se contournerait à la souris, et la
+  modale resterait posée sur l'écran suivant. `inert` retire le sous-arbre du test de survol :
+  le clic tombe alors sur l'hôte, qui porte `data-tauri-drag-region`, et la barre continue de
+  déplacer la fenêtre. Un `pointer-events: none` laisserait l'arbre d'accessibilité intact.
+-->
+@if (current() !== null) {
+  <nav
+    class="tb-right"
+    aria-label="Navigation entre les écrans"
+    i18n-aria-label="@@header.nav"
+    data-tauri-drag-region
+    [attr.inert]="modal.isOpen() ? '' : null"
+  >
+    @if (current() !== 'dictee') {
+      <app-button
+        icon="mic"
+        ariaLabel="Dictée"
+        i18n-ariaLabel="@@screen.dictee"
+        (click)="navigate.emit('dictee')"
+      >
+        <ng-container i18n="@@screen.dictee">Dictée</ng-container>
+      </app-button>
+    }
+
+    @if (current() !== 'direct') {
+      <app-button
+        icon="screen-wave"
+        ariaLabel="Direct"
+        i18n-ariaLabel="@@screen.direct"
+        (click)="navigate.emit('direct')"
+      >
+        <ng-container i18n="@@screen.direct">Direct</ng-container>
+      </app-button>
+    }
+
+    @if (current() !== 'options') {
+      <app-button
+        icon="sliders"
+        ariaLabel="Options"
+        i18n-ariaLabel="@@screen.options"
+        [iconOnly]="compact()"
+        (click)="navigate.emit('options')"
+      >
+        @if (!compact()) {
+          <ng-container i18n="@@screen.options">Options</ng-container>
+        }
+      </app-button>
+    }
+  </nav>
+}

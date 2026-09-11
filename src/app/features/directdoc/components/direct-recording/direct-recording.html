@@ -1,0 +1,77 @@
+<!--
+  ⚠️ **La tête est celle du panneau document, à un détail près** : pas de bascule à droite. Les
+  deux panneaux partagent leur charpente — tête, barre, filet, contenu —, et la fenêtre ne doit pas
+  se réorganiser sous les yeux de l'utilisateur au moment de l'arrêt.
+-->
+<div class="done-head">
+  <div>
+    <div class="done-title-row">
+      <app-inline-title
+        [value]="title()"
+        [fallback]="title()"
+        [renameLabel]="renameLabel"
+        [fieldLabel]="fieldLabel"
+        (renamed)="renamed.emit($event)"
+      />
+    </div>
+    <!--
+      ⚠️ **C'est elle qui annonce ce qu'on enregistre, et c'est sa seule trace visible.**
+      « Ne pas inclure mon micro » se choisit au déclencheur puis disparaît de l'écran ; sans ce
+      rappel, une session entière pourrait s'enregistrer sans la voix de l'utilisateur sans que
+      rien ne le dise avant la relecture du transcript.
+
+      ⚠️ **`role="status"`, contrairement au chrono** : elle ne change pas, elle peut donc être
+      annoncée sans devenir un bavardage.
+-->
+    <span class="done-meta" role="status">{{ meta() }}</span>
+  </div>
+</div>
+
+<!--
+  ⚠️ **Même emplacement que la barre d'actions du document, et c'est voulu.** Ce qui change est ce
+  que la barre porte, pas où elle est.
+-->
+<div class="done-subbar dd-recbar">
+  <app-direct-live
+    [elapsedSeconds]="elapsedSeconds()"
+    [level]="level()"
+    [stopping]="stopping()"
+    (stop)="stop.emit()"
+  />
+
+  <!--
+    ⚠️ **Un interrupteur dans une carte, au bout de la ligne d'enregistrement.** Un bouton aurait
+    dû changer de libellé à chaque clic pour dire la même chose, alors que ce qu'on règle est un
+    **état de la vue**. Tout ce qui pilote l'enregistrement en cours vit sur cette ligne-ci.
+
+    ⚠️ La carte a le fond d'un sélecteur, ce qui la range parmi les contrôles et non parmi les
+    actions. ⚠️ Sans langue de traduction il n'est pas grisé mais **absent** : il n'aurait pas de
+    seconde colonne à montrer.
+-->
+  @if (translated()) {
+    <div class="switch-field">
+      <span class="sf-label" i18n="@@direct.transcript.showOriginal">Afficher l'original</span>
+      <app-switch
+        [checked]="showOriginal()"
+        (checkedChange)="showOriginal.set($event)"
+        ariaLabel="Afficher le transcript dans sa langue d'origine"
+        i18n-ariaLabel="@@direct.transcript.showOriginalAria"
+      />
+    </div>
+  }
+</div>
+
+<!--
+  ⚠️ **Le transcript défile tout seul tant qu'on est en bas** — voir `DirectTranscript`. Remonter
+  le fige : on relit une réplique de tout à l'heure, la faire fuir sous le curseur serait pénible.
+-->
+<div class="done-content">
+  <app-direct-transcript
+    [lines]="lines()"
+    [pending]="pending()"
+    [translations]="translations()"
+    [sourceLanguage]="sourceLanguage()"
+    [targetLanguage]="targetLanguage()"
+    [showOriginal]="showOriginal()"
+  />
+</div>

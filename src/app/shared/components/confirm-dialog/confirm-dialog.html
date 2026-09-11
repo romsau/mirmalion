@@ -1,0 +1,24 @@
+<p class="message">{{ data.message }}</p>
+
+<!--
+  L'ordre du DOM **est** l'ordre du focus : « Annuler » d'abord, donc premier au clavier et
+  premier ciblé à l'ouverture. Le piège de focus vise le premier élément tabulable quand rien
+  ne réclame le focus explicitement — et c'est très bien ainsi : un `cdkFocusInitial` posé sur
+  `<app-button>` viserait un élément non focalisable, puisque le vrai bouton est à l'intérieur.
+  Le bouton dangereux se mérite.
+-->
+<footer class="actions">
+  <app-button variant="neutral" (click)="cancel()">
+    {{ data.cancelLabel }}
+  </app-button>
+  <!--
+    ⚠️ **Accent, que le geste soit destructeur ou non.** C'est **cette boîte** qui protège, pas
+    la teinte du bouton qu'elle porte : exiger un second clic est la protection. La repeindre en
+    orange ajouterait une alarme là où la question est déjà l'alarme, et coûterait une exception
+    WCAG (blanc sur orange, 3,04:1). Ne pas réintroduire de drapeau `danger` sur `ConfirmData` —
+    le focus se pose sur « Annuler » par l'ordre du DOM, sans condition.
+  -->
+  <app-button variant="accent" (click)="confirm()">
+    {{ data.confirmLabel }}
+  </app-button>
+</footer>

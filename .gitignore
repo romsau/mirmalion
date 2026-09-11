@@ -1,0 +1,70 @@
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+.history/*
+
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+__screenshots__/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Tauri
+/src-tauri/target
+/src-tauri/gen/schemas
+
+# Configuration MCP locale
+/.mcp.json
+
+# Les artefacts de l'outil de pilotage de navigateur (captures, snapshots) : ils atterrissent
+# dans le dépôt et font échouer `prettier --check`.
+.playwright-mcp/
+
+# Le site assemblé au moment d'une publication (`scripts/release.sh`) : des artefacts de
+# compilation de plusieurs dizaines de mégaoctets, reconstruits à chaque version.
+/dist-web/
+
+# Le cache du CLI Firebase — il retient l'empreinte des fichiers déjà téléversés pour ne pas les
+# renvoyer. Purement local : `firebase.json` et `.firebaserc`, eux, sont versionnés.
+/.firebase/
+
+# Les pièces jointes que Vitest dépose pendant les épreuves en navigateur.
+/.vitest-attachments/
+
+# La documentation de code assemblée par `npm run docs` : elle se reconstruit à la demande, et
+# la source de vérité reste le code.
+/docs/api/

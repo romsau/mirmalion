@@ -1,0 +1,30 @@
+<app-history-panel
+  [entries]="entries()"
+  label="Dernières dictées"
+  i18n-label="@@history.dictee.label"
+  [empty]="store.empty()"
+  [search]="store.search()"
+  searchLabel="Rechercher une dictée dans l'historique"
+  i18n-searchLabel="@@history.dictee.searchLabel"
+  searchPlaceholder="Rechercher une dictée…"
+  i18n-searchPlaceholder="@@history.dictee.searchPlaceholder"
+  noResultLabel="Aucune dictée trouvée."
+  i18n-noResultLabel="@@history.dictee.noResult"
+  (searchChange)="search($event)"
+  (copy)="copy($event)"
+  (remove)="remove($event)"
+  (clearAll)="clearAll()"
+>
+  <!--
+    L'invitation de l'historique vide. Elle est **projetée** parce qu'elle parle de dictée —
+    le raccourci, le micro — là où le panneau, lui, ne connaît aucun domaine.
+  -->
+  <ng-container emptyState>
+    <app-icon name="mic" />
+    <p class="he-title" i18n="@@history.dictee.empty.title">Aucune dictée pour l'instant</p>
+    <p class="he-text" i18n="@@history.dictee.empty.text">
+      Appuyez sur <span class="he-kbd"><kbd>⌃</kbd><kbd>⌥</kbd></span> et parlez : vos dernières
+      dictées s'afficheront ici.
+    </p>
+  </ng-container>
+</app-history-panel>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Entitlements de tous les bundles signés — « Mirmalion » comme « Mirmalion Dev ». Un seul
+  fichier : deux copies des mêmes clés ne peuvent que diverger en silence, et c'est le build
+  final, non testé au quotidien, qui perdrait.
+
+  Moindre privilège : on n'ajoute une clé qu'au moment où une brique l'utilise réellement.
+  Le collage au curseur (`CGEventTap`, `AXUIElement`) n'en demande aucun — l'Accessibilité
+  s'accorde dans Réglages Système. Rien n'émet d'Apple Event, donc pas d'entitlement
+  d'automation. La `.dylib` Swift est signée de la même identité que le binaire, donc pas de
+  dérogation à la validation de bibliothèque.
+
+  ⚠️ CE FICHIER N'EST PAS DÉCORATIF, ET LE RUNTIME DURCI EN FAIT UNE CONDITION. Nos bundles
+  sont signés `flags=0x10000(runtime)`, exigence de la notarisation. Sous ce runtime, macOS
+  refuse une ressource protégée AVANT même de consulter TCC si l'entitlement n'est pas signé
+  dans le binaire, et ce refus est MUET. Mesuré sur deux bundles identiques au bit près :
+  sans la clé, `AVCaptureDevice.requestAccess` rappelle `false` en 2 ms sans aucune invite et
+  le statut passe à `denied` ; avec elle, l'invite s'affiche et rien ne rappelle tant que
+  l'utilisateur n'a pas répondu. Un refus instantané est donc le symptôme à reconnaître.
+
+  ⚠️ Une configuration qui déclare ce fichier ne prouve rien : seul le bundle produit fait
+  foi, lu par `codesign -d` sur le `.app` signé.
+
+  ⚠️ Pas de double tiret dans ces commentaires, pas même en citant une option de commande :
+  le parseur d'entitlements refuse le fichier, et la signature échoue.
+-->
+<plist version="1.0">
+  <dict>
+    <!--
+      Entrée audio — la dictée et le son des sessions.
+
+      ⚠️ Une seule clé pour les deux : macOS ne distingue pas ici le micro du tap Core Audio,
+      alors que TCC, lui, les traite comme deux catégories séparées (`NSMicrophoneUsageDescription`
+      et `NSAudioCaptureUsageDescription`). L'entitlement ouvre la porte, TCC décide qui passe.
+    -->
+    <key>com.apple.security.device.audio-input</key>
+    <true/>
+  </dict>
+</plist>

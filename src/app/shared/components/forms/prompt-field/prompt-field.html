@@ -1,0 +1,39 @@
+<!--
+  ⚠️ **`maxlength` borne la saisie, il ne la valide pas** : le navigateur tronque un collage trop
+  long au lieu de le refuser. C'est le compteur qui rend cette amputation visible, et Rust qui
+  refuse pour de bon — voir `MAX_PROMPT_LENGTH`.
+
+  ⚠️ **Deux éléments, un seul contrat.** Les attributs sont écrits deux fois plutôt que factorisés
+  dans un `ng-template` : un gabarit partagé rendrait le balisage illisible pour économiser six
+  lignes, et c'est ce balisage qu'on relit quand un lecteur d'écran annonce mal le champ.
+-->
+@if (multiline()) {
+  <textarea
+    class="prompt-input"
+    rows="3"
+    [attr.maxlength]="max"
+    [value]="value()"
+    [disabled]="disabled()"
+    [attr.placeholder]="placeholder()"
+    [attr.aria-label]="ariaLabel()"
+    (input)="onInput($event)"
+  ></textarea>
+} @else {
+  <input
+    type="text"
+    class="prompt-input"
+    [attr.maxlength]="max"
+    [value]="value()"
+    [disabled]="disabled()"
+    [attr.placeholder]="placeholder()"
+    [attr.aria-label]="ariaLabel()"
+    (input)="onInput($event)"
+  />
+}
+
+<!--
+  ⚠️ **`aria-hidden`, et c'est délibéré** : annoncé, ce compteur parlerait à chaque touche et
+  couvrirait la dictée elle-même. La borne est déjà portée par `maxlength`, que les lecteurs
+  d'écran annoncent à la prise de focus.
+-->
+<span class="prompt-count" aria-hidden="true">{{ count() }}</span>

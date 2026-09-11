@@ -1,0 +1,189 @@
+<!--
+  ⚠️ **Trois sous-sections : apparence, audio, système** — ce qu'on voit, avec quoi on capte, la
+  machine. Six rangées à plat ne se lisaient plus.
+
+  ⚠️ **L'ordre est une décision de produit, pas une déduction.** L'audio a occupé la première
+  place, « parce que c'est ce qui fait marcher l'application » : ne pas rejouer ce raisonnement,
+  qui se lit très bien lui aussi.
+
+  ⚠️ Les icônes sont `aria-hidden` : elles redisent le titre, elles ne l'augmentent pas.
+
+  ⚠️ **`inSection` sur chaque rangée** : le filet vit sous le titre de section, jamais entre les
+  rangées — voir l'entrée du composant, qui dit pourquoi.
+-->
+<div class="opt-group">
+  <p class="opt-section">
+    <app-icon name="sun" />
+    <span i18n="@@options.section.appearance">Apparence</span>
+  </p>
+
+  <!--
+    Le libellé de la ligne et le nom du groupe segmenté partagent le **même identifiant de
+    traduction** : c'est le même mot pour la même chose. Une seule unité, deux emplacements.
+-->
+  <app-option-row
+    inSection
+    label="Thème"
+    i18n-label="@@options.theme.label"
+    (activate)="toggleTheme()"
+  >
+    <app-segmented
+      [options]="themes"
+      [value]="theme()"
+      (valueChange)="setTheme($event)"
+      ariaLabel="Thème"
+      i18n-ariaLabel="@@options.theme.label"
+    />
+  </app-option-row>
+
+  <!--
+    La teinte d'accent. ⚠️ **La ligne n'émet pas `activate`**, et c'est le seul cas de cet écran :
+    seize valeurs ne se « basculent » pas — cliquer la ligne devrait en choisir une, et laquelle ?
+    Même raisonnement que la ligne à menu déroulant, qui n'est pas cliquable non plus.
+
+    ⚠️ Le sous-libellé dit **« du thème actuel »** parce que les deux thèmes gardent chacun leur
+    teinte : sans cette phrase, revenir en clair et retrouver l'ancienne couleur passe pour un bug.
+-->
+  <app-option-row
+    inSection
+    passive
+    label="Couleur d'accent"
+    i18n-label="@@options.accent.label"
+    sublabel="Ne modifie que l'accent du thème actuel"
+    i18n-sublabel="@@options.accent.sublabel"
+  >
+    <span
+      class="swatches"
+      role="group"
+      aria-label="Couleur d'accent"
+      i18n-aria-label="@@options.accent.label"
+    >
+      @for (tint of tints(); track tint.id) {
+        <button
+          type="button"
+          class="swatch"
+          [class.is-active]="tint.id === accent()"
+          [style.background]="tint.color"
+          [attr.aria-label]="tint.label"
+          [attr.aria-pressed]="tint.id === accent()"
+          (click)="setAccent(tint.id)"
+        ></button>
+      }
+    </span>
+  </app-option-row>
+</div>
+
+<div class="opt-group">
+  <p class="opt-section">
+    <app-icon name="waveform" />
+    <span i18n="@@options.section.audio">Audio</span>
+  </p>
+
+  <!--
+    ⚠️ **LE MICRO EST ICI PARCE QU'IL SERT À TOUT**. Il a vécu sur
+    l'écran de dictée, puis dans Options ▸ Dictée, puis sur l'écran Direct avec un second
+    réglage à lui. C'est **un seul appareil**, et deux réglages pour un appareil coûtaient plus
+    qu'ils ne servaient.
+
+    ⚠️ **« Ne pas inclure de micro » n'est PAS ici** : ce n'est pas un choix d'appareil mais un
+    choix de session, et il n'a aucun sens pour la dictée. Il vit sur l'écran Direct.
+-->
+  <app-option-row
+    inSection
+    passive
+    label="Micro"
+    i18n-label="@@dictee.mic"
+    sublabel="Entrée audio de la dictée et du Direct"
+    i18n-sublabel="@@options.mic.sublabel"
+  >
+    <app-select
+      class="opt-ctl-sel"
+      [options]="microphoneOptions()"
+      [value]="microphoneValue()"
+      (valueChange)="pickMicrophone($event)"
+      ariaLabel="Micro"
+      i18n-ariaLabel="@@dictee.mic"
+    />
+  </app-option-row>
+
+  <!--
+    Les sons de début et de fin. ⚠️ **Un seul interrupteur pour la dictée ET le Direct**
+     : il y en avait un par domaine, chacun seul dans sa famille de
+    réglages. L'argument tenait — on ne dicte pas et on n'enregistre pas dans les mêmes
+    circonstances — mais il ne valait pas deux familles pour un interrupteur chacune.
+
+    ⚠️ Les couper ne retire **aucune information** : chaque son double la pilule, qui apparaît et
+    disparaît aux mêmes instants. C'est ce qui rend l'option inoffensive.
+-->
+  <app-option-row
+    inSection
+    label="Sons de démarrage / arrêt"
+    i18n-label="@@options.sounds.label"
+    sublabel="Un bip discret au début et à la fin d'un enregistrement"
+    i18n-sublabel="@@options.sounds.sublabel"
+    (activate)="toggleSounds()"
+  >
+    <app-switch
+      [checked]="soundsEnabled()"
+      (checkedChange)="setSounds($event)"
+      ariaLabel="Sons de démarrage et d'arrêt"
+      i18n-ariaLabel="@@options.sounds.aria"
+    />
+  </app-option-row>
+</div>
+
+<div class="opt-group">
+  <p class="opt-section">
+    <app-icon name="screen" />
+    <span i18n="@@options.section.system">Système</span>
+  </p>
+
+  <!--
+    Le Dock, activé par défaut : ne pas voir dans le Dock ce qu'on vient de lancer déroute, et
+    le tray seul se cherche. L'interrupteur sert donc surtout à l'enlever.
+
+    ⚠️ Le sous-libellé dit la conséquence, pas le mécanisme : passer dans le Dock ajoute aussi la
+    barre de menus applicative, et c'est ce que l'utilisateur verra.
+-->
+  <app-option-row
+    inSection
+    label="Afficher dans le Dock"
+    i18n-label="@@options.dock.label"
+    sublabel="Ajoute l'icône et la barre de menus de l'application"
+    i18n-sublabel="@@options.dock.sublabel"
+    (activate)="toggleDock()"
+  >
+    <app-switch
+      [checked]="showInDock()"
+      (checkedChange)="setDock($event)"
+      ariaLabel="Afficher dans le Dock"
+      i18n-ariaLabel="@@options.dock.label"
+    />
+  </app-option-row>
+
+  <!--
+    L'ouverture à la session macOS. ⚠️ **Interrupteur CONTRÔLÉ** : l'écriture de l'élément
+    d'ouverture peut échouer, et un interrupteur qui bascule tout seul resterait allumé sur un
+    refus. C'est l'état relu de macOS qui l'allume — voir le composant.
+
+    ⚠️ Le sous-libellé dit **« en arrière-plan »**, et ce n'est pas une nuance : l'application
+    démarre **sans fenêtre**, toujours. Il n'y a plus de réglage pour en décider — « Ouvrir la
+    fenêtre au lancement » a été supprimé.
+-->
+  <app-option-row
+    inSection
+    label="Lancer au démarrage"
+    i18n-label="@@options.launchAtLogin.label"
+    sublabel="Démarre en arrière-plan dans la barre des menus"
+    i18n-sublabel="@@options.launchAtLogin.sublabel"
+    (activate)="toggleLaunchAtLogin()"
+  >
+    <app-switch
+      [checked]="launchAtLogin()"
+      controlled
+      (toggleRequested)="toggleLaunchAtLogin()"
+      ariaLabel="Lancer au démarrage"
+      i18n-ariaLabel="@@options.launchAtLogin.label"
+    />
+  </app-option-row>
+</div>

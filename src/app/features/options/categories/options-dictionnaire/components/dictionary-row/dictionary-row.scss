@@ -1,0 +1,148 @@
+// Une ligne du dictionnaire — portée depuis `.dico-*` de `docs/ui/ui.html`.
+
+// ⚠️ **La grille de la rangée n'est pas ici** : elle est posée par la page, sur `.dico-row`, qui
+// est l'hôte de ce composant. C'est ce qui garde la corbeille alignée d'une ligne à l'autre —
+// une grille redéfinie par chaque enfant ne s'aligne avec rien.
+
+// Le terme, puis ses graphies : deux lignes, et c'est la forme retenue. Voir
+// l'en-tête du gabarit pour le pourquoi.
+.dico-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.dico-term {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.dico-field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+// ⚠️ `flex: none` : le libellé ne se comprime jamais. Il ouvre la sous-ligne, et une ligne
+// chargée de graphies le réduirait à « La dic… » — c'est précisément lui qu'on est venu ajouter.
+.dico-said {
+  flex: none;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+// ⚠️ **Les graphies portent l'ORANGE DE SIGNALÉTIQUE**, la teinte que l'application réserve à ce
+// qui signale un état sans être cliquable. Ce sont des orthographes **fautives** : les rendre
+// dans l'encre ordinaire les mettait au même rang que le terme correct, à un pixel près, et
+// c'est ce qui rendait la ligne ambiguë.
+.dico-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  color: var(--warning-on-50);
+  background: var(--warning-50);
+  border: 1px solid color-mix(in srgb, var(--warning-on-50) 30%, transparent);
+  border-radius: 999px;
+  padding: 3px 5px 3px 10px;
+
+  // La croix suit la teinte de son étiquette : le gris de `--muted` sur l'aplat orange perdait
+  // le contraste que la teinte venait d'apporter.
+  button {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--warning-on-50);
+    cursor: pointer;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    width: 15px;
+    height: 15px;
+    border-radius: 999px;
+
+    &:hover {
+      background: color-mix(in srgb, var(--warning-on-50) 22%, transparent);
+    }
+  }
+
+  app-icon {
+    width: 11px;
+    height: 11px;
+  }
+}
+
+// ⚠️ **LE PATRON DU PRODUIT : FOND TEINTÉ AU REPOS, INVERSION AU SURVOL.** Il faisait
+// exactement l'inverse — transparent au repos, teinté au survol —, c'est-à-dire qu'il employait
+// comme état de survol ce que tous les autres boutons portent au repos. Corrigé.
+
+// ⚠️ **Le pointillé reste**, et il n'est pas décoratif : c'est lui qui dit « ajouter ici », et la
+// seule chose qui distinguait ce bouton d'un libellé avant qu'il ait un fond.
+.dico-more {
+  appearance: none;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--accent-ink);
+  background: var(--accent-50);
+  border: 1px dashed color-mix(in srgb, var(--accent-ink) 45%, var(--line));
+  border-radius: 999px;
+  padding: 3px 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition:
+    color 0.12s ease,
+    background 0.12s ease,
+    border-color 0.12s ease;
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--accent-on);
+  }
+}
+
+// Le « + variante » se change sur place en champ : même taille, même rayon, pour que la
+// transformation ne déplace rien autour d'elle.
+.dico-input {
+  font: inherit;
+  font-size: 11.5px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--accent-ink);
+  border-radius: 999px;
+  padding: 3px 10px;
+  width: 120px;
+
+  // ⚠️ **`outline: none` EST LÉGITIME ICI, ET IL TIENT À UNE SEULE LIGNE DU GABARIT** —
+  // `(blur)="leave()"` *(vérifié en,)*. Ce champ **n'existe que focalisé** : il
+  // remplace le bouton « + » au clic et disparaît dès qu'il perd le focus, si bien qu'on ne peut
+  // pas le voir sans être dedans. Sa bordure d'accent permanente **est** son indication.
+  // ⚠️ **Le jour où le `(blur)` s'en va** — pour laisser le champ ouvert le temps d'un message,
+  // par exemple —, ce champ devient visible et non focalisé, et il faut lui rendre un anneau.
+  outline: none;
+}
+
+// Le refus de doublon vit désormais DANS la pile, sous la sous-ligne qu'il concerne — il n'a
+// plus à traverser la grille de la rangée.
+.dico-dup {
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--warning-ink);
+}
+
+// ⚠️ **LA CORBEILLE N'A PLUS DE STYLE ICI : C'EST `.h-act`**, la règle globale de
+// `styles/components/_history-actions.scss`. Elle réinventait le bouton-icône de liste, et mal —
+// au survol elle posait un fond `--surface` sans inverser, quand tout le reste de l'application
+// passe en aplat plein. Le motif existe et sert déjà à l'historique de dictée : on l'emploie.
+
+// ⚠️ **Il est ACCENT, pas rouge.** La variante rouge du bouton a été retirée : c'est
+// la modale de confirmation qui protège d'une suppression, pas la couleur du bouton. Ne pas la
+// ressusciter ici.

@@ -1,0 +1,39 @@
+<span class="onb-ico"><app-icon [name]="row().icon" /></span>
+
+<div class="onb-it">
+  <p class="onb-it-title">{{ row().title }}</p>
+  <p class="onb-it-desc">{{ row().description }}</p>
+  @if (row().note; as note) {
+    <p class="onb-it-note">{{ note }}</p>
+  }
+</div>
+
+@switch (row().gesture) {
+  @case ('granted') {
+    <span class="perm-tag is-ok">
+      <app-icon name="check" />
+      <ng-container i18n="@@onboarding.permissions.granted">Autorisé</ng-container>
+    </span>
+  }
+  @case ('blocked') {
+    <span class="perm-tag is-warn" i18n="@@onboarding.permissions.blocked">Refusé</span>
+  }
+  @default {
+    <!--
+      ⚠️ **Le même libellé pour `request` et pour `settings`**, alors que les deux ne font pas
+      du tout la même chose : l'un ouvre un prompt macOS, l'autre le volet des Réglages
+      Système. Décision du porteur : trois lignes, un seul verbe. On
+      demandait « Ouvrir les Réglages » pour l'Accessibilité, de peur de promettre une
+      boîte de dialogue — il a été corrigé, « Autoriser » n'annonce pas une modalité, il
+      annonce une intention.
+    -->
+    <app-button
+      variant="neutral"
+      [disabled]="row().busy"
+      [ariaLabel]="buttonLabel()"
+      (click)="act.emit(row().key)"
+      i18n="@@onboarding.permissions.grant"
+      >Autoriser</app-button
+    >
+  }
+}

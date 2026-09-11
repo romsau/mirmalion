@@ -1,0 +1,101 @@
+// La boîte de dialogue, portée depuis `.pmodal` de `docs/ui/ui.html`.
+
+@use 'abstracts/mixins' as *;
+
+.pmodal {
+  @include elevated-surface;
+
+  display: flex;
+  flex-direction: column;
+
+  // ⚠️ **Dimensions figées à l'ouverture**, et c'est délibéré : une modale dont la hauteur suit
+  // son contenu saute à chaque frappe pendant une recherche. On plafonne, et le contenu défile.
+  width: 460px;
+  // ⚠️ **`100vw`, et surtout pas `100%`.** Le `%` se résout contre l'hôte de l'overlay, dont la
+  // largeur est elle-même déduite de celle de la boîte : la borne ne bornait rien, et la modale
+  // d'installation de langue — 460 px — sortait de la fenêtre repliée, qui n'en fait que 450
+  // (constaté, texte coupé au bord droit). Le viewport, lui, ne dépend de
+  // personne. La marge de 48 px est celle du `.modal-panel` de `styles.scss`, qui reste en
+  // place pour le cas où le contenu, et non la boîte, imposerait la largeur.
+  max-width: calc(100vw - 48px);
+  // ⚠️ **La même raison, et le même piège qu'au-dessus** : un `max-height: 90%` se résolvait
+  // contre l'hôte de l'overlay, qui n'a pas de hauteur définie, et ne bornait donc rien. La
+  // borne du panneau ne rattrape pas la boîte, qui la déborde. `--modal-max-h` est en `vh` :
+  // c'est la bande que le voile épargne, mesurée sur la fenêtre et sur rien d'autre.
+  max-height: var(--modal-max-h);
+  overflow: hidden;
+
+  // ⚠️ Le liseré n'est pas décoratif : en thème sombre, c'est lui qui donne à la modale l'arête
+  // franche qu'une ombre portée ne peut pas produire sur du noir. En clair il reste discret
+  // (1,25:1) et ne change rien à l'existant.
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+// ⚠️ **La hauteur pleine et la colonne arrivent ENSEMBLE, et jamais sans qu'on les demande.**
+// `.pmodal` n'a qu'un `max-height` : un corps en colonne n'y aurait aucun espace libre à
+// distribuer. Et `.pmodal-body` est un bloc : un enfant `flex: 1` du contenu monté y retombe sur
+// sa hauteur minimale. Portée depuis `.pmodal.h-fill` et `.pmodal-body--fill` de la maquette.
+.pmodal.is-fill {
+  height: var(--modal-max-h);
+
+  .pmodal-body {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+// Largeur selon le nombre de colonnes du contenu. Elle aussi se fige à l'ouverture.
+.pmodal.columns-2 {
+  width: 640px;
+}
+
+.pmodal.columns-3 {
+  width: 820px;
+}
+
+// ⚠️ **Aucun filet sous l'en-tête.** La maquette en dessinait un ; il découpait une boîte déjà
+// petite en deux compartiments, alors que le titre et le contenu disent la même chose. Le
+// contour et l'élévation suffisent à poser la modale.
+.pmodal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  // Aligné sur le corps : le titre et le contenu doivent partager la même marge gauche, sinon
+  // le décalage se voit d'autant plus qu'il n'y a plus de filet pour le masquer.
+  padding: 10px 12px 10px 24px;
+
+  h3 {
+    margin: 0;
+    // ⚠️ `--accent-ink` et non `--accent` : c'est le jeton d'ENCRE, calculé pour porter du
+    // texte. L'aplat sert de fond et ne tiendrait pas la lecture. Il vaut pour TOUTES les
+    // modales — un titre qui change de couleur d'une boîte à l'autre se lirait comme un statut.
+    color: var(--accent-ink);
+    font-family: var(--font-brand);
+    font-size: 14px;
+  }
+
+  // Exception de TAILLE, pas de variante : le bouton de fermeture est plus petit que la norme.
+  // C'est exactement l'usage prévu du jeton.
+  app-button {
+    --btn-h: 26px;
+  }
+}
+
+// ⚠️ **Une marge généreuse, revue TROIS fois.** La maquette donnait 14/16/16 ; les boutons
+// touchaient le cadre. Un premier passage à 16/18/20 restait trop serré à l'œil,
+// un second à 20/24/24 laissait encore les actions collées au bas.
+// La boîte d'installation de langue, elle, tourne autour de 26 px — c'est cet ordre de grandeur
+// qui convient à une modale, et non celui d'un panneau.
+
+// ⚠️ **Le bas est PLUS GRAND que le haut, et ce n'est pas une asymétrie par distraction.** Le
+// haut ouvre sur un titre, qui porte sa propre respiration ; le bas se termine par une rangée de
+// boutons, dont l'aplat teinté vient buter contre le cadre. Un même chiffre des deux côtés se
+// lit donc comme un déséquilibre vers le bas.
+.pmodal-body {
+  flex: 1;
+  min-height: 0;
+  padding: 20px 24px 30px;
+  overflow-y: auto;
+}

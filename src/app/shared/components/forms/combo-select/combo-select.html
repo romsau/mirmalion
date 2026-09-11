@@ -1,0 +1,167 @@
+<!--
+  `aria-activedescendant` désigne l'option active **sans lui donner le focus** : c'est ce qui
+  permet au déclencheur de garder le clavier tout en annonçant ce que les flèches parcourent.
+  C'est le motif ARIA 1.2 du combobox, et il tombe si le focus se met à voyager.
+-->
+<div class="select-wrap">
+  <button
+    type="button"
+    class="cselect-trigger"
+    role="combobox"
+    #pop="appPopover"
+    #trigger
+    [class.is-placeholder]="showsPlaceholder()"
+    [disabled]="disabled()"
+    [attr.aria-label]="ariaLabel()"
+    [attr.aria-controls]="'combo-listbox'"
+    [attr.aria-haspopup]="cascading() ? 'menu' : 'listbox'"
+    [attr.aria-activedescendant]="pop.isOpen() ? activeId() : null"
+    [appPopover]="panel"
+    [placement]="placement()"
+    (opened)="onOpened()"
+    (keydown)="onKeydown($event, pop)"
+  >
+    {{ triggerLabel() }}
+  </button>
+
+  <app-icon class="select-chevron" name="chevron-down" [class.is-open]="pop.isOpen()" />
+</div>
+
+<ng-template #panel>
+  <!--
+    ⚠️ **LE SOUS-MENU EST UN FRÈRE DU MENU, JAMAIS SON ENFANT** : le menu a `overflow-y: auto`
+    et le découperait. Cette enveloppe n'existe que pour leur donner un ancêtre positionné
+    commun — elle ne dessine rien.
+-->
+  <div class="cselect-cascade">
+    <!--
+      ⚠️ **Le rôle suit la forme réelle du menu.** Un panneau plat est une liste
+      (`listbox` / `option`), un panneau à branches est un menu (`menu` / `menuitemradio`) : le
+      motif `listbox` ne prévoit pas de sous-menus, et annoncer une liste là où il y a une
+      cascade décrirait une structure qui n'existe pas.
+
+      ⚠️ **En mode disponibilité, la coche marque ce qui est prêt**, sur toutes les lignes, et non
+      l'option courante. Chaque ligne indisponible porte alors un libellé annoncé : une coche
+      verte ne se lit pas.
+-->
+    <div
+      class="cselect-menu"
+      id="combo-listbox"
+      [attr.role]="cascading() ? 'menu' : 'listbox'"
+      [class.shows-availability]="showsAvailability()"
+      [attr.aria-label]="ariaLabel()"
+    >
+      @for (
+        row of rows();
+        track row.kind === 'branch' ? row.group : row.option.value;
+        let index = $index
+      ) {
+        @if (row.kind === 'branch') {
+          <!--
+            ⚠️ **Une branche n'est pas une valeur** : elle ne se coche pas, ne devient jamais le
+            libellé du déclencheur, et refermer le menu dessus ne change rien au champ. D'où
+            `menuitem` — jamais `menuitemradio`, qui annoncerait un choix.
+
+            ⚠️ **Une branche VERROUILLÉE s'annonce `aria-disabled`**, et perd son `aria-expanded` :
+            elle ne s'ouvre pas, et l'annoncer « repliée » promettrait le contraire.
+-->
+          <div
+            class="cselect-branch"
+            role="menuitem"
+            [id]="optionId(index)"
+            [class.is-active]="index === activeIndex()"
+            [class.is-locked]="row.locked"
+            [attr.aria-haspopup]="row.locked ? null : 'menu'"
+            [attr.aria-disabled]="row.locked ? 'true' : null"
+            [attr.aria-expanded]="row.locked ? null : openGroup() === row.group"
+            (click)="openBranch(row.group)"
+            (mouseenter)="hoverBranch(row, index)"
+          >
+            <span class="lbl">{{ row.group }}</span>
+            <app-icon class="cselect-caret" name="chevron-right" />
+          </div>
+        } @else {
+          <div
+            class="cselect-option"
+            [attr.role]="cascading() ? 'menuitemradio' : 'option'"
+            [id]="optionId(index)"
+            [class.is-active]="index === activeIndex()"
+            [class.is-unavailable]="row.option.unavailable"
+            [class.cselect-sep]="row.option.separated"
+            [class.is-selected]="row.option.value === value()"
+            [attr.aria-selected]="cascading() ? null : row.option.value === value()"
+            [attr.aria-checked]="cascading() ? row.option.value === value() : null"
+            (click)="select(row.option, pop)"
+            (mouseenter)="activeIndex.set(index); closeSub()"
+          >
+            <span class="lbl">{{ row.option.label }}</span>
+            @if (row.option.unavailable && unavailableLabel(); as hint) {
+              <span class="hidden-hint">{{ hint }}</span>
+            }
+            <!-- L'icône est APRÈS le libellé, comme dans la maquette. -->
+            @if (row.option.unavailable) {
+              <app-icon class="cselect-download" name="download" />
+            } @else {
+              <app-icon class="cselect-check" name="check" />
+            }
+          </div>
+        }
+      }
+
+      <!--
+        La ligne d'ACTION, en dernier, séparée par un filet.
+
+        ⚠️ **Une ligne du menu, et non un bouton.** Un `<button>` en casse les enfants attendus,
+        et il exigerait un vrai focus — or le focus ne quitte jamais le déclencheur, c'est le
+        motif ARIA 1.2 du combobox. Restée ligne, elle est parcourue par les flèches comme les
+        autres, annoncée comme les autres, et jamais sélectionnée.
+
+        ⚠️ **Pas de coche**, même invisible : elle n'est jamais la valeur courante, et la place
+        réservée décalerait un libellé qui n'a rien à aligner.
+-->
+      @if (hasAction()) {
+        <div
+          class="cselect-option cselect-sep cselect-action"
+          [attr.role]="cascading() ? 'menuitem' : 'option'"
+          [id]="optionId(rows().length)"
+          [class.is-active]="rows().length === activeIndex()"
+          [attr.aria-selected]="cascading() ? null : false"
+          (click)="runAction(pop)"
+          (mouseenter)="activeIndex.set(rows().length); closeSub()"
+        >
+          <span class="lbl">{{ actionLabel() }}</span>
+        </div>
+      }
+    </div>
+
+    <!--
+      Le sous-menu de la branche ouverte. **Il n'existe que si une branche est ouverte** — masqué,
+      il resterait dans l'arbre d'accessibilité et un lecteur d'écran annoncerait des options
+      qu'on ne voit pas.
+-->
+    @if (openGroup(); as group) {
+      <div
+        class="cselect-menu cselect-sub"
+        role="menu"
+        [class.is-on-left]="subOnLeft()"
+        [attr.aria-label]="group"
+      >
+        @for (option of subOptions(); track option.value; let index = $index) {
+          <div
+            class="cselect-option"
+            role="menuitemradio"
+            [id]="subOptionId(index)"
+            [class.is-active]="index === subIndex()"
+            [class.is-selected]="option.value === value()"
+            [attr.aria-checked]="option.value === value()"
+            (click)="select(option, pop)"
+            (mouseenter)="subIndex.set(index)"
+          >
+            <span class="lbl">{{ option.label }}</span>
+            <app-icon class="cselect-check" name="check" />
+          </div>
+        }
+      </div>
+    }
+  </div>
+</ng-template>

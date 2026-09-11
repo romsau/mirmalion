@@ -1,0 +1,1268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="fr" target-language="de" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="settings.saveFailed" datatype="html">
+        <source>Vos réglages n&apos;ont pas pu être enregistrés : ils seront perdus au prochain démarrage.</source>
+        <target>Deine Einstellungen konnten nicht gespeichert werden: Sie gehen beim nächsten Start verloren.</target>
+      </trans-unit>
+      <trans-unit id="language.fr" datatype="html">
+        <source>Français</source>
+        <target>Französisch</target>
+      </trans-unit>
+      <trans-unit id="language.en" datatype="html">
+        <source>Anglais</source>
+        <target>Englisch</target>
+      </trans-unit>
+      <trans-unit id="language.es" datatype="html">
+        <source>Espagnol</source>
+        <target>Spanisch</target>
+      </trans-unit>
+      <trans-unit id="language.de" datatype="html">
+        <source>Allemand</source>
+        <target>Deutsch</target>
+      </trans-unit>
+      <trans-unit id="language.it" datatype="html">
+        <source>Italien</source>
+        <target>Italienisch</target>
+      </trans-unit>
+      <trans-unit id="language.pt" datatype="html">
+        <source>Portugais</source>
+        <target>Portugiesisch</target>
+      </trans-unit>
+      <trans-unit id="language.adjective.fr" datatype="html">
+        <source>française</source>
+        <target>Französisch</target>
+      </trans-unit>
+      <trans-unit id="language.adjective.en" datatype="html">
+        <source>anglaise</source>
+        <target>Englisch</target>
+      </trans-unit>
+      <trans-unit id="language.adjective.es" datatype="html">
+        <source>espagnole</source>
+        <target>Spanisch</target>
+      </trans-unit>
+      <trans-unit id="language.adjective.de" datatype="html">
+        <source>allemande</source>
+        <target>Deutsch</target>
+      </trans-unit>
+      <trans-unit id="language.adjective.it" datatype="html">
+        <source>italienne</source>
+        <target>Italienisch</target>
+      </trans-unit>
+      <trans-unit id="language.adjective.pt" datatype="html">
+        <source>portugaise</source>
+        <target>Portugiesisch</target>
+      </trans-unit>
+      <trans-unit id="filedoc.translate.original" datatype="html">
+        <source>Langue d&apos;origine</source>
+        <target>Originalsprache</target>
+      </trans-unit>
+      <trans-unit id="language.install.confirm" datatype="html">
+        <source>Installer la langue <x id="name" equiv-text="LANGUAGE_ADJECTIVES[language]"/> ?</source>
+        <target>Sprache <x id="name" equiv-text="LANGUAGE_ADJECTIVES[language]"/> installieren?</target>
+      </trans-unit>
+      <trans-unit id="language.install.progress.many" datatype="html">
+        <source>Installation des langues</source>
+        <target>Sprachen werden installiert</target>
+      </trans-unit>
+      <trans-unit id="language.install.progress" datatype="html">
+        <source>Installation de la langue <x id="name" equiv-text="LANGUAGE_ADJECTIVES[only]"/></source>
+        <target>Sprache <x id="name" equiv-text="LANGUAGE_ADJECTIVES[only]"/> wird installiert</target>
+      </trans-unit>
+      <trans-unit id="languages.count.zero" datatype="html">
+        <source>Aucune</source>
+        <target>Keine</target>
+      </trans-unit>
+      <trans-unit id="languages.count.one" datatype="html">
+        <source>1 langue</source>
+        <target>1 Sprache</target>
+      </trans-unit>
+      <trans-unit id="languages.count.other" datatype="html">
+        <source><x id="count" equiv-text="count"/> langues</source>
+        <target><x id="count" equiv-text="count"/> Sprachen</target>
+      </trans-unit>
+      <trans-unit id="direct.document.untitled" datatype="html">
+        <source>Session du <x id="date" equiv-text="date"/> à <x id="time" equiv-text="time"/></source>
+        <target>Sitzung vom <x id="date" equiv-text="date"/> um <x id="time" equiv-text="time"/></target>
+      </trans-unit>
+      <trans-unit id="direct.report.none" datatype="html">
+        <source>Pas de compte rendu</source>
+        <target>Kein Bericht</target>
+      </trans-unit>
+      <trans-unit id="direct.report.team" datatype="html">
+        <source>Point d&apos;équipe</source>
+        <target>Teambesprechung</target>
+      </trans-unit>
+      <trans-unit id="direct.report.oneToOne" datatype="html">
+        <source>Entretien 1:1</source>
+        <target>1:1-Gespräch</target>
+      </trans-unit>
+      <trans-unit id="direct.report.client" datatype="html">
+        <source>Point client</source>
+        <target>Kundentermin</target>
+      </trans-unit>
+      <trans-unit id="direct.report.brainstorm" datatype="html">
+        <source>Brainstorming</source>
+        <target>Ideensammlung</target>
+      </trans-unit>
+      <trans-unit id="direct.report.summary" datatype="html">
+        <source>Résumé</source>
+        <target>Zusammenfassung</target>
+      </trans-unit>
+      <trans-unit id="direct.report.lecture" datatype="html">
+        <source>Cours / conférence</source>
+        <target>Vorlesung / Vortrag</target>
+      </trans-unit>
+      <trans-unit id="direct.report.media" datatype="html">
+        <source>Vidéo ou podcast</source>
+        <target>Video oder Podcast</target>
+      </trans-unit>
+      <trans-unit id="direct.report.interview" datatype="html">
+        <source>Entretien</source>
+        <target>Interview</target>
+      </trans-unit>
+      <trans-unit id="direct.report.group.custom" datatype="html">
+        <source>Personnalisé</source>
+        <target>Benutzerdefiniert</target>
+      </trans-unit>
+      <trans-unit id="common.custom" datatype="html">
+        <source>Personnalisé…</source>
+        <target>Benutzerdefiniert…</target>
+      </trans-unit>
+      <trans-unit id="direct.report.group.meetings" datatype="html">
+        <source>Réunions</source>
+        <target>Besprechungen</target>
+      </trans-unit>
+      <trans-unit id="direct.report.group.content" datatype="html">
+        <source>Contenus</source>
+        <target>Inhalte</target>
+      </trans-unit>
+      <trans-unit id="direct.step.settling" datatype="html">
+        <source>Récupération des derniers mots…</source>
+        <target>Letzte Wörter werden erfasst…</target>
+      </trans-unit>
+      <trans-unit id="direct.step.voices" datatype="html">
+        <source>Analyse des voix…</source>
+        <target>Stimmen werden analysiert…</target>
+      </trans-unit>
+      <trans-unit id="direct.step.echo" datatype="html">
+        <source>Retrait de l&apos;écho…</source>
+        <target>Echo wird entfernt…</target>
+      </trans-unit>
+      <trans-unit id="direct.step.weaving" datatype="html">
+        <source>Assemblage du transcript…</source>
+        <target>Transkript wird zusammengesetzt…</target>
+      </trans-unit>
+      <trans-unit id="direct.step.erasing" datatype="html">
+        <source>Suppression de l&apos;audio…</source>
+        <target>Audio wird gelöscht…</target>
+      </trans-unit>
+      <trans-unit id="direct.step.notes" datatype="html">
+        <source>Lecture de la session…</source>
+        <target>Sitzung wird gelesen…</target>
+      </trans-unit>
+      <trans-unit id="direct.step.writing" datatype="html">
+        <source>Rédaction du compte rendu…</source>
+        <target>Bericht wird geschrieben…</target>
+      </trans-unit>
+      <trans-unit id="history.dictee.empty.title" datatype="html">
+        <source>Aucune dictée pour l&apos;instant</source>
+        <target>Noch keine Diktate</target>
+      </trans-unit>
+      <trans-unit id="history.dictee.empty.text" datatype="html">
+        <source> Appuyez sur <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;he-kbd&quot;&gt;"/><x id="START_TAG_KBD" ctype="x-kbd" equiv-text="&lt;kbd&gt;"/>⌃<x id="CLOSE_TAG_KBD" ctype="x-kbd" equiv-text="&lt;/kbd&gt;"/><x id="START_TAG_KBD" ctype="x-kbd" equiv-text="&lt;kbd&gt;"/>⌥<x id="CLOSE_TAG_KBD" ctype="x-kbd" equiv-text="&lt;/kbd&gt;"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/> et parlez : vos dernières dictées s&apos;afficheront ici. </source>
+        <target> Drücke <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;he-kbd&quot;&gt;"/><x id="START_TAG_KBD" ctype="x-kbd" equiv-text="&lt;kbd&gt;"/>⌃<x id="CLOSE_TAG_KBD" ctype="x-kbd" equiv-text="&lt;/kbd&gt;"/><x id="START_TAG_KBD" ctype="x-kbd" equiv-text="&lt;kbd&gt;"/>⌥<x id="CLOSE_TAG_KBD" ctype="x-kbd" equiv-text="&lt;/kbd&gt;"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/> und sprich: deine letzten Diktate erscheinen hier. </target>
+      </trans-unit>
+      <trans-unit id="history.dictee.label" datatype="html">
+        <source>Dernières dictées</source>
+        <target>Letzte Diktate</target>
+      </trans-unit>
+      <trans-unit id="history.dictee.searchLabel" datatype="html">
+        <source>Rechercher une dictée dans l&apos;historique</source>
+        <target>Diktat im Verlauf suchen</target>
+      </trans-unit>
+      <trans-unit id="history.dictee.searchPlaceholder" datatype="html">
+        <source>Rechercher une dictée…</source>
+        <target>Diktat suchen…</target>
+      </trans-unit>
+      <trans-unit id="history.dictee.noResult" datatype="html">
+        <source>Aucune dictée trouvée.</source>
+        <target>Kein Diktat gefunden.</target>
+      </trans-unit>
+      <trans-unit id="history.copyFailed" datatype="html">
+        <source>Copie impossible.</source>
+        <target>Kopieren nicht möglich.</target>
+      </trans-unit>
+      <trans-unit id="common.deleteAll.heading" datatype="html">
+        <source>Tout supprimer ?</source>
+        <target>Alles löschen?</target>
+      </trans-unit>
+      <trans-unit id="history.dictee.clearAll.message" datatype="html">
+        <source>Toutes les dictées de l&apos;historique seront supprimées. Cette action est irréversible.</source>
+        <target>Alle Diktate im Verlauf werden gelöscht. Das lässt sich nicht rückgängig machen.</target>
+      </trans-unit>
+      <trans-unit id="common.deleteAll" datatype="html">
+        <source>Tout supprimer</source>
+        <target>Alles löschen</target>
+      </trans-unit>
+      <trans-unit id="common.cancel" datatype="html">
+        <source>Annuler</source>
+        <target>Abbrechen</target>
+      </trans-unit>
+      <trans-unit id="dictee.mode" datatype="html">
+        <source>Mode de dictée</source>
+        <target>Diktatmodus</target>
+      </trans-unit>
+      <trans-unit id="dictee.language" datatype="html">
+        <source>Langue parlée</source>
+        <target>Gesprochene Sprache</target>
+      </trans-unit>
+      <trans-unit id="dictee.translation" datatype="html">
+        <source>Traduction</source>
+        <target>Übersetzung</target>
+      </trans-unit>
+      <trans-unit id="dictee.translation.hint" datatype="html">
+        <source>Traduit en <x id="INTERPOLATION" equiv-text="{{ into }}"/></source>
+        <target>Übersetzung: <x id="INTERPOLATION" equiv-text="{{ into }}"/></target>
+      </trans-unit>
+      <trans-unit id="common.translateTo" datatype="html">
+        <source>Traduire vers</source>
+        <target>Übersetzen nach</target>
+      </trans-unit>
+      <trans-unit id="dictee.rephrasing" datatype="html">
+        <source>Reformulation</source>
+        <target>Umformulierung</target>
+      </trans-unit>
+      <trans-unit id="dictee.rephrasing.prompt" datatype="html">
+        <source>Écrivez votre prompt de reformulation…</source>
+        <target>Schreibe deinen Prompt zur Umformulierung…</target>
+      </trans-unit>
+      <trans-unit id="dictee.rephrasing.promptAria" datatype="html">
+        <source>Prompt de reformulation</source>
+        <target>Prompt zur Umformulierung</target>
+      </trans-unit>
+      <trans-unit id="dictee.language.seeOptions" datatype="html">
+        <source>Voir les options de langues</source>
+        <target>Sprachoptionen anzeigen</target>
+      </trans-unit>
+      <trans-unit id="dictee.rephrasing.none" datatype="html">
+        <source>Pas de reformulation</source>
+        <target>Keine Umformulierung</target>
+      </trans-unit>
+      <trans-unit id="dictee.rephrasing.standard" datatype="html">
+        <source>Standard</source>
+        <target>Standard</target>
+      </trans-unit>
+      <trans-unit id="dictee.rephrasing.professional" datatype="html">
+        <source>Professionnel</source>
+        <target>Professionell</target>
+      </trans-unit>
+      <trans-unit id="dictee.rephrasing.concise" datatype="html">
+        <source>Concis</source>
+        <target>Knapp</target>
+      </trans-unit>
+      <trans-unit id="dictee.rephrasing.detailed" datatype="html">
+        <source>Détaillé</source>
+        <target>Ausführlich</target>
+      </trans-unit>
+      <trans-unit id="dictee.rephrasing.friendly" datatype="html">
+        <source>Amical</source>
+        <target>Freundlich</target>
+      </trans-unit>
+      <trans-unit id="dictee.translation.none" datatype="html">
+        <source>Pas de traduction</source>
+        <target>Keine Übersetzung</target>
+      </trans-unit>
+      <trans-unit id="dictee.mode.hold" datatype="html">
+        <source>Maintenir</source>
+        <target>Halten</target>
+      </trans-unit>
+      <trans-unit id="dictee.mode.toggle" datatype="html">
+        <source>Mains libres</source>
+        <target>Freihändig</target>
+      </trans-unit>
+      <trans-unit id="dictee.mode.hint.hold" datatype="html">
+        <source>Maintenez pour dicter.</source>
+        <target>Zum Diktieren gedrückt halten.</target>
+      </trans-unit>
+      <trans-unit id="dictee.mode.hint.toggle" datatype="html">
+        <source>Tapez pour démarrer, tapez pour arrêter.</source>
+        <target>Tippen zum Starten, tippen zum Stoppen.</target>
+      </trans-unit>
+      <trans-unit id="history.toggle" datatype="html">
+        <source>Replier ou déplier l&apos;historique</source>
+        <target>Verlauf ein- oder ausklappen</target>
+      </trans-unit>
+      <trans-unit id="screen.historique" datatype="html">
+        <source>Historique</source>
+        <target>Verlauf</target>
+      </trans-unit>
+      <trans-unit id="screen.dictee" datatype="html">
+        <source>Dictée</source>
+        <target>Diktat</target>
+      </trans-unit>
+      <trans-unit id="direct.source" datatype="html">
+        <source>Source audio</source>
+        <target>Audioquelle</target>
+      </trans-unit>
+      <trans-unit id="direct.mic.include" datatype="html">
+        <source>Inclure mon micro</source>
+        <target>Mein Mikrofon einbeziehen</target>
+      </trans-unit>
+      <trans-unit id="direct.mic.includeAria" datatype="html">
+        <source>Inclure mon micro dans l&apos;enregistrement</source>
+        <target>Mein Mikrofon in die Aufnahme einbeziehen</target>
+      </trans-unit>
+      <trans-unit id="common.stop" datatype="html">
+        <source>Arrêter</source>
+        <target>Stoppen</target>
+      </trans-unit>
+      <trans-unit id="direct.start" datatype="html">
+        <source>Démarrer l&apos;enregistrement</source>
+        <target>Aufnahme starten</target>
+      </trans-unit>
+      <trans-unit id="direct.source.placeholder" datatype="html">
+        <source>Choisir une source (obligatoire)</source>
+        <target>Quelle wählen (erforderlich)</target>
+      </trans-unit>
+      <trans-unit id="history.direct.empty.title" datatype="html">
+        <source>Aucune session enregistrée</source>
+        <target>Keine Sitzungen aufgenommen</target>
+      </trans-unit>
+      <trans-unit id="history.direct.empty.text" datatype="html">
+        <source> Choisissez une source et cliquez sur « Démarrer » : vos comptes rendus s&apos;afficheront ici. </source>
+        <target> Wähle eine Quelle und klicke auf „Starten“: deine Berichte erscheinen hier. </target>
+      </trans-unit>
+      <trans-unit id="history.direct.label" datatype="html">
+        <source>Dernières sessions</source>
+        <target>Letzte Sitzungen</target>
+      </trans-unit>
+      <trans-unit id="history.direct.searchLabel" datatype="html">
+        <source>Rechercher une session dans l&apos;historique</source>
+        <target>Sitzung im Verlauf suchen</target>
+      </trans-unit>
+      <trans-unit id="history.direct.searchPlaceholder" datatype="html">
+        <source>Rechercher une session…</source>
+        <target>Sitzung suchen…</target>
+      </trans-unit>
+      <trans-unit id="history.direct.noResult" datatype="html">
+        <source>Aucune session trouvée.</source>
+        <target>Keine Sitzung gefunden.</target>
+      </trans-unit>
+      <trans-unit id="history.direct.clearAll.message" datatype="html">
+        <source>Toutes les sessions de l&apos;historique seront supprimées, transcripts et comptes rendus compris. Cette action est irréversible.</source>
+        <target>Alle Sitzungen im Verlauf werden gelöscht, samt Transkripten und Berichten. Das lässt sich nicht rückgängig machen.</target>
+      </trans-unit>
+      <trans-unit id="screen.direct" datatype="html">
+        <source>Direct</source>
+        <target>Live</target>
+      </trans-unit>
+      <trans-unit id="export.clipboard" datatype="html">
+        <source>Copier (presse-papier)</source>
+        <target>Kopieren (Zwischenablage)</target>
+      </trans-unit>
+      <trans-unit id="export.csv" datatype="html">
+        <source>CSV (.csv)</source>
+        <target>CSV (.csv)</target>
+      </trans-unit>
+      <trans-unit id="export.json" datatype="html">
+        <source>JSON (.json)</source>
+        <target>JSON (.json)</target>
+      </trans-unit>
+      <trans-unit id="export.markdown" datatype="html">
+        <source>Markdown (.md)</source>
+        <target>Markdown (.md)</target>
+      </trans-unit>
+      <trans-unit id="export.pdf" datatype="html">
+        <source>PDF (.pdf)</source>
+        <target>PDF (.pdf)</target>
+      </trans-unit>
+      <trans-unit id="export.srt" datatype="html">
+        <source>Sous-titres (.srt)</source>
+        <target>Untertitel (.srt)</target>
+      </trans-unit>
+      <trans-unit id="export.vtt" datatype="html">
+        <source>Sous-titres (.vtt)</source>
+        <target>Untertitel (.vtt)</target>
+      </trans-unit>
+      <trans-unit id="export.text" datatype="html">
+        <source>Texte (.txt)</source>
+        <target>Text (.txt)</target>
+      </trans-unit>
+      <trans-unit id="export.word" datatype="html">
+        <source>Word (.docx)</source>
+        <target>Word (.docx)</target>
+      </trans-unit>
+      <trans-unit id="direct.document.rename" datatype="html">
+        <source>Renommer la session</source>
+        <target>Sitzung umbenennen</target>
+      </trans-unit>
+      <trans-unit id="direct.document.titleField" datatype="html">
+        <source>Titre de la session</source>
+        <target>Titel der Sitzung</target>
+      </trans-unit>
+      <trans-unit id="direct.document.empty" datatype="html">
+        <source>Cette session n&apos;a produit aucun texte.</source>
+        <target>Diese Sitzung hat keinen Text ergeben.</target>
+      </trans-unit>
+      <trans-unit id="direct.document.kind" datatype="html">
+        <source>Type de compte rendu</source>
+        <target>Berichtstyp</target>
+      </trans-unit>
+      <trans-unit id="direct.report.prompt" datatype="html">
+        <source>Écrivez votre prompt de compte rendu…</source>
+        <target>Schreibe deinen Prompt für den Bericht…</target>
+      </trans-unit>
+      <trans-unit id="direct.report.legacyTitle" datatype="html">
+        <source>Mon prompt personnalisé</source>
+        <target>Mein eigener Prompt</target>
+      </trans-unit>
+      <trans-unit id="common.export" datatype="html">
+        <source>Exporter</source>
+        <target>Exportieren</target>
+      </trans-unit>
+      <trans-unit id="direct.document.translateReport" datatype="html">
+        <source>Traduire le compte rendu vers</source>
+        <target>Bericht übersetzen nach</target>
+      </trans-unit>
+      <trans-unit id="direct.document.translateTranscript" datatype="html">
+        <source>Traduire le transcript vers</source>
+        <target>Transkript übersetzen nach</target>
+      </trans-unit>
+      <trans-unit id="direct.document.showTranscript" datatype="html">
+        <source>Afficher le transcript</source>
+        <target>Transkript anzeigen</target>
+      </trans-unit>
+      <trans-unit id="direct.document.showReport" datatype="html">
+        <source>Afficher le compte rendu</source>
+        <target>Bericht anzeigen</target>
+      </trans-unit>
+      <trans-unit id="direct.transcript.showOriginal" datatype="html">
+        <source>Afficher l&apos;original</source>
+        <target>Original anzeigen</target>
+      </trans-unit>
+      <trans-unit id="direct.transcript.showOriginalAria" datatype="html">
+        <source>Afficher le transcript dans sa langue d&apos;origine</source>
+        <target>Transkript in seiner Originalsprache anzeigen</target>
+      </trans-unit>
+      <trans-unit id="direct.transcript.empty" datatype="html">
+        <source> La transcription s&apos;affichera ici dès les premiers mots. </source>
+        <target> Das Transkript erscheint hier ab den ersten Wörtern. </target>
+      </trans-unit>
+      <trans-unit id="direct.transcript.label" datatype="html">
+        <source>Transcription en direct</source>
+        <target>Live-Transkript</target>
+      </trans-unit>
+      <trans-unit id="direct.transcript.roleTranslated" datatype="html">
+        <source>traduction</source>
+        <target>Übersetzung</target>
+      </trans-unit>
+      <trans-unit id="direct.transcript.roleOriginal" datatype="html">
+        <source>original</source>
+        <target>Original</target>
+      </trans-unit>
+      <trans-unit id="direct.document.finalising" datatype="html">
+        <source>Finalisation de la session…</source>
+        <target>Sitzung wird abgeschlossen…</target>
+      </trans-unit>
+      <trans-unit id="direct.document.working" datatype="html">
+        <source>Compte rendu en cours…</source>
+        <target>Bericht wird erstellt…</target>
+      </trans-unit>
+      <trans-unit id="direct.document.translatingReport" datatype="html">
+        <source>Traduction du compte rendu…</source>
+        <target>Bericht wird übersetzt…</target>
+      </trans-unit>
+      <trans-unit id="direct.document.translatingTranscript" datatype="html">
+        <source>Traduction du transcript…</source>
+        <target>Transkript wird übersetzt…</target>
+      </trans-unit>
+      <trans-unit id="direct.document.metaWithMic" datatype="html">
+        <source><x id="name" equiv-text="found.sourceName"/> · avec mon micro</source>
+        <target><x id="name" equiv-text="found.sourceName"/> · mit meinem Mikrofon</target>
+      </trans-unit>
+      <trans-unit id="direct.document.metaNoMic" datatype="html">
+        <source><x id="name" equiv-text="found.sourceName"/> · sans micro</source>
+        <target><x id="name" equiv-text="found.sourceName"/> · ohne Mikrofon</target>
+      </trans-unit>
+      <trans-unit id="translation.pairMissing" datatype="html">
+        <source>La traduction vers la langue <x id="name" equiv-text="LANGUAGE_ADJECTIVES[target]"/> n&apos;est pas installée. Ajoutez-la dans Options ▸ Langues.</source>
+        <target>Übersetzung nach <x id="name" equiv-text="LANGUAGE_ADJECTIVES[target]"/> ist nicht installiert. Füge sie unter Optionen ▸ Sprachen hinzu.</target>
+      </trans-unit>
+      <trans-unit id="translation.pairUnsupported" datatype="html">
+        <source>La traduction vers la langue <x id="name" equiv-text="LANGUAGE_ADJECTIVES[target]"/> n&apos;est pas prise en charge.</source>
+        <target>Übersetzung nach <x id="name" equiv-text="LANGUAGE_ADJECTIVES[target]"/> wird nicht unterstützt.</target>
+      </trans-unit>
+      <trans-unit id="directdoc.export.copiedReport" datatype="html">
+        <source>Compte rendu copié dans le presse-papiers.</source>
+        <target>Bericht in die Zwischenablage kopiert.</target>
+      </trans-unit>
+      <trans-unit id="directdoc.export.copiedTranscript" datatype="html">
+        <source>Transcript copié dans le presse-papiers.</source>
+        <target>Transkript in die Zwischenablage kopiert.</target>
+      </trans-unit>
+      <trans-unit id="directdoc.export.written" datatype="html">
+        <source>Session exportée.</source>
+        <target>Sitzung exportiert.</target>
+      </trans-unit>
+      <trans-unit id="direct.close.title" datatype="html">
+        <source>Arrêter la session ?</source>
+        <target>Sitzung stoppen?</target>
+      </trans-unit>
+      <trans-unit id="direct.close.message" datatype="html">
+        <source>Fermer cette fenêtre met fin à la session en cours. Tout ce qui a déjà été transcrit est conservé.</source>
+        <target>Wenn du dieses Fenster schließt, endet die laufende Sitzung. Alles bereits Transkribierte bleibt erhalten.</target>
+      </trans-unit>
+      <trans-unit id="direct.close.cancel" datatype="html">
+        <source>Continuer la session</source>
+        <target>Sitzung fortsetzen</target>
+      </trans-unit>
+      <trans-unit id="direct.transcript.micSilent" datatype="html">
+        <source>Votre micro ne sera pas transcrit (<x id="reason" equiv-text="silent.reason"/>). L&apos;enregistrement continue.</source>
+        <target>Dein Mikrofon wird nicht transkribiert (<x id="reason" equiv-text="silent.reason"/>). Die Aufnahme läuft weiter.</target>
+      </trans-unit>
+      <trans-unit id="direct.transcript.systemSilent" datatype="html">
+        <source>L&apos;audio de la session ne sera pas transcrit (<x id="reason" equiv-text="silent.reason"/>). L&apos;enregistrement continue.</source>
+        <target>Der Ton der Sitzung wird nicht transkribiert (<x id="reason" equiv-text="silent.reason"/>). Die Aufnahme läuft weiter.</target>
+      </trans-unit>
+      <trans-unit id="fichiers.drop.browse" datatype="html">
+        <source>Parcourir l&apos;ordinateur</source>
+        <target>Computer durchsuchen</target>
+      </trans-unit>
+      <trans-unit id="fichiers.drop.title.dragging" datatype="html">
+        <source>Déposez le fichier</source>
+        <target>Datei hier ablegen</target>
+      </trans-unit>
+      <trans-unit id="fichiers.drop.title" datatype="html">
+        <source>Glissez un fichier audio ou vidéo</source>
+        <target>Zieh eine Audio- oder Videodatei hierher</target>
+      </trans-unit>
+      <trans-unit id="screen.fichiers" datatype="html">
+        <source>Fichiers</source>
+        <target>Dateien</target>
+      </trans-unit>
+      <trans-unit id="fichiers.langs" datatype="html">
+        <source> La langue est <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>détectée automatiquement<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>. Seules les <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>6 langues<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> de Mirmalion sont reconnues (français, anglais, espagnol, allemand, italien, portugais). </source>
+        <target> Die Sprache wird <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>automatisch erkannt<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>. Erkannt werden nur die <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>6 Sprachen<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> von Mirmalion (Französisch, Englisch, Spanisch, Deutsch, Italienisch, Portugiesisch). </target>
+      </trans-unit>
+      <trans-unit id="fichiers.detect.noSpeech" datatype="html">
+        <source>Aucune parole n&apos;a été trouvée dans ce fichier.</source>
+        <target>In dieser Datei wurde keine Sprache gefunden.</target>
+      </trans-unit>
+      <trans-unit id="fichiers.detect.unsupportedLanguage" datatype="html">
+        <source>La langue parlée dans ce fichier n&apos;est pas installée. Ajoutez-la dans Options ▸ Langues.</source>
+        <target>Die in dieser Datei gesprochene Sprache ist nicht installiert. Füge sie unter Optionen ▸ Sprachen hinzu.</target>
+      </trans-unit>
+      <trans-unit id="fichiers.detect.tooShort" datatype="html">
+        <source>Ce fichier est trop court pour reconnaître la langue. Choisissez-la vous-même.</source>
+        <target>Diese Datei ist zu kurz, um die Sprache zu erkennen. Wähle sie selbst aus.</target>
+      </trans-unit>
+      <trans-unit id="fichiers.detect.noInstalledLanguage" datatype="html">
+        <source>Aucune langue parlée n&apos;est installée. Ajoutez-en une dans Options ▸ Langues.</source>
+        <target>Es ist keine gesprochene Sprache installiert. Füge unter Optionen ▸ Sprachen eine hinzu.</target>
+      </trans-unit>
+      <trans-unit id="fichiers.detect.working" datatype="html">
+        <source>Détection de la langue…</source>
+        <target>Sprache wird erkannt…</target>
+      </trans-unit>
+      <trans-unit id="fichiers.transcription.failed" datatype="html">
+        <source>La transcription a échoué. Réessayez, et redémarrez Mirmalion si cela se reproduit.</source>
+        <target>Die Transkription ist fehlgeschlagen. Versuche es erneut und starte Mirmalion neu, falls es wieder passiert.</target>
+      </trans-unit>
+      <trans-unit id="fichiers.reject.failed" datatype="html">
+        <source>L&apos;analyse du média a échoué. Réessayez, et redémarrez Mirmalion si cela se reproduit.</source>
+        <target>Das Medium konnte nicht analysiert werden. Versuche es erneut und starte Mirmalion neu, falls es wieder passiert.</target>
+      </trans-unit>
+      <trans-unit id="fichiers.reject.empty" datatype="html">
+        <source>Ce fichier est vide.</source>
+        <target>Diese Datei ist leer.</target>
+      </trans-unit>
+      <trans-unit id="fichiers.reject.unreadable" datatype="html">
+        <source>Fichier illisible. Essayez un MP3, M4A, WAV, MP4 ou MOV.</source>
+        <target>Datei nicht lesbar. Versuch es mit MP3, M4A, WAV, MP4 oder MOV.</target>
+      </trans-unit>
+      <trans-unit id="fichiers.reject.noAudioTrack" datatype="html">
+        <source>Cette vidéo n&apos;a pas de son.</source>
+        <target>Dieses Video hat keinen Ton.</target>
+      </trans-unit>
+      <trans-unit id="fichiers.reject.multipleFiles" datatype="html">
+        <source>Un seul fichier à la fois.</source>
+        <target>Nur eine Datei auf einmal.</target>
+      </trans-unit>
+      <trans-unit id="fichiers.reject.noFile" datatype="html">
+        <source>Glissez un fichier audio ou vidéo.</source>
+        <target>Zieh eine Audio- oder Videodatei hierher.</target>
+      </trans-unit>
+      <trans-unit id="filedoc.work.translating" datatype="html">
+        <source>Traduction…</source>
+        <target>Wird übersetzt…</target>
+      </trans-unit>
+      <trans-unit id="filedoc.work.exporting" datatype="html">
+        <source>Export…</source>
+        <target>Wird exportiert…</target>
+      </trans-unit>
+      <trans-unit id="filedoc.work.copying" datatype="html">
+        <source>Copie…</source>
+        <target>Wird kopiert…</target>
+      </trans-unit>
+      <trans-unit id="filedoc.work.closing" datatype="html">
+        <source>Fermeture…</source>
+        <target>Wird geschlossen…</target>
+      </trans-unit>
+      <trans-unit id="filedoc.title.rename" datatype="html">
+        <source>Renommer la transcription</source>
+        <target>Transkript umbenennen</target>
+      </trans-unit>
+      <trans-unit id="filedoc.title.field" datatype="html">
+        <source>Titre de la transcription</source>
+        <target>Titel des Transkripts</target>
+      </trans-unit>
+      <trans-unit id="filedoc.export.copied" datatype="html">
+        <source>Transcription copiée dans le presse-papiers.</source>
+        <target>Transkript in die Zwischenablage kopiert.</target>
+      </trans-unit>
+      <trans-unit id="filedoc.export.written" datatype="html">
+        <source>Transcription exportée.</source>
+        <target>Transkript exportiert.</target>
+      </trans-unit>
+      <trans-unit id="onboarding.download.title" datatype="html">
+        <source>Installation des langues parlées</source>
+        <target>Gesprochene Sprachen werden installiert</target>
+      </trans-unit>
+      <trans-unit id="onboarding.permissions.title" datatype="html">
+        <source>Autorisations</source>
+        <target>Berechtigungen</target>
+      </trans-unit>
+      <trans-unit id="onboarding.permissions.subtitle" datatype="html">
+        <source> Accordez-les une par une — rien ne s&apos;active sans votre accord.
+</source>
+        <target> Erteile sie einzeln — nichts wird ohne deine Zustimmung aktiviert.
+</target>
+      </trans-unit>
+      <trans-unit id="onboarding.permissions.recheck" datatype="html">
+        <source>Revérifier</source>
+        <target>Erneut prüfen</target>
+      </trans-unit>
+      <trans-unit id="common.continue" datatype="html">
+        <source>Continuer</source>
+        <target>Weiter</target>
+      </trans-unit>
+      <trans-unit id="onboarding.permissions.microphone.title" datatype="html">
+        <source>Microphone</source>
+        <target>Mikrofon</target>
+      </trans-unit>
+      <trans-unit id="onboarding.permissions.microphone.desc" datatype="html">
+        <source>Capturer votre voix.</source>
+        <target>Deine Stimme aufnehmen.</target>
+      </trans-unit>
+      <trans-unit id="onboarding.permissions.accessibility.title" datatype="html">
+        <source>Accessibilité</source>
+        <target>Bedienungshilfen</target>
+      </trans-unit>
+      <trans-unit id="onboarding.permissions.accessibility.desc" datatype="html">
+        <source>Déclencher la dictée avec le raccourci et coller le texte.</source>
+        <target>Diktat per Tastenkürzel starten und den Text einsetzen.</target>
+      </trans-unit>
+      <trans-unit id="onboarding.permissions.audio.title" datatype="html">
+        <source>Enregistrement de l&apos;audio</source>
+        <target>Audioaufnahme</target>
+      </trans-unit>
+      <trans-unit id="onboarding.permissions.audio.desc" datatype="html">
+        <source>Capter le son de vos sessions.</source>
+        <target>Den Ton deiner Sitzungen aufnehmen.</target>
+      </trans-unit>
+      <trans-unit id="onboarding.permissions.microphone.note" datatype="html">
+        <source>Elle se rétablit dans Réglages Système ▸ Confidentialité et sécurité ▸ Microphone.</source>
+        <target>Sie lässt sich unter Systemeinstellungen ▸ Datenschutz & Sicherheit ▸ Mikrofon wiederherstellen.</target>
+      </trans-unit>
+      <trans-unit id="onboarding.permissions.blocked.note" datatype="html">
+        <source>Elle se rétablit dans les Réglages Système, à la section Confidentialité et sécurité.</source>
+        <target>Sie lässt sich in den Systemeinstellungen unter Datenschutz & Sicherheit wiederherstellen.</target>
+      </trans-unit>
+      <trans-unit id="languages.list.spoken" datatype="html">
+        <source>Langues parlées</source>
+        <target>Gesprochene Sprachen</target>
+      </trans-unit>
+      <trans-unit id="onboarding.spoken.subtitle" datatype="html">
+        <source> Celles dans lesquelles vous dictez et dans lesquelles se tiennent vos sessions. Modifiable à tout moment dans les réglages.
+</source>
+        <target> Die Sprachen, in denen du diktierst und in denen deine Sitzungen stattfinden. Jederzeit in den Einstellungen änderbar.
+</target>
+      </trans-unit>
+      <trans-unit id="options.languages.lastOne" datatype="html">
+        <source>Au moins une langue parlée est nécessaire.</source>
+        <target>Mindestens eine gesprochene Sprache ist erforderlich.</target>
+      </trans-unit>
+      <trans-unit id="onboarding.spoken.download" datatype="html">
+        <source>Télécharger (<x id="count" equiv-text="count"/>)</source>
+        <target>Herunterladen (<x id="count" equiv-text="count"/>)</target>
+      </trans-unit>
+      <trans-unit id="onboarding.translation.title" datatype="html">
+        <source>Traduction</source>
+        <target>Übersetzung</target>
+      </trans-unit>
+      <trans-unit id="onboarding.translation.subtitle" datatype="html">
+        <source> Vers quelles langues traduire vos dictées. Modifiable à tout moment dans les réglages.
+</source>
+        <target> In welche Sprachen deine Diktate übersetzt werden. Jederzeit in den Einstellungen änderbar.
+</target>
+      </trans-unit>
+      <trans-unit id="onboarding.translation.finish" datatype="html">
+        <source>Terminer</source>
+        <target>Fertig</target>
+      </trans-unit>
+      <trans-unit id="onboarding.welcome.title" datatype="html">
+        <source>Écrivez à voix haute.</source>
+        <target>Schreib laut.</target>
+      </trans-unit>
+      <trans-unit id="onboarding.welcome.subtitle" datatype="html">
+        <source> Tout reste sur votre Mac — rien ne part dans le cloud.
+</source>
+        <target> Alles bleibt auf deinem Mac — nichts geht in die Cloud.
+</target>
+      </trans-unit>
+      <trans-unit id="onboarding.welcome.start" datatype="html">
+        <source>Commencer</source>
+        <target>Loslegen</target>
+      </trans-unit>
+      <trans-unit id="onboarding.use.dictation.desc" datatype="html">
+        <source>Un raccourci, vous parlez, le texte s&apos;insère au curseur.</source>
+        <target>Ein Tastenkürzel, du sprichst, der Text landet an der Einfügemarke.</target>
+      </trans-unit>
+      <trans-unit id="onboarding.use.live.desc" datatype="html">
+        <source>Enregistrez le son de votre Mac, obtenez un transcript et un compte rendu.</source>
+        <target>Nimm den Ton deines Macs auf und erhalte Transkript und Bericht.</target>
+      </trans-unit>
+      <trans-unit id="onboarding.use.files.desc" datatype="html">
+        <source>Importez un audio ou une vidéo, récupérez le texte.</source>
+        <target>Importiere eine Audio- oder Videodatei und erhalte den Text.</target>
+      </trans-unit>
+      <trans-unit id="onboarding.permissions.granted" datatype="html">
+        <source>Autorisé</source>
+        <target>Erteilt</target>
+      </trans-unit>
+      <trans-unit id="onboarding.permissions.blocked" datatype="html">
+        <source>Refusé</source>
+        <target>Verweigert</target>
+      </trans-unit>
+      <trans-unit id="onboarding.permissions.grant" datatype="html">
+        <source>Autoriser</source>
+        <target>Erlauben</target>
+      </trans-unit>
+      <trans-unit id="onboarding.permissions.grant.aria" datatype="html">
+        <source>Autoriser : <x id="PERMISSION" equiv-text="this.row().title"/></source>
+        <target>Erlauben: <x id="PERMISSION" equiv-text="this.row().title"/></target>
+      </trans-unit>
+      <trans-unit id="onboarding.spoken.downloadFailed" datatype="html">
+        <source>Le téléchargement n&apos;a pas abouti. Réessayez, ou décochez cette langue pour continuer.</source>
+        <target>Der Download wurde nicht abgeschlossen. Versuche es erneut oder schalte diese Sprache aus, um fortzufahren.</target>
+      </trans-unit>
+      <trans-unit id="onboarding.permissions.readFailed" datatype="html">
+        <source>L&apos;état des autorisations n&apos;a pas pu être lu.</source>
+        <target>Der Status der Berechtigungen konnte nicht gelesen werden.</target>
+      </trans-unit>
+      <trans-unit id="onboarding.permissions.askFailed" datatype="html">
+        <source>L&apos;autorisation n&apos;a pas pu être demandée. Réessayez, ou accordez-la dans les Réglages Système.</source>
+        <target>Die Berechtigung konnte nicht angefragt werden. Versuche es erneut oder erteile sie in den Systemeinstellungen.</target>
+      </trans-unit>
+      <trans-unit id="onboarding.permissions.saveFailed" datatype="html">
+        <source>Vos réglages n&apos;ont pas pu être enregistrés : la bienvenue se rejouera au prochain démarrage.</source>
+        <target>Deine Einstellungen konnten nicht gespeichert werden: Die Begrüßung erscheint beim nächsten Start erneut.</target>
+      </trans-unit>
+      <trans-unit id="onboarding.permissions.exitFailed" datatype="html">
+        <source>L&apos;application n&apos;a pas pu s&apos;ouvrir. Réessayez, ou passez par l&apos;icône de la barre des menus.</source>
+        <target>Die App konnte nicht geöffnet werden. Versuche es erneut oder nutze das Symbol in der Menüleiste.</target>
+      </trans-unit>
+      <trans-unit id="dictionary.said" datatype="html">
+        <source>La dictée écrit</source>
+        <target>Das Diktat schreibt</target>
+      </trans-unit>
+      <trans-unit id="dictionary.variantPlaceholder" datatype="html">
+        <source>mir maléon</source>
+        <target>mir maleon</target>
+      </trans-unit>
+      <trans-unit id="dictionary.addVariant" datatype="html">
+        <source>une autre</source>
+        <target>eine weitere</target>
+      </trans-unit>
+      <trans-unit id="dictionary.duplicateVariant" datatype="html">
+        <source> C&apos;est déjà listé sous ce mot. </source>
+        <target> Steht bereits unter diesem Wort. </target>
+      </trans-unit>
+      <trans-unit id="dictionary.removeTerm" datatype="html">
+        <source>Supprimer <x id="term" equiv-text="term"/></source>
+        <target><x id="term" equiv-text="term"/> löschen</target>
+      </trans-unit>
+      <trans-unit id="dictionary.removeVariant" datatype="html">
+        <source>Retirer <x id="variant" equiv-text="variant"/> de <x id="term" equiv-text="term"/></source>
+        <target><x id="variant" equiv-text="variant"/> aus <x id="term" equiv-text="term"/> entfernen</target>
+      </trans-unit>
+      <trans-unit id="dictionary.addVariantFor" datatype="html">
+        <source>Ajouter ce que la dictée écrit pour <x id="term" equiv-text="term"/></source>
+        <target>Ergänzen, was das Diktat für <x id="term" equiv-text="term"/> schreibt</target>
+      </trans-unit>
+      <trans-unit id="dictionary.add" datatype="html">
+        <source>Ajouter un nouveau mot</source>
+        <target>Neues Wort hinzufügen</target>
+      </trans-unit>
+      <trans-unit id="dictionary.word.merged" datatype="html">
+        <source>Ce mot était déjà dans votre dictionnaire : cette écriture est rangée dessous.</source>
+        <target>Dieses Wort stand bereits in deinem Wörterbuch: Diese Schreibweise steht darunter.</target>
+      </trans-unit>
+      <trans-unit id="dictionary.word.submit" datatype="html">
+        <source>Ajouter</source>
+        <target>Hinzufügen</target>
+      </trans-unit>
+      <trans-unit id="dictionary.word.said" datatype="html">
+        <source>Ce que la dictée écrit à la place, par exemple what&apos;s up</source>
+        <target>Was das Diktat stattdessen schreibt, zum Beispiel what&apos;s up</target>
+      </trans-unit>
+      <trans-unit id="dictionary.word.term" datatype="html">
+        <source>Le mot correct, par exemple WhatsApp</source>
+        <target>Das korrekte Wort, zum Beispiel WhatsApp</target>
+      </trans-unit>
+      <trans-unit id="dictionary.word.heading" datatype="html">
+        <source>Ajouter un mot</source>
+        <target>Wort hinzufügen</target>
+      </trans-unit>
+      <trans-unit id="dictionary.searchPlaceholder" datatype="html">
+        <source>Rechercher un mot…</source>
+        <target>Wort suchen…</target>
+      </trans-unit>
+      <trans-unit id="dictionary.searchLabel" datatype="html">
+        <source>Rechercher un mot</source>
+        <target>Wort suchen</target>
+      </trans-unit>
+      <trans-unit id="options.dictionary.desc" datatype="html">
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Les mots que la dictée écrit mal se corrigent une fois pour toutes<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> : vos noms propres, vos marques, votre vocabulaire de métier.
+</source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Wörter, die das Diktat falsch schreibt, werden ein für alle Mal korrigiert<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>: deine Eigennamen, deine Marken, dein Fachvokabular.</target>
+      </trans-unit>
+      <trans-unit id="dictionary.empty" datatype="html">
+        <source> Votre dictionnaire est vide. Ajoutez un mot que la dictée écrit mal. </source>
+        <target> Dein Wörterbuch ist leer. Füge ein Wort hinzu, das das Diktat falsch schreibt. </target>
+      </trans-unit>
+      <trans-unit id="dictionary.noResult" datatype="html">
+        <source>Aucun mot trouvé.</source>
+        <target>Kein Wort gefunden.</target>
+      </trans-unit>
+      <trans-unit id="options.direct.overlay" datatype="html">
+        <source>Afficher l&apos;indicateur visuel pendant un direct</source>
+        <target>Visuelle Anzeige während einer Live-Sitzung einblenden</target>
+      </trans-unit>
+      <trans-unit id="options.direct.reportType" datatype="html">
+        <source>Type de compte rendu par défaut</source>
+        <target>Standard-Berichtstyp</target>
+      </trans-unit>
+      <trans-unit id="direct.report.promptAria" datatype="html">
+        <source>Prompt de compte rendu</source>
+        <target>Prompt für den Bericht</target>
+      </trans-unit>
+      <trans-unit id="options.section.audio" datatype="html">
+        <source>Audio</source>
+        <target>Audio</target>
+      </trans-unit>
+      <trans-unit id="dictee.mic" datatype="html">
+        <source>Micro</source>
+        <target>Mikrofon</target>
+      </trans-unit>
+      <trans-unit id="options.mic.sublabel" datatype="html">
+        <source>Entrée audio de la dictée et du Direct</source>
+        <target>Audioeingang für Diktat und Live</target>
+      </trans-unit>
+      <trans-unit id="options.sounds.label" datatype="html">
+        <source>Sons de démarrage / arrêt</source>
+        <target>Start- / Stopptöne</target>
+      </trans-unit>
+      <trans-unit id="options.sounds.sublabel" datatype="html">
+        <source>Un bip discret au début et à la fin d&apos;un enregistrement</source>
+        <target>Ein dezenter Ton am Anfang und am Ende einer Aufnahme</target>
+      </trans-unit>
+      <trans-unit id="options.sounds.aria" datatype="html">
+        <source>Sons de démarrage et d&apos;arrêt</source>
+        <target>Start- und Stopptöne</target>
+      </trans-unit>
+      <trans-unit id="options.section.appearance" datatype="html">
+        <source>Apparence</source>
+        <target>Darstellung</target>
+      </trans-unit>
+      <trans-unit id="options.theme.label" datatype="html">
+        <source>Thème</source>
+        <target>Erscheinungsbild</target>
+      </trans-unit>
+      <trans-unit id="options.accent.label" datatype="html">
+        <source>Couleur d&apos;accent</source>
+        <target>Akzentfarbe</target>
+      </trans-unit>
+      <trans-unit id="options.accent.sublabel" datatype="html">
+        <source>Ne modifie que l&apos;accent du thème actuel</source>
+        <target>Ändert nur den Akzent des aktuellen Erscheinungsbilds</target>
+      </trans-unit>
+      <trans-unit id="options.section.system" datatype="html">
+        <source>Système</source>
+        <target>System</target>
+      </trans-unit>
+      <trans-unit id="options.dock.label" datatype="html">
+        <source>Afficher dans le Dock</source>
+        <target>Im Dock anzeigen</target>
+      </trans-unit>
+      <trans-unit id="options.dock.sublabel" datatype="html">
+        <source>Ajoute l&apos;icône et la barre de menus de l&apos;application</source>
+        <target>Fügt das App-Symbol und die Menüleiste hinzu</target>
+      </trans-unit>
+      <trans-unit id="options.launchAtLogin.label" datatype="html">
+        <source>Lancer au démarrage</source>
+        <target>Beim Anmelden öffnen</target>
+      </trans-unit>
+      <trans-unit id="options.launchAtLogin.sublabel" datatype="html">
+        <source>Démarre en arrière-plan dans la barre des menus</source>
+        <target>Startet im Hintergrund in der Menüleiste</target>
+      </trans-unit>
+      <trans-unit id="dictee.mic.system" datatype="html">
+        <source>Micro système (par défaut)</source>
+        <target>Systemmikrofon (Standard)</target>
+      </trans-unit>
+      <trans-unit id="options.theme.light" datatype="html">
+        <source>Clair</source>
+        <target>Hell</target>
+      </trans-unit>
+      <trans-unit id="options.theme.dark" datatype="html">
+        <source>Sombre</source>
+        <target>Dunkel</target>
+      </trans-unit>
+      <trans-unit id="options.launchAtLogin.failed" datatype="html">
+        <source>macOS a refusé de modifier l&apos;ouverture à la session.</source>
+        <target>macOS hat die Änderung des Anmeldeobjekts abgelehnt.</target>
+      </trans-unit>
+      <trans-unit id="options.accent.red" datatype="html">
+        <source>Rouge</source>
+        <target>Rot</target>
+      </trans-unit>
+      <trans-unit id="options.accent.orange" datatype="html">
+        <source>Orange</source>
+        <target>Orange</target>
+      </trans-unit>
+      <trans-unit id="options.accent.amber" datatype="html">
+        <source>Ambre</source>
+        <target>Bernstein</target>
+      </trans-unit>
+      <trans-unit id="options.accent.gold" datatype="html">
+        <source>Or</source>
+        <target>Gold</target>
+      </trans-unit>
+      <trans-unit id="options.accent.olive" datatype="html">
+        <source>Olive</source>
+        <target>Oliv</target>
+      </trans-unit>
+      <trans-unit id="options.accent.green" datatype="html">
+        <source>Vert</source>
+        <target>Grün</target>
+      </trans-unit>
+      <trans-unit id="options.accent.emerald" datatype="html">
+        <source>Émeraude</source>
+        <target>Smaragd</target>
+      </trans-unit>
+      <trans-unit id="options.accent.teal" datatype="html">
+        <source>Sarcelle</source>
+        <target>Blaugrün</target>
+      </trans-unit>
+      <trans-unit id="options.accent.cyan" datatype="html">
+        <source>Cyan</source>
+        <target>Cyan</target>
+      </trans-unit>
+      <trans-unit id="options.accent.klein" datatype="html">
+        <source>Bleu Klein</source>
+        <target>Klein-Blau</target>
+      </trans-unit>
+      <trans-unit id="options.accent.blue" datatype="html">
+        <source>Bleu</source>
+        <target>Blau</target>
+      </trans-unit>
+      <trans-unit id="options.accent.indigo" datatype="html">
+        <source>Indigo</source>
+        <target>Indigo</target>
+      </trans-unit>
+      <trans-unit id="options.accent.violet" datatype="html">
+        <source>Violet</source>
+        <target>Violett</target>
+      </trans-unit>
+      <trans-unit id="options.accent.magenta" datatype="html">
+        <source>Magenta</source>
+        <target>Magenta</target>
+      </trans-unit>
+      <trans-unit id="options.accent.fuchsia" datatype="html">
+        <source>Fuchsia</source>
+        <target>Fuchsia</target>
+      </trans-unit>
+      <trans-unit id="options.accent.rose" datatype="html">
+        <source>Rose</source>
+        <target>Rosa</target>
+      </trans-unit>
+      <trans-unit id="options.retention.label" datatype="html">
+        <source>Dictées conservées</source>
+        <target>Aufbewahrte Diktate</target>
+      </trans-unit>
+      <trans-unit id="options.retention.sublabel" datatype="html">
+        <source>Par nombre · au-delà, les plus anciennes sont supprimées</source>
+        <target>Nach Anzahl · darüber hinaus werden die ältesten gelöscht</target>
+      </trans-unit>
+      <trans-unit id="options.retention.aria" datatype="html">
+        <source>Nombre de dictées conservées</source>
+        <target>Anzahl der aufbewahrten Diktate</target>
+      </trans-unit>
+      <trans-unit id="options.liveRetention.label" datatype="html">
+        <source>Sessions conservées</source>
+        <target>Aufbewahrte Sitzungen</target>
+      </trans-unit>
+      <trans-unit id="options.liveRetention.sublabel" datatype="html">
+        <source>Par durée · au-delà, les plus anciennes sont supprimées</source>
+        <target>Nach Dauer · darüber hinaus werden die ältesten gelöscht</target>
+      </trans-unit>
+      <trans-unit id="options.liveRetention.aria" datatype="html">
+        <source>Durée de conservation des sessions</source>
+        <target>Aufbewahrungsdauer der Sitzungen</target>
+      </trans-unit>
+      <trans-unit id="options.retention.purgeFailed" datatype="html">
+        <source>Le plafond est enregistré, mais les dictées en trop n&apos;ont pas pu être supprimées.</source>
+        <target>Die Obergrenze ist gespeichert, die überzähligen Diktate konnten aber nicht gelöscht werden.</target>
+      </trans-unit>
+      <trans-unit id="options.liveRetention.30d" datatype="html">
+        <source>30 jours</source>
+        <target>30 Tage</target>
+      </trans-unit>
+      <trans-unit id="options.liveRetention.3m" datatype="html">
+        <source>3 mois</source>
+        <target>3 Monate</target>
+      </trans-unit>
+      <trans-unit id="options.liveRetention.6m" datatype="html">
+        <source>6 mois</source>
+        <target>6 Monate</target>
+      </trans-unit>
+      <trans-unit id="options.liveRetention.1y" datatype="html">
+        <source>1 an</source>
+        <target>1 Jahr</target>
+      </trans-unit>
+      <trans-unit id="options.liveRetention.unlimited" datatype="html">
+        <source>Illimité</source>
+        <target>Unbegrenzt</target>
+      </trans-unit>
+      <trans-unit id="options.languages.back" datatype="html">
+        <source>Retour à Langues</source>
+        <target>Zurück zu Sprachen</target>
+      </trans-unit>
+      <trans-unit id="options.languages.spoken.desc" datatype="html">
+        <source> Les langues proposées à la dictée et à la session.
+</source>
+        <target> Die Sprachen, die für Diktat und Sitzung angeboten werden.
+</target>
+      </trans-unit>
+      <trans-unit id="options.languages.quotaFull" datatype="html">
+        <source>Pour ajouter une langue, éteignez-en une autre d&apos;abord : cette machine ne peut en garder que <x id="count" equiv-text="this.languages.reservationCeiling()"/> installées à la fois.</source>
+        <target>Um eine Sprache hinzuzufügen, schalte zuerst eine andere aus: Dieser Mac kann nur <x id="count" equiv-text="this.languages.reservationCeiling()"/> gleichzeitig installiert halten.</target>
+      </trans-unit>
+      <trans-unit id="options.languages.installFailed" datatype="html">
+        <source>Le téléchargement n&apos;a pas abouti. Vérifiez votre connexion, puis réessayez.</source>
+        <target>Der Download wurde nicht abgeschlossen. Prüfe deine Verbindung und versuche es erneut.</target>
+      </trans-unit>
+      <trans-unit id="languages.list.translation" datatype="html">
+        <source>Langues de traduction</source>
+        <target>Übersetzungssprachen</target>
+      </trans-unit>
+      <trans-unit id="options.languages.translation.desc" datatype="html">
+        <source> Les langues proposées comme cible de traduction.
+</source>
+        <target> Die Sprachen, die als Übersetzungsziel angeboten werden.
+</target>
+      </trans-unit>
+      <trans-unit id="options.languages.interface.label" datatype="html">
+        <source>Langue de l&apos;interface</source>
+        <target>Sprache der Oberfläche</target>
+      </trans-unit>
+      <trans-unit id="options.languages.interface.sublabel" datatype="html">
+        <source>La fenêtre se recharge aussitôt</source>
+        <target>Das Fenster lädt sofort neu</target>
+      </trans-unit>
+      <trans-unit id="screen.options" datatype="html">
+        <source>Options</source>
+        <target>Optionen</target>
+      </trans-unit>
+      <trans-unit id="options.category.general" datatype="html">
+        <source>Général</source>
+        <target>Allgemein</target>
+      </trans-unit>
+      <trans-unit id="options.category.dictionnaire" datatype="html">
+        <source>Dictionnaire</source>
+        <target>Wörterbuch</target>
+      </trans-unit>
+      <trans-unit id="options.category.langues" datatype="html">
+        <source>Langues</source>
+        <target>Sprachen</target>
+      </trans-unit>
+      <trans-unit id="overlay.state.listening" datatype="html">
+        <source>Écoute</source>
+        <target>Hört zu</target>
+      </trans-unit>
+      <trans-unit id="overlay.state.preparing" datatype="html">
+        <source>Préparation</source>
+        <target>Vorbereitung</target>
+      </trans-unit>
+      <trans-unit id="overlay.state.translating" datatype="html">
+        <source>Traduction</source>
+        <target>Übersetzung</target>
+      </trans-unit>
+      <trans-unit id="overlay.state.done" datatype="html">
+        <source>Terminé !</source>
+        <target>Fertig!</target>
+      </trans-unit>
+      <trans-unit id="overlay.state.error" datatype="html">
+        <source>Erreur</source>
+        <target>Fehler</target>
+      </trans-unit>
+      <trans-unit id="overlay.state.suspended" datatype="html">
+        <source>Dictée suspendue</source>
+        <target>Diktat angehalten</target>
+      </trans-unit>
+      <trans-unit id="header.nav" datatype="html">
+        <source>Navigation entre les écrans</source>
+        <target>Navigation zwischen den Bildschirmen</target>
+      </trans-unit>
+      <trans-unit id="history.copy" datatype="html">
+        <source>Copier dans le presse-papier</source>
+        <target>In die Zwischenablage kopieren</target>
+      </trans-unit>
+      <trans-unit id="history.delete" datatype="html">
+        <source>Supprimer</source>
+        <target>Löschen</target>
+      </trans-unit>
+      <trans-unit id="language.install.brief" datatype="html">
+        <source> Les ressources de transcription seront téléchargées <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>depuis Apple<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/>. </source>
+        <target> Die Transkriptionsressourcen werden <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>von Apple<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> geladen. </target>
+      </trans-unit>
+      <trans-unit id="language.install.accept" datatype="html">
+        <source>Installer</source>
+        <target>Installieren</target>
+      </trans-unit>
+      <trans-unit id="languages.switch.spoken" datatype="html">
+        <source>Dicter en <x id="name" equiv-text="name"/></source>
+        <target>Diktieren auf <x id="name" equiv-text="name"/></target>
+      </trans-unit>
+      <trans-unit id="languages.switch.translation" datatype="html">
+        <source>Traduire en <x id="name" equiv-text="name"/></source>
+        <target>Übersetzen nach <x id="name" equiv-text="name"/></target>
+      </trans-unit>
+      <trans-unit id="languages.switch.missing" datatype="html">
+        <source>à télécharger</source>
+        <target>noch zu laden</target>
+      </trans-unit>
+      <trans-unit id="modal.close" datatype="html">
+        <source>Fermer</source>
+        <target>Schließen</target>
+      </trans-unit>
+      <trans-unit id="snackbar.dismiss" datatype="html">
+        <source>Fermer la notification</source>
+        <target>Mitteilung schließen</target>
+      </trans-unit>
+      <trans-unit id="update.available" datatype="html">
+        <source> Une nouvelle version est disponible (<x id="INTERPOLATION" equiv-text="{{ version() }}"/>). </source>
+        <target> Eine neue Version ist verfügbar (<x id="INTERPOLATION" equiv-text="{{ version() }}"/>). </target>
+      </trans-unit>
+      <trans-unit id="update.downloading" datatype="html">
+        <source> Téléchargement de la mise à jour… </source>
+        <target> Update wird heruntergeladen… </target>
+      </trans-unit>
+      <trans-unit id="update.ready" datatype="html">
+        <source> Mise à jour prête à être installée. </source>
+        <target> Das Update ist bereit zur Installation. </target>
+      </trans-unit>
+      <trans-unit id="update.progress" datatype="html">
+        <source>Téléchargement de la mise à jour</source>
+        <target>Update wird heruntergeladen</target>
+      </trans-unit>
+      <trans-unit id="update.later" datatype="html">
+        <source> Plus tard </source>
+        <target> Später </target>
+      </trans-unit>
+      <trans-unit id="update.install" datatype="html">
+        <source> Mettre à jour </source>
+        <target> Aktualisieren </target>
+      </trans-unit>
+      <trans-unit id="update.restart" datatype="html">
+        <source> Redémarrer maintenant </source>
+        <target> Jetzt neu starten </target>
+      </trans-unit>
+      <trans-unit id="permissions.accessibility.lost" datatype="html">
+        <source>Mirmalion n&apos;a plus l&apos;autorisation d&apos;Accessibilité : le raccourci de dictée ne répond plus. Elle se rétablit dans Réglages Système ▸ Confidentialité et sécurité ▸ Accessibilité.</source>
+        <target>Mirmalion hat die Bedienungshilfen-Berechtigung nicht mehr: Der Diktat-Kurzbefehl reagiert nicht mehr. Sie lässt sich unter Systemeinstellungen ▸ Datenschutz &amp; Sicherheit ▸ Bedienungshilfen wiederherstellen.</target>
+      </trans-unit>
+      <trans-unit id="languages.vanished.message" datatype="html">
+        <source>macOS a retiré les ressources de transcription de cette langue, que Mirmalion avait installées. Tant qu&apos;elles manquent, la dictée et les sessions dans cette langue ne peuvent pas transcrire.</source>
+        <target>macOS hat die Transkriptionsressourcen dieser Sprache entfernt, die Mirmalion installiert hatte. Solange sie fehlen, können Diktat und Sitzungen in dieser Sprache nicht transkribieren.</target>
+      </trans-unit>
+      <trans-unit id="languages.vanished.reinstall" datatype="html">
+        <source>Réinstaller</source>
+        <target>Neu installieren</target>
+      </trans-unit>
+      <trans-unit id="update.heading" datatype="html">
+        <source>Mise à jour</source>
+        <target>Aktualisierung</target>
+      </trans-unit>
+      <trans-unit id="direct.prompt.titleLabel" datatype="html">
+        <source>Titre</source>
+        <target>Titel</target>
+      </trans-unit>
+      <trans-unit id="direct.prompt.titlePlaceholder" datatype="html">
+        <source>Nommez ce prompt…</source>
+        <target>Benenne diesen Prompt…</target>
+      </trans-unit>
+      <trans-unit id="direct.prompt.promptLabel" datatype="html">
+        <source>Prompt</source>
+        <target>Prompt</target>
+      </trans-unit>
+      <trans-unit id="direct.prompt.duplicate" datatype="html">
+        <source>Ce titre est déjà pris.</source>
+        <target>Dieser Titel ist bereits vergeben.</target>
+      </trans-unit>
+      <trans-unit id="common.save" datatype="html">
+        <source>Enregistrer</source>
+        <target>Speichern</target>
+      </trans-unit>
+      <trans-unit id="direct.prompt.listLabel" datatype="html">
+        <source>Prompts personnalisés</source>
+        <target>Eigene Prompts</target>
+      </trans-unit>
+      <trans-unit id="direct.prompt.empty" datatype="html">
+        <source> Aucun prompt personnalisé. Ajoutez-en un pour le retrouver dans la rubrique « Personnalisé » du menu ci-dessus. </source>
+        <target> Noch kein eigener Prompt. Füge einen hinzu, um ihn oben im Menü unter „Benutzerdefiniert“ zu finden. </target>
+      </trans-unit>
+      <trans-unit id="direct.prompt.add" datatype="html">
+        <source>Ajouter un prompt personnalisé</source>
+        <target>Eigenen Prompt hinzufügen</target>
+      </trans-unit>
+      <trans-unit id="direct.prompt.editOne" datatype="html">
+        <source>Modifier <x id="title" equiv-text="title"/></source>
+        <target><x id="title" equiv-text="title"/> bearbeiten</target>
+      </trans-unit>
+      <trans-unit id="direct.prompt.removeOne" datatype="html">
+        <source>Supprimer le prompt <x id="title" equiv-text="title"/></source>
+        <target>Prompt <x id="title" equiv-text="title"/> löschen</target>
+      </trans-unit>
+      <trans-unit id="direct.prompt.delete.heading" datatype="html">
+        <source>Supprimer ce prompt ?</source>
+        <target>Diesen Prompt löschen?</target>
+      </trans-unit>
+      <trans-unit id="direct.prompt.delete.message" datatype="html">
+        <source>Ce prompt personnalisé sera supprimé. Les comptes rendus déjà produits avec lui sont conservés.</source>
+        <target>Dieser eigene Prompt wird gelöscht. Bereits damit erstellte Protokolle bleiben erhalten.</target>
+      </trans-unit>
+      <trans-unit id="direct.prompt.delete.confirm" datatype="html">
+        <source>Supprimer le prompt</source>
+        <target>Prompt löschen</target>
+      </trans-unit>
+      <trans-unit id="direct.prompt.edit" datatype="html">
+        <source>Modifier le prompt</source>
+        <target>Prompt bearbeiten</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

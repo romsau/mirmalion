@@ -1,0 +1,32 @@
+{
+  "hosting": {
+    "public": "dist-web",
+    "ignore": ["**/.*"],
+    "headers": [
+      {
+        "//": "⚠️⚠️ LE MANIFESTE NE DOIT JAMAIS ÊTRE MIS EN CACHE. Le CDN de Firebase sert par défaut avec un cache d'une heure : une version publiée resterait invisible pendant ce temps-là, et le symptôme — « la mise à jour n'arrive pas » — est indiscernable d'un updater cassé. C'est le SEUL fichier du site qui change de contenu sans changer de nom.",
+        "source": "/updates/latest.json",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache, max-age=0" }]
+      },
+      {
+        "//": "Les archives, elles, portent leur version dans leur nom : leur contenu ne change jamais, on peut les garder un an.",
+        "source": "/updates/*.tar.gz",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      },
+      {
+        "//": "La page et sa feuille changent de contenu sans changer de nom, comme le manifeste : le bouton annoncerait sinon l'ancienne version pendant une heure après une publication.",
+        "source": "**/*.@(html|css|png)",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache, max-age=0" }]
+      },
+      {
+        "//": "⚠️ Firebase apparie le CHEMIN de la requête, pas le fichier servi : « / » et « /en/ » ne finissent par aucune extension et échappent donc à la règle ci-dessus, alors que ce sont les deux adresses par lesquelles le site est lu.",
+        "source": "/",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache, max-age=0" }]
+      },
+      {
+        "source": "/en/",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache, max-age=0" }]
+      }
+    ]
+  }
+}

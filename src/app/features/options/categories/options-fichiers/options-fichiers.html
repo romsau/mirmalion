@@ -1,0 +1,39 @@
+<!--
+  ⚠️ **La phrase des langues est DANS le gabarit du panneau, pas dans la zone de dépôt** : elle
+  reste affichée dans les DEUX états. Seule la zone centrale change — dépôt à l'import,
+  progression pendant le traitement. La descendre d'un cran obligerait à l'écrire deux fois.
+-->
+<div class="fi-drop-wrap">
+  @if (media()) {
+    <!--
+      ⚠️ **Barre DÉTERMINÉE, et le pourcentage est vrai** : le backend le calcule sur la
+      position dans le média et n'émet que sur changement d'entier.
+
+      ⚠️ **Le libellé change une fois** : « Détection de la langue… » pendant les premières
+      secondes, puis le **nom du fichier**, comme dans la maquette. Celle-ci ne dessine que le
+      second état — c'est la phase longue, celle qu'on regarde ; voir `progressLabel`.
+-->
+    <div class="fi-progress">
+      <!--
+        ⚠️ **« Annuler » apparaît TOUT DE SUITE, sans le délai de 2,5 s.** Ce délai existe pour
+        que le bouton ne clignote pas sur les traitements brefs — une transcription n'en est
+        jamais un. Avec lui, sur un média court, le bouton surgissait APRÈS que la barre eut
+        atteint 100 % : on offrait la sortie au moment où il n'y avait plus rien à arrêter.
+        Même raisonnement que pour le téléchargement d'un modèle, qui pose déjà `0`.
+-->
+      <app-progress-bar
+        [label]="progressLabel()"
+        [progress]="percent()"
+        [cancelDelay]="0"
+        (cancelled)="cancelImport()"
+      />
+    </div>
+  } @else {
+    <app-file-drop-zone [dragging]="dragging()" (browseRequested)="browseMedia()" />
+  }
+
+  <p class="dz-langs" i18n="@@fichiers.langs">
+    La langue est <strong>détectée automatiquement</strong>. Seules les <strong>6 langues</strong>
+    de Mirmalion sont reconnues (français, anglais, espagnol, allemand, italien, portugais).
+  </p>
+</div>

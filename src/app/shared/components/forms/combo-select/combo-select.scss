@@ -1,0 +1,313 @@
+// Le select à liste stylée, porté depuis `.cselect-*` de `docs/ui/ui.html`.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  display: block;
+}
+
+.select-wrap {
+  position: relative;
+}
+
+.cselect-trigger {
+  display: block;
+  width: 100%;
+  padding: 11px 34px 11px 14px;
+  @include field-surface;
+
+  overflow: hidden;
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  appearance: none;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+
+  &.is-placeholder {
+    color: var(--muted);
+  }
+
+  &[aria-expanded='true'] {
+    box-shadow: 0 0 0 1px var(--accent-ink);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:disabled {
+    @include disabled-control;
+  }
+}
+
+.select-chevron {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  width: 16px;
+  height: 16px;
+  color: var(--accent-ink);
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: transform 0.15s ease;
+
+  &.is-open {
+    transform: translateY(-50%) rotate(180deg);
+  }
+}
+
+// ---- Le panneau -------------------------------------------------------------------------------
+// Il est rendu dans l'overlay, mais il reste **dans le gabarit de ce composant** : le portail
+// crée une vue encapsulée, donc ces styles l'atteignent.
+
+.cselect-menu {
+  @include popover-panel;
+}
+
+// LA CASCADE — un menu et son sous-menu, côte à côte.
+
+// ⚠️ **LE SOUS-MENU EST UN FRÈRE DU MENU, JAMAIS SON ENFANT** : le menu a `overflow-y: auto`
+// et le découperait. Cette enveloppe ne dessine rien — elle ne sert qu'à leur donner un ancêtre
+// positionné commun.
+.cselect-cascade {
+  position: relative;
+
+  // ⚠️ **Sans cette largeur, tous les menus se rétractent sur leur texte** — mesuré dans un
+  // navigateur.
+
+  // Le panneau d'overlay reçoit bien la largeur du déclencheur — c'est `Popover.open` qui
+  // l'impose —, mais cette enveloppe s'est intercalée entre les deux quand le sous-menu est
+  // arrivé. Elle est un **élément flex** du panneau (`.cdk-overlay-pane` est en
+  // `display: flex`) : sans consigne, un élément flex se rétracte sur son contenu. Le
+  // `width: 100%` de `popover-panel`, porté par le menu, valait alors 100 % de cette enveloppe
+  // rétractée au lieu de 100 % du panneau.
+
+  // Mesuré sur « Langue parlée » : déclencheur **1124 px**, panneau **1124 px**, menu
+  // **206 px**. Avec cette ligne, les trois valent 1124.
+
+  // ⚠️ **Le sous-menu n'en souffre pas** : il se pose à `left: calc(100% + 6px)` de cette
+  // enveloppe, qui a désormais exactement la largeur du menu — la relation est la même qu'avant.
+
+  // ⚠️ **AUCUN TEST NE PEUT GARDER CETTE PORTE**, et c'est pourquoi elle a dormi : jsdom ne
+  // met rien en page, donc une assertion de largeur y mesurerait zéro des deux côtés et
+  // passerait quoi qu'il arrive. Le seul garde-fou est ce commentaire et la maquette.
+  width: 100%;
+}
+
+// ⚠️ **Aligné sur le HAUT du menu, pas sur sa branche.** Aligner sur la ligne demanderait une
+// lecture de mise en page à chaque ouverture, pour quelques pixels — les branches vivent dans
+// les premières lignes.
+.cselect-sub {
+  position: absolute;
+  top: 0;
+  left: calc(100% + 6px);
+
+  // ⚠️ **Ce `6px` est répété dans `SUB_GAP`, côté composant** : c'est le même écart, une fois
+  // pour dessiner et une fois pour décider du côté. Les désaccorder ferait basculer trop tôt.
+
+  // ⚠️ **Pas d'animation d'entrée** : le sous-menu s'ouvre au survol, donc plusieurs fois de
+  // suite en parcourant les branches. Un fondu à chaque passage ferait clignoter le panneau.
+  animation: none;
+}
+
+// Le repli : à gauche du menu, quand la fenêtre ne laisse pas la place à droite. La maquette le
+// fait aussi (`toRight`), et le portage l'avait perdu — un sous-menu hors écran est un sous-menu
+// perdu.
+
+// ⚠️ **`left: auto` est indispensable** : sans lui, les deux bords sont contraints à la fois et
+// c'est `left` qui l'emporte — la règle n'aurait aucun effet visible.
+.cselect-sub.is-on-left {
+  right: calc(100% + 6px);
+  left: auto;
+}
+
+// La branche : même boîte qu'une option, mais elle ne se coche pas — ce n'est pas une valeur.
+.cselect-branch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: default;
+  transition:
+    background 0.1s ease,
+    color 0.1s ease;
+}
+
+.cselect-branch:hover,
+.cselect-branch.is-active,
+.cselect-branch[aria-expanded='true'] {
+  background: var(--accent-50);
+  color: var(--accent-ink);
+}
+
+// ⚠️ La rubrique vide reste À SA PLACE, en encre estompée : la retirer n'apprendrait pas
+// qu'elle existe. Sa règle vient APRÈS celles du survol et de `.is-active`, sinon l'une des deux
+// la rallumerait à spécificité égale.
+.cselect-branch.is-locked,
+.cselect-branch.is-locked:hover,
+.cselect-branch.is-locked.is-active {
+  @include disabled-control;
+
+  background: none;
+}
+
+.cselect-branch.is-locked .cselect-caret {
+  visibility: hidden;
+}
+
+.cselect-branch .lbl {
+  flex: 1;
+  min-width: 0;
+}
+
+.cselect-caret {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  opacity: 0.7;
+}
+
+.cselect-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.1s ease,
+    color 0.1s ease;
+
+  &:hover,
+  &.is-active {
+    background: var(--accent-50);
+    color: var(--accent-ink);
+  }
+
+  // ⚠️ **Une classe, pas `[aria-selected]`** : en cascade, la sélection s'annonce par
+  // `aria-checked` — un `menuitemradio` n'a pas d'`aria-selected`. Faire porter le dessin par
+  // l'attribut ARIA le faisait donc disparaître dès que le menu devenait une cascade.
+  &.is-selected {
+    color: var(--accent-ink);
+    font-weight: 600;
+  }
+}
+
+.lbl {
+  flex: 1;
+  min-width: 0;
+}
+
+// La coche occupe sa place même invisible : sans cela, les libellés se décaleraient d'une
+// option à l'autre selon celle qui est choisie.
+.cselect-check {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  opacity: 0;
+
+  .cselect-option.is-selected & {
+    opacity: 1;
+  }
+}
+
+// ---- Mode « disponibilité » -------------------------------------------------------------
+// ⚠️ **Ici la coche ne dit plus « sélectionné », elle dit « prêt à l'emploi »** — et elle est
+// donc visible sur TOUTES les lignes disponibles. La sélection reste lisible par le gras et la
+// couleur d'accent que `aria-selected` porte déjà.
+// ⚠️ **La ligne choisie garde le fond d'accent, qui l'emporte sur le vert.** Sans cette règle,
+// la langue en cours se confond avec les autres langues installées. Deux couleurs, deux sens :
+// le bleu dit « c'est celle-ci », le vert dit « elle est prête ».
+.cselect-menu .cselect-option.is-selected {
+  background: var(--accent-50);
+}
+
+.cselect-menu.shows-availability .cselect-option:not(.is-unavailable) .cselect-check {
+  width: 16px;
+  height: 16px;
+  color: var(--success-ink);
+  opacity: 1;
+  stroke-width: 3;
+}
+
+// ⚠️ **SEULE L'ICÔNE distingue une langue installée d'une langue à télécharger** — décidé le
+//. Le libellé garde son encre pleine dans les deux cas, et aucune ligne ne reçoit de
+// fond : le seul fond de la liste est celui de la ligne **choisie**. Deux essais avaient précédé
+// celui-ci — estomper davantage les absentes (impossible : `--muted` n'a plus que 0,11 point de
+// marge avant de tomber sous WCAG AA) puis mettre les installées en avant sur fond vert (la
+// ligne choisie s'y confondait avec les autres). Une seule variable pour une seule information.
+
+// L'icône dit qu'un téléchargement est POSSIBLE, pas qu'il y a un problème — d'où `--muted`, et
+// non l'orange d'un avertissement.
+.cselect-download {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  color: var(--muted);
+}
+
+// Au survol, la ligne reprend sa pleine encre — c'est le moment où on la considère. La coche
+// verte, elle, ne bouge pas : elle décrit un fait, que le survol ne change pas.
+.cselect-option:hover,
+.cselect-option.is-active {
+  .lbl,
+  .cselect-download {
+    color: var(--accent-ink);
+  }
+}
+
+// ---- Le filet de groupe -----------------------------------------------------------------
+// Il détache une ligne de ce qui la précède : la ligne d'ACTION, et toute option que
+// `FormOption.separated` met à part — « Masquer les locuteurs » après les deux modes d'analyse.
+
+// ⚠️ **Le filet fait tout le travail** : c'est lui qui annonce, avant le
+// clic, que cette ligne ne se comporte pas comme les autres. Sans lui, elle se lirait comme une
+// valeur de plus — et l'on ne comprendrait qu'après coup pourquoi le champ n'a pas changé.
+
+// ⚠️ **La MÊME encre que les autres lignes**, et surtout pas la teinte d'accent : un premier
+// essai la peignait en accent, elle attirait l'œil avant les langues alors qu'on ne la cherche
+// qu'après avoir constaté un manque.
+
+// Les marges négatives annulent le rembourrage du panneau : le filet va d'un bord à l'autre,
+// là où une ligne courte se lirait comme une décoration plutôt que comme une séparation. Le
+// rembourrage horizontal les compense pour que le texte reste aligné sur les autres lignes.
+.cselect-sep {
+  margin: 6px -6px 0;
+  padding: 12px 16px 10px;
+  border-top: 1px solid var(--line);
+}
+
+// La ligne d'action est **toujours la dernière** : elle épouse le bas du panneau. Une option
+// séparée, elle, peut avoir des lignes après elle — d'où la séparation des deux règles.
+.cselect-action {
+  margin-bottom: -6px;
+  border-radius: 0 0 11px 11px;
+}
+
+// Annoncé, jamais affiché : une coche verte et une icône ne se lisent pas.
+
+// ⚠️ Ni `display: none` ni `visibility: hidden` — les deux retirent l'élément de l'arbre
+// d'accessibilité, ce qui est exactement l'inverse du but.
+.hidden-hint {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

@@ -1,0 +1,17 @@
+@if (payload(); as current) {
+  <app-overlay-pill [state]="current.state" [elapsedSeconds]="elapsedSeconds()" />
+
+  <!--
+    ⚠️ **Le gabarit de mesure, et il n'est PAS décoratif.** La fenêtre prend la largeur du
+    pire état, jamais celle de l'état courant : sans lui, la pilule se rétrécirait et
+    s'allongerait à chaque étape de la dictée. Il disparaît dès la mesure faite — six pilules
+    animées en permanence coûteraient du CPU pour rien.
+  -->
+  @if (measuring()) {
+    <div class="overlay-measure" aria-hidden="true">
+      @for (state of states; track state) {
+        <app-overlay-pill [state]="state" [elapsedSeconds]="widestElapsed()" />
+      }
+    </div>
+  }
+}

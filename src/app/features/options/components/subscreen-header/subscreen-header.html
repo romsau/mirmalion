@@ -1,0 +1,4 @@
+<button class="back" type="button" [attr.aria-label]="backLabel()" (click)="back.emit()">
+  <app-icon name="chevron-left" />
+  <span>{{ title() }}</span>
+</button>

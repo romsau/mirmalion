@@ -1,0 +1,11 @@
+// L'étape « Traduction », portée depuis `.onb-step[data-onb="translation"]` de `docs/ui/ui.html`.
+
+// Elle n'a **rien en propre** : les deux étapes à liste de langues sont rigoureusement
+// identiques, et c'est ce qui a fait remonter leur motif dans `abstracts/_mixins.scss`.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  @include onboarding-step;
+  @include onboarding-language-step;
+}

@@ -1,0 +1,15 @@
+<!--
+  ⚠️ Le composant générique, NU : ni titre propre, ni cadre, ni texte à côté. C'est exactement
+  ce qui lui permet d'entrer aussi bien ici que dans une modale — lui ajouter un décor en ferait
+  un composant de plus.
+
+  `cancelDelay` à zéro : plusieurs centaines de mégaoctets ne sont jamais une opération courte,
+  et faire attendre 2,5 s avant d'offrir la sortie n'a aucun sens — ici d'autant moins que c'est
+  la SEULE sortie de l'écran.
+-->
+<app-progress-bar
+  [label]="label()"
+  [progress]="progress()"
+  [cancelDelay]="0"
+  (cancelled)="cancelled.emit()"
+/>

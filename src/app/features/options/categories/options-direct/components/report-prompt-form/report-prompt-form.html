@@ -1,0 +1,58 @@
+<!--
+  ⚠️ **Le champ fait la longueur de ce qu'on peut y écrire, et rien de plus** : un champ pleine
+  largeur pour 40 caractères promet une phrase et n'en accepte pas une. La borne est donc posée
+  ici, **une seule fois**, et la feuille calcule la largeur avec — on ne peut pas changer l'une
+  sans l'autre.
+
+  ⚠️ Un `<span>` et non un `<label>` : le vrai `<input>` est à l'intérieur du composant, hors de
+  portée d'un `for`. Le nom accessible passe donc par `ariaLabel`, et le libellé visible dit le
+  même mot.
+-->
+<div class="rp-field rp-field--sized" [style.--chars]="maxTitleLength">
+  <span class="rp-label" i18n="@@direct.prompt.titleLabel">Titre</span>
+  <app-text-field
+    [value]="title()"
+    [maxLength]="maxTitleLength"
+    placeholder="Nommez ce prompt…"
+    i18n-placeholder="@@direct.prompt.titlePlaceholder"
+    ariaLabel="Titre"
+    i18n-ariaLabel="@@direct.prompt.titleLabel"
+    [invalid]="duplicate()"
+    [describedBy]="duplicate() ? duplicateId : null"
+    (valueChange)="writeTitle($event)"
+  />
+</div>
+
+<!--
+  ⚠️ **Le champ du prompt prend la hauteur qui reste, il ne l'impose pas** : avec une hauteur
+  figée, le corps de la modale dépassait sa hauteur maximale et se mettait à défiler — les
+  boutons touchaient alors le bord. Le détail du calcul est dans la feuille.
+-->
+<div class="rp-field rp-field--grow">
+  <span class="rp-label" i18n="@@direct.prompt.promptLabel">Prompt</span>
+  <app-prompt-field
+    multiline
+    [value]="prompt()"
+    [placeholder]="promptPlaceholder"
+    ariaLabel="Prompt de compte rendu"
+    i18n-ariaLabel="@@direct.report.promptAria"
+    (valueChange)="writePrompt($event)"
+  />
+</div>
+
+<!--
+  ⚠️ `role="alert"` : le message apparaît à la frappe, loin du champ qu'il concerne, et
+  « Enregistrer » s'éteint sans rien dire. Sans lui, un lecteur d'écran laisse chercher pourquoi.
+
+  ⚠️ `aria-invalid` et `aria-describedby` sur le champ **en plus** de l'alerte, comme la ligne
+  du dictionnaire : l'alerte ne se dit qu'une fois, à son apparition, et rien ne rattacherait
+  ensuite le message au champ pour qui y revient.
+-->
+@if (duplicate()) {
+  <p class="field-error" role="alert" [id]="duplicateId">{{ duplicateMessage }}</p>
+}
+
+<div class="rp-actions">
+  <app-button variant="neutral" (click)="cancel()" i18n="@@common.cancel">Annuler</app-button>
+  <app-button [disabled]="!canSave()" (click)="save()" i18n="@@common.save">Enregistrer</app-button>
+</div>

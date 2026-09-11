@@ -1,0 +1,62 @@
+// Le select natif habillé, porté depuis `.select` de `docs/ui/ui.html`.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  display: block;
+}
+
+.select-wrap {
+  position: relative;
+}
+
+.select {
+  width: 100%;
+  padding: 11px 34px 11px 14px;
+
+  // ⚠️ **`--line` et non `--line-strong`, et c'est une exception raisonnée.**
+  // Le critère du projet est « que resterait-il pour dire que le contrôle est là
+  // si le trait n'y était pas » — et ici il reste **le chevron**, mesuré à **9,98:1** en clair
+  // et **4,90:1** en sombre, très au-dessus des 3:1 qu'exige WCAG 1.4.11. Un select n'est par
+  // ailleurs **jamais vide** : il affiche toujours sa valeur. Le trait fort y était donc
+  // redondant, et l'avait appliqué plus largement que sa propre règle ne le demandait.
+
+  // ⚠️ **Ne pas généraliser ce raisonnement à un CHAMP DE SAISIE** : vide, celui-ci n'a ni
+  // texte, ni icône à 3:1, ni fond distinct de la page — la recherche d'historique, le prompt
+  // et le titre de document gardent `--line-strong` pour cette raison exacte.
+
+  // ⚠️ **Le chevron est donc porteur d'accessibilité, pas décoratif.** Le retirer, le passer en
+  // `--muted`, ou le teinter d'une couleur claire ferait retomber le select sous le seuil
+  // **sans qu'aucun test ne le voie** : `scripts/check-contrast.mjs` mesure des couples de
+  // jetons, pas ce qui compose un composant.
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-soft);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  appearance: none;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:disabled {
+    @include disabled-control;
+  }
+}
+
+// Le chevron ne doit intercepter aucun clic : le clic appartient au `<select>` en dessous, qui
+// déroule la liste native.
+.select-chevron {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  width: 16px;
+  height: 16px;
+  color: var(--accent-ink);
+  pointer-events: none;
+  transform: translateY(-50%);
+}

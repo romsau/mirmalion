@@ -1,0 +1,25 @@
+// Le contenu de la modale d'un mot : deux champs empilés, deux actions. Le cadre, l'en-tête et
+// le comportement viennent de `ModalContainer` — rien de tout cela n'est répété ici.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  display: block;
+}
+
+// ⚠️ **Le rembourrage bas du champ réserve la place de son compteur** : sans compteur, il ne
+// réserve plus qu'un vide, et les deux champs flottent à 16 px l'un de l'autre. C'est une
+// contrainte de BOÎTE, posée par la modale, pas un style que le champ devrait porter partout.
+.dwf-field {
+  padding-bottom: 0;
+}
+
+// ⚠️ La marge sépare les deux champs SANS les décoller de l'en-tête : le premier n'en prend pas,
+// et deux champs qui se touchent se lisent comme un seul contrôle à deux lignes.
+.dwf-field + .dwf-field {
+  margin-top: 10px;
+}
+
+.dwf-actions {
+  @include modal-actions;
+}

@@ -1,0 +1,28 @@
+<h1 class="onb-h" i18n="@@onboarding.translation.title">Traduction</h1>
+
+<!--
+  ⚠️ « Facultatif » a été retiré : rien n'est coché à l'arrivée et le bouton dit « Terminer »,
+  donc l'écran se traverse déjà sans rien choisir. Le mot ne faisait que redire ce que la page
+  montre, en invitant à la sauter. Ce qui reste est la seule chose qu'on ne peut PAS deviner
+  depuis l'écran — qu'on pourra y revenir, et où.
+-->
+<p class="onb-sub" i18n="@@onboarding.translation.subtitle">
+  Vers quelles langues traduire vos dictées. Modifiable à tout moment dans les réglages.
+</p>
+
+<div class="lang-block">
+  <!--
+    ⚠️ `installed` reste absent — et ce n'est pas la même chose qu'une liste vide, qui dirait
+    « aucune n'est là ». Cet écran ne dit RIEN de l'installation.
+  -->
+  <app-language-list
+    purpose="translation"
+    fill
+    [selected]="selected()"
+    (toggled)="toggled.emit($event)"
+  />
+</div>
+
+<div class="onb-footer">
+  <app-button (click)="finish.emit()" i18n="@@onboarding.translation.finish">Terminer</app-button>
+</div>

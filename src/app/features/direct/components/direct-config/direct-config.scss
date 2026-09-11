@@ -1,0 +1,208 @@
+// Porté depuis `.rc-controls`, `.rc-footer`, `.rec-start` et `.req` de `docs/ui/ui.html`.
+
+// ⚠️ `.group` et `.label` ne sont **pas** redéfinis ici : ils viennent des mixins partagés avec
+// la colonne de dictée — c'est leur deuxième emploi, donc leur domicile.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+// ⚠️ **C'est cette zone qui défile, pas l'hôte.** Le footer doit rester visible : un bouton
+// « Démarrer » qui part sous la ligne de flottaison rendrait l'écran inutilisable dès que la
+// zone de prompt personnalisé s'ouvre. Le rembourrage tient le clip à distance de la bordure
+// des champs — même piège qu'en dictée, mesuré.
+
+// ⚠️ **28 px à droite panneau déplié, 6 px replié**, exactement comme la maquette l'écrit
+// (`.window.hist-collapsed .rc-controls`). Les garder à 28 px décalait toute la colonne dans la
+// fenêtre étroite — c'est le même écart que la dictée avait mesuré, et il avait
+// été oublié ici.
+
+// ⚠️ **`:host-context` et non une entrée `collapsed`.** Le repli est un fait de la FENÊTRE, pas
+// une donnée du formulaire : le faire descendre par une entrée obligerait ce composant à
+// connaître un état qui ne le regarde pas, et l'écran à le lui répéter. C'est exactement le cas
+// que `:host-context` couvre — s'adapter à un ancêtre sans rien savoir de lui.
+.rc-controls {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 28px;
+  padding-left: 6px;
+
+  :host-context(.direct.is-collapsed) & {
+    padding-right: 6px;
+  }
+}
+
+.group {
+  @include field-group;
+}
+
+.label {
+  @include section-label;
+}
+
+// L'astérisque des champs sans valeur par défaut. `--accent-ink` et non un rouge : ce n'est pas
+// une erreur, c'est une exigence. Valeurs relevées sur `.label .req` de la maquette.
+.label .req {
+  margin-left: 4px;
+  color: var(--accent-ink);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+// Hors du défilement, et centré.
+.rc-footer {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 0;
+}
+
+// ⚠️ **Préfixe `rc-`, comme toute la colonne de configuration** : `.rec-stop` et `.rec-timer` sont
+// **déjà pris** par la ligne d'enregistrement de la fenêtre-session, et les réutiliser ici les
+// cassait.
+
+// ⚠️ **Même gabarit que « Démarrer », mais PLEIN dès le repos** : c'est l'action en cours, pas une
+// proposition. L'inversion au survol du patron unifié ne s'applique donc pas ici.
+.rc-stop {
+  @include focus-ring;
+
+  display: inline-flex;
+  margin: 0;
+  padding: 13px 16px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--accent);
+  color: var(--accent-on);
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  flex: none;
+  transition: background 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--accent-600);
+  }
+
+  &:disabled {
+    cursor: progress;
+    opacity: 0.6;
+  }
+}
+
+.rc-square {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  background: currentcolor;
+  flex: none;
+}
+
+// ⚠️ **LE MINUTEUR EST DANS LE BOUTON**, et il en est **séparé par un
+// filet, pas par un espace** : « Arrêter 00:12:34 » sans marque se lit comme un seul libellé, et
+// le regard bute sur les chiffres avant de trouver le verbe.
+
+// ⚠️ **`tabular-nums` est obligatoire** : sans lui, la largeur du bouton bouge à chaque seconde,
+// et un bouton qui respire sous le curseur se manque au clic.
+.rc-timer {
+  margin-left: 2px;
+  padding-left: 11px;
+  border-left: 1px solid color-mix(in srgb, currentcolor 35%, transparent);
+  font-size: 14px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+}
+
+// ⚠️ **Patron unifié — fond teinté au repos, inversion au survol — mais EXCEPTION de taille.**
+// Il ne suit pas `--btn-h` : c'est l'action principale de l'écran, la maquette le veut grand.
+.rec-start {
+  flex: none;
+  margin: 0;
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-ink);
+  background: var(--accent-50);
+  border-radius: 12px;
+  padding: 13px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--accent);
+    color: var(--accent-on);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  // ⚠️ **Un vrai changement de couleur, pas de l'opacité** : une opacité délave aussi le fond,
+  // et les valeurs en dur d'un premier essai tombaient à 2,54:1 — sous le minimum AA. Des
+  // jetons, donc, qui suivent le thème et la teinte d'accent.
+  &:disabled {
+    background: var(--surface-soft);
+    color: var(--muted);
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  &:disabled .rec-dot {
+    background: currentcolor;
+  }
+}
+
+.rec-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: currentcolor;
+}
+
+// La carte à interrupteur : « Inclure mon micro » et son contrôle sur une seule ligne.
+
+// ⚠️ **La même surface qu'un select**, par le mixin partagé — pas des valeurs recopiées : deux
+// jeux de valeurs pour un même aspect divergent au premier ajustement.
+
+// ⚠️ **Moins haute qu'un select** : l'interrupteur mesure 22 px là où une ligne de texte en
+// mesure 20. Reprendre le rembourrage du select ferait une carte visiblement plus grande que
+// ses voisines pour un contrôle plus petit.
+.switch-field {
+  @include field-surface;
+
+  // ⚠️ **Serré contre le sélecteur au-dessus** : les deux ne font qu'un
+  // champ — ce qu'on capte, et si l'on s'y ajoute. L'écart d'un groupe à l'autre (30 px) les
+  // aurait fait lire comme deux réglages sans rapport.
+  margin-top: 8px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 14px;
+}
+
+.sf-label {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+}

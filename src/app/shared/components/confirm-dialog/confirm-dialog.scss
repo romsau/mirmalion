@@ -1,0 +1,16 @@
+// Le contenu d'une confirmation : un message, deux actions. Le cadre, l'en-tête et le
+// comportement viennent de `ModalContainer` — rien de tout cela n'est répété ici.
+
+@use 'abstracts/mixins' as *;
+
+.message {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+// Le message est court : la rangée respire davantage que dans une modale de formulaire, où un
+// champ la précède.
+.actions {
+  @include modal-actions(8px, 20px);
+}

@@ -1,0 +1,23 @@
+<!--
+  La barre entière est le bouton : cliquer n'importe où ferme. `role="alert"` et
+  `aria-live="assertive"` sont sur le conteneur et non sur le bouton — c'est le conteneur qui
+  doit exister avant le message pour que le lecteur d'écran annonce son apparition.
+-->
+<div class="snackbar" role="alert" aria-live="assertive">
+  <button
+    type="button"
+    class="snack"
+    i18n-aria-label="@@snackbar.dismiss"
+    aria-label="Fermer la notification"
+    (click)="dismiss()"
+    (mouseenter)="pause()"
+    (mouseleave)="resume()"
+    (focus)="pause()"
+    (blur)="resume()"
+  >
+    @if (icon(); as name) {
+      <app-icon class="snack-ico" [name]="name" />
+    }
+    <span class="snack-msg">{{ message() }}</span>
+  </button>
+</div>

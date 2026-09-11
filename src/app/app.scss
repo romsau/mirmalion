@@ -1,0 +1,10 @@
+// La racine ne fait que router : elle occupe la fenêtre, et rien de plus.
+
+// ⚠️ **Aucun style d'application ici.** La mise en page appartient à `WindowShell` —
+// et les fenêtres secondaires à venir, qui ne la traversent pas, ne doivent hériter d'aucune
+// marge ni d'aucun cadre posé à ce niveau.
+
+:host {
+  display: block;
+  height: 100%;
+}

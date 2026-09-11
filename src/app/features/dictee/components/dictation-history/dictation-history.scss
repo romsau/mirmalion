@@ -1,0 +1,31 @@
+// L'invitation de l'historique vide — maquette : `.hist-empty` de l'écran `dictee`.
+
+// ⚠️ **Seul le CONTENU est ici** ; le cadre (`.hist-empty`) appartient au panneau. Les trois
+// règles communes (icône, titre, phrase) ont rejoint `styles/abstracts/_mixins.scss` le jour où
+// la session a projeté la sienne — comme ce commentaire l'annonçait. Ce qui reste ci-dessous
+// est **propre à la dictée** : le rendu des deux touches du raccourci.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  display: contents;
+
+  @include history-empty-content;
+}
+
+.he-kbd {
+  display: inline-flex;
+  gap: 3px;
+  vertical-align: middle;
+
+  kbd {
+    font: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--key-bg);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 1px 6px;
+  }
+}

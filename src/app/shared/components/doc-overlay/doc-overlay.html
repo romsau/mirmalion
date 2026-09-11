@@ -1,0 +1,12 @@
+<!--
+  La boîte ne sert qu'à donner sa largeur au bloc de progression, qui occupe la place qu'on lui
+  laisse. Sans elle, la barre traverserait toute la fenêtre.
+-->
+<div class="dl-box">
+  <app-progress-bar
+    [label]="label()"
+    [progress]="progress()"
+    [cancellable]="cancellable()"
+    (cancelled)="cancelled.emit()"
+  />
+</div>

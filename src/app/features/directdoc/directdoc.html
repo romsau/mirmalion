@@ -1,0 +1,74 @@
+<!--
+  La barre de titre, réduite à l'identité : `current` reste à `null`, donc **aucune navigation**.
+  Une fenêtre-document n'a pas les écrans de la fenêtre principale.
+-->
+<app-header />
+
+<!--
+  ⚠️ **`.done` PORTE `position: relative`**, et c'est lui l'ancêtre positionné du voile :
+  `app-doc-overlay` se pose en `position: absolute` pour être borné à cette fenêtre.
+-->
+<!--
+  ⚠️ **`<main>` et non `<div>`** : sans repère de page, tout le contenu de la fenêtre-document
+  se trouvait hors de tout point d'atterrissage pour un lecteur d'écran. Même motif — et même
+  angle mort de la suite de tests — que le `<main>` de `WindowShell` : la règle `region` d'AXE
+  ne s'évalue que sur une page entière, jamais sur le fragment qu'analyse un spec.
+-->
+<main class="done">
+  @if (veiled()) {
+    <!--
+      ⚠️ **UN SEUL VOILE POUR DEUX ATTENTES, ET SON LIBELLÉ DOIT CHANGER.** Un « Chargement… »
+      unique laisserait croire à un seul traitement, et l'attente d'une génération se lirait comme
+      celle d'une finalisation. Le libellé nomme donc l'**étape en cours**, et la barre compte les
+      étapes franchies — jamais un temps restant.
+
+      ⚠️ **La finalisation n'offre AUCUN Annuler** : l'audio est déjà capté, il n'y a plus rien à
+      renoncer, et abandonner ne rendrait que le transcript brut — moins bien pour le même prix.
+      C'est `cancellable()` qui tient cette différence, et elle vaut aussi **au-delà** du seuil de
+      2,5 s de `ProgressBar` : le bouton n'apparaît jamais, il n'est pas seulement retardé.
+-->
+    <app-doc-overlay
+      [label]="veilLabel()"
+      [progress]="progress()"
+      [cancellable]="cancellable()"
+      (cancelled)="cancel()"
+    />
+  }
+
+  <!--
+    ⚠️ **DEUX PANNEAUX, UN SEUL À LA FOIS, ET LA CHARPENTE NE BOUGE PAS ENTRE EUX** : tête,
+    barre, filet, contenu, aux mêmes endroits. Ce qui change est ce que la barre porte.
+-->
+  @if (recording()) {
+    <app-direct-recording
+      [title]="title()"
+      [meta]="meta()"
+      [elapsedSeconds]="elapsedSeconds()"
+      [level]="level()"
+      [stopping]="stopping()"
+      [lines]="liveLines()"
+      [pending]="pending()"
+      [translations]="translations()"
+      [sourceLanguage]="spokenName()"
+      [targetLanguage]="translationTarget()"
+      (stop)="stop()"
+      (renamed)="rename($event)"
+    />
+  } @else {
+    <app-direct-document
+      [title]="title()"
+      [meta]="meta()"
+      [sections]="sections()"
+      [lines]="lines()"
+      [kind]="kind()"
+      [kinds]="kinds()"
+      [transcriptTarget]="transcriptTarget()"
+      [reportTarget]="reportTarget()"
+      [busy]="working()"
+      (renamed)="rename($event)"
+      (kindChange)="chooseKind($event)"
+      (exported)="pickExport($event)"
+      (translate)="translateTo($event)"
+    />
+  }
+</main>

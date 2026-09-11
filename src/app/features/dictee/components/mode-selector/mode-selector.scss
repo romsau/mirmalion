@@ -1,0 +1,84 @@
+// Porté depuis `.mode-row`, `.mode-card`, `.mode-btn`, `.hint`, `.keys` et `.key` de
+// `docs/ui/ui.html`.
+
+// ⚠️ **`.mode-btn` n'est PAS le bouton unique de l'application**, et c'est délibéré : au repos
+// il n'a aucun fond, là où `Button` en pose un teinté. Voir l'en-tête du composant —
+// la maquette dessine trois motifs de contrôle, celui-ci est le troisième.
+
+@use 'abstracts/mixins' as *;
+
+.mode-row {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
+// La carte creusée qui contient les deux choix. `flex: 0 0 auto` : elle prend la largeur de
+// son libellé le plus long, et laisse tout le reste à l'indice.
+.mode-card {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  // ⚠️ Le remplissage de la carte, à ne pas confondre avec le `gap` : celui-ci écarte les deux
+  // choix l'un de l'autre, celui-là les écarte du bord. Les deux choix étaient à l'étroit
+  // contre leur cadre.
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-soft);
+  gap: 6px;
+}
+
+.mode-btn {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  gap: 8px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+
+  app-icon {
+    width: 15px;
+    height: 15px;
+    flex: none;
+  }
+
+  // ⚠️ **Le survol teinte le fond, il ne le REMPLIT pas.** Une simple bascule d'encre était un
+  // signal trop faible — rien ne disait « cliquable ». Et surtout, pas
+  // le fond plein du bouton unique : ce serait exactement l'apparence du choix actif, et
+  // pendant le survol les deux paraîtraient sélectionnés. `Segmented` suit la même règle —
+  // c'est le même motif, il ne peut pas avoir deux survols.
+  &:hover:not(.is-active) {
+    background: var(--accent-50);
+    color: var(--accent-ink);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &.is-active {
+    background: var(--accent);
+    color: var(--accent-on);
+  }
+}
+
+// L'indice : les deux touches, puis la phrase qui suit le mode.
+//
+// ⚠️ Tout son dessin — encadré, touches, symbole, phrase — vit dans `shortcut-hint` : il est
+// partagé avec l'indice du second raccourci, sous le champ Traduction.
+.hint {
+  @include shortcut-hint;
+}

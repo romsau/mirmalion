@@ -1,0 +1,177 @@
+// La ligne d'enregistrement — portée depuis `.live-actions`, `.rec-badge`, `.meter` et
+// `.rec-stop` de `docs/ui/ui.html`.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  display: contents;
+}
+
+// ⚠️ **Le point et le minuteur ne font qu'un objet.** Posés nus côte à côte, ils flottaient
+// dans la barre sans rien
+// pour les tenir, et le point rouge se lisait comme une décoration détachée. La pastille les
+// relie : « ça enregistre, depuis ce temps-là » est UNE information.
+
+// ⚠️ **Sa hauteur est celle du bouton d'en face (38 px)** — c'est ce qui rend la barre droite.
+// Deux objets de hauteurs voisines mais inégales se voient immédiatement.
+.rec-badge {
+  display: inline-flex;
+  min-height: 38px;
+  box-sizing: border-box;
+  align-items: center;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  gap: 11px;
+  min-width: 0;
+}
+
+// La pastille rouge qui bat. ⚠️ Le battement s'arrête pour qui n'en veut pas — l'information,
+// elle, reste portée par la couleur et par le chrono qui avance.
+.rec-live {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--danger);
+  flex: none;
+  animation: rec-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes rec-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--danger) 50%, transparent);
+  }
+
+  50% {
+    opacity: 0.4;
+    box-shadow: 0 0 0 5px transparent;
+  }
+}
+
+// `tabular-nums` : sans lui, les chiffres de largeur variable font sautiller le chrono à
+// chaque seconde.
+.rec-timer {
+  font-variant-numeric: tabular-nums;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+// ⚠️ **12 px entre la pastille et le niveau** — ils décrivent la même chose, l'enregistrement qui
+// tourne, et se lisent d'un bloc. Les 18 px avant « Arrêter » sont posés sur le BOUTON, pas sur ce
+// `gap` : un `gap` unique les aurait tous écartés pareil, et la pastille aurait décroché du niveau.
+.live-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex: none;
+}
+
+// ⚠️ **Le niveau est CENTRÉ sur la ligne, et sa boîte est plus basse que ses voisins** : les
+// barres poussent depuis leur propre base, et une boîte à la hauteur du bouton les collerait au
+// bas de la barre. 20 px centrés les posent au milieu, où l'œil les attend.
+
+// ⚠️ **Largeur fixe** : sans elle, la boîte se rétrécirait au gré des barres et « Arrêter »
+// glisserait de quelques pixels à chaque relevé.
+.meter {
+  display: inline-flex;
+  width: 27px;
+  height: 20px;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  flex: none;
+
+  // ⚠️ **`scaleY(var(--meter))`, et non une hauteur calculée** : une transformation ne
+  // provoque ni recalcul de disposition ni repeinture du voisinage, là où écrire `height` dix
+  // fois par seconde sur cinq éléments en provoquerait à chaque relevé.
+  i {
+    width: 3px;
+    border-radius: 2px;
+    background: var(--accent);
+    transform-origin: bottom;
+    transform: scaleY(var(--meter, 0.06));
+
+    // Assez court pour ne pas retarder l'information, assez long pour lisser le pas de
+    // relevé — sans quoi le mètre avancerait par saccades de 100 ms.
+    transition: transform 0.09s linear;
+  }
+
+  // Les cinq hauteurs de la maquette, conservées : c'est la silhouette de l'égaliseur. Les
+  // décalages d'animation, eux, sont partis avec l'animation — voir l'en-tête du composant.
+  i:nth-child(1) {
+    height: 45%;
+  }
+
+  i:nth-child(2) {
+    height: 75%;
+  }
+
+  i:nth-child(3) {
+    height: 100%;
+  }
+
+  i:nth-child(4) {
+    height: 60%;
+  }
+
+  i:nth-child(5) {
+    height: 85%;
+  }
+}
+
+// ⚠️ **Ce qui disparaît ici est l'interpolation, pas la mesure.** Les barres continuent de
+// suivre le son — c'est une donnée, pas un ornement — mais elles y vont d'un coup, sans
+// mouvement fabriqué entre deux relevés. La pastille, elle, cesse de battre : son battement
+// n'informe de rien que la couleur et le chrono ne disent déjà.
+@media (prefers-reduced-motion: reduce) {
+  .rec-live {
+    animation: none;
+  }
+
+  .meter i {
+    transition: none;
+  }
+}
+
+// ⚠️ **BLEU, PAS ROUGE**. **Tous** les boutons de l'application prennent
+// la couleur d'accent, sans exception. Le rouge disait « danger » là où il n'y en a pas : arrêter
+// une session est le déroulement normal, pas un accident — et son jumeau de l'écran déclencheur
+// était déjà à l'accent. Deux boutons pour un même geste, deux couleurs : c'est ce qui se voyait.
+
+// ⚠️ **L'exception de taille se pose en deux niveaux de sélecteur**, et ce piège a mordu deux
+// FOIS.** Le bloc des boutons unifiés pose `min-height: var(--btn-h)` (32 px) ; à spécificité
+// égale, c'est LUI qui gagne, et « Arrêter » retombe six pixels sous la pastille d'à côté.
+// `.fprog .fprog-cancel` porte la même note pour la même raison.
+// ⚠️ **Carré, parce qu'il n'a plus de mot** : la règle des boutons du
+// projet veut qu'une icône seule tienne dans un carré. Les 38 px restent ceux de la pastille et
+// de la carte d'en face — c'est la LARGEUR qui tombe, d'environ 110 px à 38, pas la hauteur, qui
+// tient l'alignement de toute la barre.
+.live-actions .rec-stop {
+  width: 38px;
+  min-height: 38px;
+  margin-left: 18px;
+}
+
+.rec-stop {
+  @include unified-button;
+
+  padding: 0;
+  gap: 0;
+
+  // ⚠️ **`unified-button` CENTRE VERTICALEMENT, PAS HORIZONTALEMENT** — il pose `align-items`
+  // et rien d'autre. Tant que le bouton portait un mot, son rembourrage latéral faisait
+  // illusion ; réduit à une icône dans une largeur imposée, le carré s'est collé au bord gauche
+  //. Tout bouton à icône seule doit donc l'ajouter lui-même.
+  justify-content: center;
+
+  .sq {
+    width: 11px;
+    height: 11px;
+    border-radius: 2px;
+    background: currentcolor;
+    flex: none;
+  }
+}

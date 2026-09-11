@@ -1,0 +1,92 @@
+// Le panneau document de la fenêtre-session — porté depuis `[data-dd-panel="done"]` de
+// `docs/ui/ui.html`.
+
+// ⚠️ **`display: contents` sur l'hôte, et ce n'est pas cosmétique** : la coquille est une colonne
+// flex dont le contenu, seul, défile. Un hôte en `block` s'interposerait entre les deux et le
+// `flex: 1` de `.done-content` n'aurait plus de parent à remplir — le transcript déborderait au
+// lieu de défiler.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  @include document-panel;
+
+  display: contents;
+}
+
+// L'état « rien à montrer ». Discret : c'est une information, pas une erreur.
+.doc-empty {
+  margin: auto;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+// La bascule vers le transcript. ⚠️ **Elle n'est plus dans la rangée du titre** : une fois les
+// locuteurs retirés, collée au titre elle donnait un bloc de gauche déséquilibré et un large vide
+// à droite. Enfant direct de la tête, le `space-between` la pousse au bord — le même bord que le
+// sélecteur d'export de la barre en dessous.
+
+// ⚠️ **Un `Button` et rien d'autre** : elle ne redéfinit ni coins, ni graisse, ni taille
+// d'icône. Elle en portait trois, héritées d'un second patron de bouton, et c'est ce qui la
+// faisait détonner. `flex: none` seul reste — la tête est une rangée qui la comprimerait.
+.tr-toggle {
+  flex: none;
+}
+
+// Le sélecteur d'export de la barre d'actions. ⚠️ **C'est le `flex: 1` de `.cr-row` qui le
+// pousse au bord droit**, sans marge automatique : le type et la langue disent ce que le
+// document *est*, « Exporter » dit ce qu'on en *fait* — d'où cette seule commande au bord.
+.export {
+  @include document-export-select;
+}
+
+// ⚠️ 12, valeur de la maquette — il avait dérivé à 10.
+.cr-row {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 12px;
+}
+
+// La largeur du sélecteur, écrite en ligne dans la maquette (`style="width: 190px"`) : c'est de
+// la mise en page, elle appartient à qui pose le contrôle.
+.cr-kind {
+  width: 190px;
+}
+
+// Idem — `style="width: 185px"` sur `#done-translate` dans la maquette.
+.cr-translate {
+  width: 185px;
+}
+
+// Les rubriques du compte rendu — `.cr-section`, `.cr-h`, `.cr-p`, `.cr-list` de la maquette.
+.cr-section + .cr-section {
+  margin-top: 20px;
+}
+
+.cr-h {
+  margin: 0 0 8px;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.cr-p {
+  margin: 0;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.cr-list {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.55;
+
+  li + li {
+    margin-top: 5px;
+  }
+}

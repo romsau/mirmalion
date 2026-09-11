@@ -1,0 +1,38 @@
+<!--
+  ⚠️ **Aucun libellé visible, et l'`aria-label` est ce qui rend le retrait acceptable** : le texte
+  d'attente disparaît à la première frappe, et un champ rempli n'aurait plus aucun nom accessible.
+  Les deux portent donc le même texte, et changer l'un sans l'autre laisse un champ anonyme.
+
+  ⚠️ Pas de compteur : la borne est celle de la base, à 120 caractères, et aucun mot ne l'approche
+  — annoncer ce budget parlerait d'une limite qui ne concerne personne.
+-->
+<app-text-field
+  class="dwf-field"
+  [value]="term()"
+  [maxLength]="maxLength"
+  [showCounter]="false"
+  placeholder="Le mot correct, par exemple WhatsApp"
+  i18n-placeholder="@@dictionary.word.term"
+  ariaLabel="Le mot correct, par exemple WhatsApp"
+  i18n-ariaLabel="@@dictionary.word.term"
+  (valueChange)="writeTerm($event)"
+/>
+
+<app-text-field
+  class="dwf-field"
+  [value]="said()"
+  [maxLength]="maxLength"
+  [showCounter]="false"
+  placeholder="Ce que la dictée écrit à la place, par exemple what's up"
+  i18n-placeholder="@@dictionary.word.said"
+  ariaLabel="Ce que la dictée écrit à la place, par exemple what's up"
+  i18n-ariaLabel="@@dictionary.word.said"
+  (valueChange)="writeSaid($event)"
+/>
+
+<div class="dwf-actions">
+  <app-button variant="neutral" (click)="cancel()" i18n="@@common.cancel">Annuler</app-button>
+  <app-button [disabled]="!canAdd()" (click)="add()" i18n="@@dictionary.word.submit"
+    >Ajouter</app-button
+  >
+</div>

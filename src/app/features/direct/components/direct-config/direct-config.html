@@ -1,0 +1,130 @@
+<!--
+  L'ordre est celui de la maquette, et il suit l'ordre de la décision : ce qu'on capte, avec
+  quel micro, dans quelle langue, puis ce qu'on veut en tirer.
+
+  ⚠️ Le libellé visible et le nom accessible sont écrits **deux fois**, avec le même `@@id` —
+  donc une seule unité à traduire, mais une duplication réelle. C'est le motif déjà retenu par
+  la colonne de dictée et par les lignes de réglage.
+  ⚠️ **IL EXIGE QUE LES DEUX TEXTES SOIENT IDENTIQUES AU CARACTÈRE PRÈS**, balisage compris —
+  sans quoi les deux emplois lisent la même traduction et l'un des deux est faux. Voir le premier
+  groupe ci-dessous, où ce défaut a été livré.
+-->
+<div class="rc-controls">
+  <!--
+    ⚠️ **Le seul astérisque de l'écran**, qui marque le seul champ sans valeur par défaut.
+    `aria-hidden` parce qu'il ne se lit pas : c'est le placeholder qui porte l'obligation pour un
+    lecteur d'écran, et c'est pour cela qu'il dit « (obligatoire) » en toutes lettres.
+
+    ⚠️ **Le balisage porte sur le texte seul, pas sur le `<p>`.** Posé sur le paragraphe, le
+    `i18n` avalait l'astérisque : `@@direct.source` valait deux textes, et le nom accessible en
+    héritait dans les cinq langues traduites — invisible en français, la locale source ne
+    substituant rien. `check-i18n.mjs` garde désormais cette porte.
+-->
+  <div class="group">
+    <p class="label">
+      <span i18n="@@direct.source">Source audio</span><span class="req" aria-hidden="true">*</span>
+    </p>
+    <!--
+      ⚠️ **`[value]` et `(valueChange)` écrits à la main, pas `[(value)]`.** La valeur du champ
+      peut être `null` — aucune source choisie — et la banane-en-boîte ne saurait pas la porter.
+      La chaîne vide ne correspond à aucune option : le placeholder s'affiche, estompé.
+-->
+    <app-combo-select
+      [options]="sourceOptions()"
+      [value]="sourceId() ?? ''"
+      (valueChange)="sourceId.set($event)"
+      placeholder="Choisir une source (obligatoire)"
+      i18n-placeholder="@@direct.source.placeholder"
+      [disabled]="recording()"
+      ariaLabel="Source audio"
+      i18n-ariaLabel="@@direct.source"
+    />
+
+    <!--
+      ⚠️ **« Inclure mon micro » appartient à « Source audio »** : ce
+      n'est pas une rubrique de plus, c'est le **libellé d'un interrupteur** — on complète la
+      source captée par sa propre voix. D'où sa place sous le sélecteur, dans le même groupe, et
+      un libellé qui ne porte PAS le style des intitulés de section.
+
+      ⚠️ La carte reprend la surface d'un select — même fond, même filet, même rayon — pour que
+      la colonne se lise comme une colonne de champs.
+-->
+    <div class="switch-field">
+      <span class="sf-label" i18n="@@direct.mic.include">Inclure mon micro</span>
+      <app-switch
+        [checked]="includeMicrophone()"
+        (checkedChange)="includeMicrophone.set($event)"
+        [disabled]="recording()"
+        ariaLabel="Inclure mon micro dans l'enregistrement"
+        i18n-ariaLabel="@@direct.mic.includeAria"
+      />
+    </div>
+  </div>
+
+  <div class="group">
+    <p class="label" i18n="@@dictee.language">Langue parlée</p>
+    <app-combo-select
+      [options]="languageOptions()"
+      [(value)]="language"
+      [actionLabel]="actionLabel"
+      (action)="languageOptionsRequested.emit('spoken')"
+      [disabled]="recording()"
+      ariaLabel="Langue parlée"
+      i18n-ariaLabel="@@dictee.language"
+    />
+  </div>
+
+  <!--
+    ⚠️ **La paire de langues se vérifie ici, avant « Démarrer », jamais pendant.** Apple présente
+    sa propre feuille pour installer une paire, et elle exige un hôte SwiftUI dans une fenêtre
+    visible : au milieu d'une session, c'est impossible.
+
+    ⚠️ « Pas de traduction » est verrouillé et toujours offert : on doit pouvoir ne rien traduire
+    même sans cible activée. Le compte rendu se fabrique toujours sur l'**original**.
+-->
+  <div class="group">
+    <p class="label" i18n="@@dictee.translation">Traduction</p>
+    <app-combo-select
+      [options]="translationOptions()"
+      [(value)]="translationTarget"
+      [actionLabel]="actionLabel"
+      (action)="languageOptionsRequested.emit('translation')"
+      [disabled]="recording()"
+      ariaLabel="Traduire vers"
+      i18n-ariaLabel="@@common.translateTo"
+    />
+  </div>
+
+  <!--
+    ⚠️ **Le type de compte rendu a quitté cet écran, et sa zone de prompt avec lui.** Il se
+    fabrique **après** le direct, et le choix vit à deux endroits seulement : la fenêtre-session,
+    où il se change à volonté, et Options ▸ Direct, qui dit lequel est *proposé* par défaut.
+
+    ⚠️ Corollaire : l'arrêt d'un direct ne génère **rien**. Il mène au transcript, et le compte
+    rendu devient un geste. Ne pas remettre un sélecteur ici en voyant que la fenêtre en a un.
+--></div>
+
+<!--
+  ⚠️ **Le bouton est désactivé, pas masqué**, tant qu'aucune source n'est choisie : un bouton qui
+  disparaît ne dit pas ce qui manque. `disabled` est annoncé, le grisé seul ne l'est pas.
+
+  ⚠️ **Un seul bouton qui bascule, et le minuteur est dedans** : c'est le même geste au même
+  endroit, et deux boutons superposés déplaceraient le point de clic. Posé à côté, le minuteur ne
+  disait pas qu'il comptait ce qu'on s'apprête à arrêter.
+
+  ⚠️ `aria-hidden` sur le minuteur : annoncer la seconde qui passe serait un bavardage sans fin.
+-->
+<div class="rc-footer">
+  @if (recording()) {
+    <button type="button" class="rc-stop" [disabled]="inert()" (click)="stop.emit()">
+      <span class="rc-square" aria-hidden="true"></span>
+      <span i18n="@@common.stop">Arrêter</span>
+      <span class="rc-timer" aria-hidden="true">{{ elapsed() }}</span>
+    </button>
+  } @else {
+    <button type="button" class="rec-start" [disabled]="inert()" (click)="start.emit()">
+      <span class="rec-dot" aria-hidden="true"></span>
+      <span i18n="@@direct.start">Démarrer l'enregistrement</span>
+    </button>
+  }
+</div>

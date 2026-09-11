@@ -1,0 +1,181 @@
+// Le transcript live.
+
+// ⚠️ **Ce n'est plus une liste de répliques, c'est un flux de texte.**
+// La maquette dessine ici des lignes à pastille, comme la fenêtre-document ; le direct n'affiche
+// plus de locuteur, donc plus de pastille, donc plus de colonne. Le patron partagé
+// `transcript-lines` reste employé par la fenêtre-document, qui a toujours ses locuteurs.
+
+@use 'abstracts/mixins' as *;
+
+// ⚠️ **L'hôte EST le conteneur qui défile** — voir le décorateur du composant, qui dit pourquoi
+// il n'y a pas de div à l'intérieur.
+
+// ⚠️ **`flex: 1` et `min-height: 0`, les deux.** Sans le second, un conteneur en `flex` refuse
+// de descendre sous la hauteur de son contenu : le texte pousserait l'écran au lieu de défiler,
+// et le bandeau d'enregistrement sortirait par le haut.
+:host {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+  padding: 16px 4px 8px;
+  overflow-y: auto;
+}
+
+// ⚠️ **Colonnes de largeur ÉGALE** (`1fr 1fr`) : une traduction est plus longue ou plus courte
+// que son original selon la langue, et laisser les colonnes se dimensionner sur leur contenu
+// ferait bouger la frontière à chaque paragraphe qui tombe.
+.tr-cols {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 48px;
+  align-items: start;
+  min-height: 0;
+}
+
+.tr-cols.is-single {
+  grid-template-columns: 1fr;
+}
+
+.tr-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+// ⚠️ **Le filet se pose au milieu de la gouttière, pas à son bord.**
+// Le calcul est en trois temps et il doit rester
+// cohérent : la gouttière fait **48**, le décalage négatif ramène le filet à **24** du texte de
+// gauche, et le rembourrage repousse le texte de droite de **24**. Changer l'un des trois sans
+// les autres recolle une colonne au filet.
+.tr-col + .tr-col {
+  border-left: 1px solid var(--line);
+  padding-left: 24px;
+  margin-left: -24px;
+}
+
+// ⚠️ **Collant** : au bout de trois paragraphes on ne sait plus quelle colonne on lit. Le fond
+// opaque est **obligatoire** — sans lui, le texte défile derrière l'en-tête.
+.tr-col-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin: 0;
+  padding: 2px 0 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+// Le rôle, en second : il lève l'ambiguïté quand les deux langues se ressemblent à l'œil.
+.tr-col-head span {
+  margin-left: 6px;
+  color: var(--muted);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+// Un paragraphe du transcript, coupé aux silences de la session.
+// ⚠️ **Le définitif est un cran plus appuyé que le provisoire**, en plus d'être plus sombre :
+// la clarté seule ne pouvait pas porter la distinction (voir `.tpar-live`).
+.tpar {
+  margin: 0;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 450;
+  line-height: 1.6;
+}
+
+// ⚠️ **Ce qui n'est pas encore sûr ne se lit pas comme ce qui l'est.**
+
+// Une transcription en direct affiche des prédictions qu'elle révise ensuite : le phénomène a un
+// nom (*text instability*), une métrique (l'*erasure*) et une littérature — Google, CHI 2023, où
+// 123 participants rapportent distraction et fatigue. Le remède documenté du domaine est de
+// **séparer les deux états visuellement**.
+
+// ⚠️ **C'est ce qui change l'impression de bug en impression de travail en cours.** Un doublon
+// transitoire en texte plein se lit comme une erreur ; le même en atténué se lit comme « le
+// système n'a pas encore tranché » — ce qui est exactement la vérité.
+// ⚠️ **La différence ne passe pas par un gris plus clair**, et c'est une contrainte, pas un
+// CHOIX D'ESTHÈTE.** `--muted` tient **4,9:1** sur `--surface` — à peine au-dessus du minimum
+// WCAG AA de 4,5:1. L'éclaircir ferait passer le texte provisoire **sous le seuil de
+// lisibilité** ; et `--ink` étant déjà presque noir, foncer le définitif n'est pas possible non
+// plus. La marge de manœuvre sur la clarté est donc nulle dans les deux sens.
+
+// ⚠️ **D'où un second canal : le FOND.** Le provisoire est posé sur un aplat léger, ce qui le
+// détache comme une zone de travail — franchement visible, sans toucher au contraste du texte.
+// C'est aussi la bonne pratique d'accessibilité : ne jamais faire porter une distinction à la
+// seule couleur du texte.
+.tpar-live {
+  color: var(--muted);
+  font-weight: 400;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--surface-soft);
+  // ⚠️ **Un fondu à l'apparition, jamais un surgissement.** Google range l'animation parmi ses
+  // trois techniques de stabilisation : ce qui apparaît progressivement se remarque moins que ce
+  // qui surgit, et se laisse donc remplacer sans que l'œil crie à l'erreur.
+  animation: settle-in 160ms ease-out;
+}
+
+@starting-style {
+  .tpar-live {
+    opacity: 0;
+  }
+}
+
+@keyframes settle-in {
+  from {
+    opacity: 0;
+  }
+}
+
+// Le curseur de l'hypothèse en cours. ⚠️ **`step-end`** : un curseur qui se fondrait
+// progressivement ne se lirait plus comme un curseur, mais comme un texte qui s'efface.
+
+// ⚠️ **Sur la DERNIÈRE hypothèse seulement.** Les deux flux peuvent en porter une chacun ; deux
+// curseurs qui clignotent en même temps donnent l'image d'un écran qui a perdu le fil.
+.tpar-live:last-of-type::after {
+  content: '';
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 3px;
+  background: var(--accent);
+  vertical-align: text-bottom;
+  animation: caret 1s step-end infinite;
+}
+
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+// L'invitation des premières secondes. Discrète : elle disparaît au premier mot, et ne doit
+// pas ressembler à un message d'erreur.
+.lt-empty {
+  margin: auto 0;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+// ⚠️ **Ni curseur ni fondu pour qui ne veut pas de mouvement**, mais le texte en cours reste
+// visible et reste atténué : c'est le texte qui porte l'information, pas le clignotement.
+@media (prefers-reduced-motion: reduce) {
+  .tpar-live {
+    animation: none;
+  }
+
+  .tpar-live:last-of-type::after {
+    animation: none;
+  }
+}

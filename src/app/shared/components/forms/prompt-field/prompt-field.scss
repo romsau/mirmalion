@@ -1,0 +1,32 @@
+// Le champ de prompt et son compteur.
+
+@use 'abstracts/mixins' as *;
+
+// ⚠️ **`position: relative` sur l'hôte, et il porte le compteur** : celui-ci se pose en absolu
+// sous le coin bas-droit du champ. Dans le flux, il pousserait ce qui suit et ferait sauter la
+// mise en page à l'apparition du champ.
+:host {
+  position: relative;
+  display: block;
+  padding-bottom: 16px;
+}
+
+.prompt-input {
+  @include prompt-field;
+
+  display: block;
+  resize: vertical;
+}
+
+// ⚠️ **Une ligne ne se redimensionne pas** : la poignée d'un `<textarea>` n'existe pas sur un
+// `<input>`, et `resize` y est sans effet. La règle au-dessus vaut donc pour les deux.
+
+// Le compteur, sous le champ et calé à droite. Discret : il informe, il n'alerte pas.
+.prompt-count {
+  position: absolute;
+  right: 2px;
+  bottom: 0;
+  color: var(--muted);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+}

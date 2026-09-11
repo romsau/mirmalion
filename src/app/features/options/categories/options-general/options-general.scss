@@ -1,0 +1,106 @@
+// Les sous-sections et les pastilles de teinte, portées depuis `.opt-group`, `.opt-section` et
+// `.opt-swatch` de la maquette.
+
+@use 'abstracts/mixins' as *;
+
+// ⚠️ **LES SOUS-SECTIONS SE RÉPARTISSENT SUR TOUTE LA HAUTEUR**, au
+// lieu de s'empiler en haut d'un panneau à moitié vide.
+
+// ⚠️ **D'où l'enveloppe `.opt-group`** : sans elle, `space-between` écarterait les **titres et les
+// rangées** indifféremment, et les trois blocs se désagrégeraient.
+
+// ⚠️ **`min-height` et non `height`** : si le contenu dépasse un jour, la répartition cède la
+// place au défilement normal au lieu de comprimer les rangées.
+:host {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+// ⚠️ **L'intitulé de sous-section ne se survole pas et ne se clique pas** : ce n'est pas une
+// rangée, c'est un titre.
+
+// ⚠️ **Le filet vit ici, sous le titre — et nulle part ailleurs.**
+
+// Découper chaque rangée hachait la page : six traits de même poids ne
+// disaient plus lesquels comptaient.
+
+// ⚠️ **Deux positions essayées avant celle-ci, et il faut savoir pourquoi elles ont échoué** : le
+// trait a d'abord été posé en `border-top` du titre, puis en `border-bottom` du groupe. Le premier
+// s'est fait **pousser** quand les sections se sont réparties sur la hauteur — l'espace s'est
+// inséré entre la dernière rangée et le trait, qui est parti se coller au titre suivant.
+.opt-section {
+  display: flex;
+  margin: 0 0 2px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--line);
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+
+  // Un peu plus grande que la casse du titre : à 12 px de haut elle serait illisible, ses traits
+  // se confondant avec la graisse des lettres.
+  app-icon {
+    width: 15px;
+    height: 15px;
+    flex: none;
+    color: var(--muted);
+  }
+}
+
+// ⚠️ **Une largeur FIXE, pas `flex: 1`**. À prendre toute la place
+// restante, le sélecteur devenait visiblement plus grand que tous les autres des Options sans que
+// rien ne le justifie ; à 210 px il tronquait sa propre valeur — « Micro système (par dé… » —,
+// c'est-à-dire le pire cas possible pour un champ, celui où l'on ne peut pas lire ce qui est déjà
+// choisi. 330 px tient les noms de périphériques réels.
+
+// ⚠️ **La même valeur qu'Options ▸ Direct** : deux largeurs voisines se verraient l'une à côté de
+// l'autre en passant d'une famille à l'autre au rail.
+.opt-ctl-sel {
+  width: 330px;
+  flex: none;
+}
+
+// Deux rangées de huit, alignées à droite comme tous les autres contrôles de ligne.
+
+// ⚠️ **`max-content` et non `1fr`** : à `1fr` les colonnes se partagent la largeur restante et
+// les pastilles s'écartent jusqu'au libellé. Elles doivent rester groupées en bout de ligne.
+.swatches {
+  display: grid;
+  justify-content: end;
+  gap: 9px;
+  grid-template-columns: repeat(8, max-content);
+}
+
+// ⚠️ **La couleur vient d'un style en ligne**, pas d'un jeton : c'est la seule exception de
+// l'application, et elle est inhérente à un nuancier — on y montre les seize teintes *en même
+// temps*, alors que `var(--accent)` n'en désigne qu'une, celle qui est active. La table qui les
+// porte est générée et vérifiée en contraste (`accent-palette.ts`).
+.swatch {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  // Le liseré intérieur détache les teintes sombres du fond sombre, où elles se fondraient.
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 14%);
+  cursor: pointer;
+  transition: box-shadow 0.12s ease;
+}
+
+// L'anneau de sélection : un liseré de surface, puis l'encre d'accent. ⚠️ **Deux ombres et non
+// une bordure** — une bordure agrandirait la pastille et ferait sauter la grille d'un pixel.
+.swatch.is-active {
+  box-shadow:
+    0 0 0 2px var(--surface),
+    0 0 0 4px var(--accent-ink);
+}
+
+.swatch:focus-visible {
+  @include focus-ring(2px, 3px);
+}

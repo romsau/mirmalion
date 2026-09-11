@@ -1,0 +1,29 @@
+// Le champ d'une ligne et son compteur.
+
+@use 'abstracts/mixins' as *;
+
+// ⚠️ **`position: relative` sur l'hôte, et il porte le compteur** : celui-ci se pose en absolu
+// sous le coin bas-droit du champ. Dans le flux, il pousserait ce qui suit et ferait sauter la
+// mise en page à l'apparition du champ.
+:host {
+  position: relative;
+  display: block;
+  padding-bottom: 16px;
+}
+
+.field-input {
+  @include text-field-surface;
+
+  display: block;
+  width: 100%;
+}
+
+// Le compteur, sous le champ et calé à droite. Discret : il informe, il n'alerte pas.
+.field-count {
+  position: absolute;
+  right: 2px;
+  bottom: 0;
+  color: var(--muted);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+}

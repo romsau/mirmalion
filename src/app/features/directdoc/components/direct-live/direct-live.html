@@ -1,0 +1,53 @@
+<!--
+  ⚠️ **UN SEUL GROUPE, ET NON QUATRE OBJETS ALIGNÉS**. Tout ce qui est
+  ici parle de l'enregistrement en cours : depuis combien de temps, qu'on entend quelque chose, et
+  comment l'arrêter. Ce qui règle une **vue** — « Afficher l'original » — se pose à l'autre
+  bout de la ligne, hors de ce groupe.
+
+  ⚠️ **L'écart avant « Arrêter » est INTERNE au groupe** : le bouton n'en sort pas, il s'y
+  détache. Collé au niveau, il se lisait comme sa commande ; sorti du groupe, il aurait perdu ce
+  dont il parle.
+
+  ⚠️ **Le chrono est en `aria-hidden`.** Sans cela un lecteur d'écran annoncerait la seconde qui
+  passe, indéfiniment — même piège que la pilule. Ce qui doit être annoncé — qu'on enregistre, et
+  sur quoi — l'est par la méta de l'en-tête, qui ne change pas.
+-->
+<div class="live-actions">
+  <div class="rec-badge">
+    <span class="rec-live" aria-hidden="true"></span>
+    <span class="rec-timer" aria-hidden="true">{{ elapsed() }}</span>
+  </div>
+
+  <!--
+    ⚠️ **`aria-hidden` bien qu'il ne soit plus décoratif** — voir l'en-tête du composant : un
+    niveau qui change dix fois par seconde ne se restitue pas à la voix, et ce qu'il faut
+    annoncer l'est déjà par la méta de l'en-tête.
+
+    ⚠️ **Le niveau passe par une variable CSS, pas par cinq liaisons de style.** Les cinq
+    barres partagent la même mesure : la donner une fois au conteneur évite cinq écritures
+    dans le DOM à chaque relevé, dix fois par seconde, pendant deux heures de session.
+-->
+  <span class="meter" aria-hidden="true" [style.--meter]="meter()">
+    @for (bar of bars; track bar) {
+      <i></i>
+    }
+  </span>
+
+  <!--
+    ⚠️ **Icône seule, et le nom accessible devient le seul porteur du sens.** `aria-label` n'est
+    donc pas une formalité : sans lui, un lecteur d'écran annoncerait « bouton », sans plus.
+
+    ⚠️ Le déclencheur, lui, garde son libellé : au repos, un écran qui n'offrirait qu'un carré ne
+    dirait pas ce qu'il fait. Ici le contexte est sans ambiguïté, le chrono tournant à côté.
+-->
+  <button
+    type="button"
+    class="rec-stop"
+    [disabled]="stopping()"
+    (click)="stop.emit()"
+    i18n-aria-label="@@common.stop"
+    aria-label="Arrêter"
+  >
+    <span class="sq" aria-hidden="true"></span>
+  </button>
+</div>

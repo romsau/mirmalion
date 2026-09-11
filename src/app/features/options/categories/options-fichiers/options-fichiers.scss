@@ -1,0 +1,66 @@
+// Porté depuis `.body[data-fstate="import"]` et `[data-fstate="live"]` de `docs/ui/ui.html` —
+// `.fichiers-import`, `.fi-drop-wrap`, `.fprog` et `.dz-langs`. Les deux états partagent le même
+// cadre : seule la zone centrale change.
+
+@use 'abstracts/mixins' as *;
+
+// ⚠️ `screen-frame` et **pas** `screen-body` : la famille vit dans le panneau des Options, qui
+// rembourre déjà son contenu (`.content` d'`options.scss`). Les deux s'additionnaient — 48 px de
+// marge latérale au lieu de 24. `min-height` rend la hauteur que le panneau ne transmet pas,
+// sans quoi la zone de dépôt s'effondre sur son texte. Mesuré par `options-fichiers.layout.spec.ts`.
+:host {
+  @include screen-frame;
+
+  min-height: 100%;
+
+  // La teinte n'apparaît **que** pendant un glisser réel — jamais au survol de la souris. La
+  // transition la fait monter et descendre en fondu, comme dans la maquette.
+  transition: background 0.15s ease;
+}
+
+// ⚠️ **Le fond teinté est un JETON, et il diffère d'un thème à l'autre** : 6 % d'accent en
+// clair, 16 % en sombre. La maquette l'écrit en deux règles, l'une sous `:root[data-theme]` —
+// intraduisible tel quel dans un composant, dont les styles sont encapsulés. Le jeton résout
+// les deux à la fois : c'est le thème qui décide de sa valeur, comme pour `--hover-tint`.
+:host(.is-drag) {
+  background: var(--drop-tint);
+}
+
+// L'espace entre la zone de dépôt et la phrase des langues, et rien d'autre : la zone prend
+// tout ce qui reste (`flex: 1` sur son propre hôte).
+.fi-drop-wrap {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  padding: 0 4px;
+  gap: 10px;
+}
+
+// L'état « en cours », porté depuis `.fprog` de `docs/ui/ui.html`. Le bloc de progression est le
+// composant générique, **nu** : le centrage et le rembourrage appartiennent à l'écran, pas à lui.
+.fi-progress {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px;
+}
+
+// ⚠️ **La largeur se pose sur l'hôte, pas sur la barre** : le composant est agnostique de sa
+// boîte, et sa barre occupe 100 % de la place qu'on lui donne. La contraindre de l'extérieur
+// exigerait un `::ng-deep` là où une largeur d'hôte suffit.
+app-progress-bar {
+  width: 340px;
+  max-width: 78%;
+  align-self: center;
+}
+
+.dz-langs {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10.5px;
+  line-height: 1.45;
+  text-align: center;
+}

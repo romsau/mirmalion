@@ -1,0 +1,19 @@
+@if (icon(); as name) {
+  <!-- La rotation du sablier appartient à `Icon` : l'animer ici ferait tourner
+       l'élément hôte, donc une image déjà rastérisée, et le glyphe tremblerait. -->
+  <app-icon class="ro-ico" [name]="name" [spin]="state() === 'preparing'" />
+} @else {
+  <!-- L'égaliseur de l'état « Écoute » : décoratif, à cadence fixe. Aucun niveau audio. -->
+  <span class="ro-wave" aria-hidden="true">
+    @for (bar of bars; track bar) {
+      <i></i>
+    }
+  </span>
+}
+
+<span class="ro-label">{{ label() }}</span>
+
+@if (elapsed(); as time) {
+  <!-- Masqué aux technologies d'assistance : la région live annoncerait chaque seconde. -->
+  <span class="ro-timer" aria-hidden="true">{{ time }}</span>
+}

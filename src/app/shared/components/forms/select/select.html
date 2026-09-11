@@ -1,0 +1,27 @@
+<div class="select-wrap">
+  <select
+    class="select"
+    [attr.aria-label]="ariaLabel()"
+    [disabled]="disabled()"
+    [value]="value()"
+    (change)="select($event)"
+  >
+    <!--
+      L'entrée de tête d'un menu de COMMANDE : `disabled` pour qu'on ne puisse pas la choisir,
+      `hidden` pour qu'elle ne prenne pas une ligne dans la liste déroulée. C'est exactement ce
+      que dessine la maquette (`#fd-export`), et c'est elle qu'on réaffiche après chaque action.
+    -->
+    @if (placeholder(); as label) {
+      <option value="" disabled hidden [selected]="value().length === 0">{{ label }}</option>
+    }
+
+    @for (option of options(); track option.value) {
+      <option [value]="option.value" [selected]="option.value === value()">
+        {{ option.label }}
+      </option>
+    }
+  </select>
+
+  <!-- Décoratif : le `<select>` est déjà annoncé comme une liste déroulante. -->
+  <app-icon class="select-chevron" name="chevron-down" />
+</div>

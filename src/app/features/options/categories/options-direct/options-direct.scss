@@ -1,0 +1,86 @@
+// La famille Direct, portée depuis `[data-ofam="direct"]` et `.cp-*` de `docs/ui/ui.html`.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  display: block;
+}
+
+// Le sélecteur, dans la colonne de droite de la rangée.
+
+// ⚠️ **La même largeur qu'Options ▸ Général** : les intitulés de compte
+// rendu sont longs et les noms de micro imprévisibles — 210 px tronquaient les deux. Une seule
+// valeur pour les deux familles, parce que deux largeurs voisines se verraient l'une à côté de
+// l'autre en passant de l'une à l'autre au rail.
+.report-field {
+  width: 330px;
+  flex: none;
+}
+
+// La liste des prompts personnalisés, sous les rangées et sur toute la largeur du panneau.
+
+// ⚠️ **Le filet du HAUT est celui des rangées de réglages (`--line`)** : il sépare deux réglages,
+// comme partout ailleurs dans les Options. Ceux de la liste, eux, séparent les lignes d'un MÊME
+// réglage — d'où `--line-soft`. Deux filets de même couleur mettraient au même rang la frontière
+// entre réglages et le rythme interne d'une liste.
+.cp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 5px 0 4px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  gap: 12px;
+}
+
+.cp-head-lbl {
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+// ⚠️ Une `<ul>` dépouillée : la sémantique de liste sans rien de son rendu par défaut — puces,
+// marge et retrait déplaceraient toutes les lignes.
+.cp-list {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  flex-direction: column;
+  list-style: none;
+}
+
+.cp-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 2px;
+  gap: 12px;
+}
+
+.cp-row + .cp-row {
+  border-top: 1px solid var(--line-soft);
+}
+
+// ⚠️ `overflow-wrap: anywhere` avec `min-width: 0` : un titre de 40 caractères sans espace
+// pousserait sinon les deux boutons hors de la ligne.
+.cp-title {
+  min-width: 0;
+  color: var(--ink);
+  font-size: 13.5px;
+  overflow-wrap: anywhere;
+}
+
+.cp-acts {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 2px;
+}
+
+.cp-empty {
+  margin: 0;
+  padding: 10px 2px 2px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}

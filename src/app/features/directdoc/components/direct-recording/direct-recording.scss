@@ -1,0 +1,91 @@
+// Le panneau d'enregistrement de la fenêtre-session — porté depuis `[data-dd-panel="rec"]` de
+// `docs/ui/ui.html`.
+
+// ⚠️ **`display: contents` sur l'hôte** : la coquille est une colonne flex dont le contenu, seul,
+// défile. Un hôte en `block` s'interposerait et le `flex: 1` de `.done-content` n'aurait plus de
+// parent à remplir — le transcript déborderait au lieu de défiler.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  @include document-panel;
+
+  display: contents;
+}
+
+// La ligne d'enregistrement occupe la place de la barre d'actions du document, et c'est voulu :
+// la charpente de la fenêtre ne bouge pas d'un état à l'autre.
+
+// ⚠️ **Deux groupes, et le partage porte du sens.** À gauche l'enregistrement en cours ; à
+// droite, seule, la commande qui ne règle qu'une vue — « Afficher l'original ». Tant
+// qu'elle n'existe pas, le groupe de gauche est seul, mais la disposition l'attend.
+// ⚠️ **Elle ne garde que ce qui la distingue** : hauteur, rembourrage et écart viennent de
+// `document-panel`. Ses deux groupes vont aux deux bords et se centrent, seul cas.
+
+// ⚠️ **`:host` devant, et ce n'est pas un ornement** — mesuré dans un navigateur. Sans lui, la
+// règle du mixin compile avec une spécificité de plus que la règle nue du même fichier : le
+// mixin gagnait et ses `flex-start` s'appliquaient, à rebours de ce qu'il annonce.
+
+// Mesuré avant : `justify-content: flex-start`, `align-items: flex-start`. En préfixant par
+// `:host`, la spécificité s'égalise et c'est l'ORDRE qui tranche — cette règle vient après.
+
+// ⚠️ **Ne pas « simplifier » en retirant le `:host`** : le fichier compilerait, les tests
+// passeraient, et « Afficher l'original » retournerait se coller au bouton d'arrêt.
+:host .done-subbar {
+  align-items: center;
+  justify-content: space-between;
+}
+
+// ⚠️ **Sans ce flex, le transcript ne défile pas tout seul.**
+
+// `DirectTranscript` suit le bas du texte à mesure qu'il arrive, et il le fait sur **son propre
+// élément hôte** — c'est son contrat, écrit dans son en-tête. Or `document-panel` laisse
+// `.done-content` en **bloc** : le `flex: 1; min-height: 0` de l'hôte y est **inerte**, la boîte
+// grandit avec son texte, et c'est `.done-content` qui finit par défiler. Le composant poussait
+// donc `scrollTop` sur un élément qui ne défile pas — sans effet, et sans rien pour le signaler.
+
+// Mesuré avant : `.done-content` haute de 883 px, transcript haut de **53 px**, soit exactement
+// son contenu. Après : le transcript remplit la boîte et défile lui-même.
+
+// ⚠️ **Posé ICI et non dans le mixin**, bien que la tentation soit grande : les deux autres
+// panneaux qui le partagent n'ont pas ce besoin, et l'un d'eux — le compte rendu — empile des
+// rubriques en flux de blocs, où passer en flex changerait la fusion des marges. Un défilement
+// qui marche ne vaut pas une régression d'espacement ailleurs.
+
+// ⚠️ **`:host` devant, pour la même raison que la règle ci-dessus** : sans lui, la règle du mixin
+// l'emporterait en spécificité.
+:host .done-content {
+  display: flex;
+  flex-direction: column;
+}
+
+// La carte « Afficher l'original » — `.dd-orig-field` dans la maquette.
+
+// ⚠️ **CES DEUX RÈGLES MANQUAIENT, ET LE GABARIT PORTAIT DÉJÀ LEURS CLASSES** *(relevé en
+//,)*. `switch-field` et `sf-label` avaient été **recopiées depuis
+// `direct-config`**, où elles sont bel et bien écrites — mais l'encapsulation émulée d'Angular
+// enferme un style dans son composant : ici, la carte n'avait ni fond, ni filet, ni rayon, et
+// le libellé flottait à côté de son interrupteur. **Copier une classe ne copie pas son style**,
+// et rien ne le signale : le gabarit compile, le test passe, l'écran est faux.
+
+// ⚠️ **Elle n'a pas les métriques de sa jumelle**, et la maquette le veut ainsi : celle du
+// formulaire remplit la largeur d'une colonne de champs, celle-ci se pose au bout d'une ligne
+// d'actions et doit y faire **exactement 38 px**, comme le bouton « Arrêter » qui la précède.
+// D'où `inline-flex` et `flex: none` là où l'autre est un bloc.
+.switch-field {
+  @include field-surface;
+
+  display: inline-flex;
+  min-height: 38px;
+  box-sizing: border-box;
+  flex: none;
+  align-items: center;
+  gap: 11px;
+  padding: 0 14px;
+}
+
+.sf-label {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+}

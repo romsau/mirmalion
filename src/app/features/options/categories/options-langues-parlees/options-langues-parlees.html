@@ -1,0 +1,26 @@
+<app-subscreen-header
+  title="Langues parlées"
+  i18n-title="@@languages.list.spoken"
+  backLabel="Retour à Langues"
+  i18n-backLabel="@@options.languages.back"
+  (back)="back()"
+/>
+
+<!--
+  ⚠️ UNE PHRASE, et rien de plus. Ce sous-titre a porté tour à tour l'exclusion des fichiers, le
+  caractère explicite du téléchargement et l'absence de plafond : trois précisions vraies, mais
+  qui répondaient à des questions que personne ne se pose devant une liste de six langues à
+  interrupteur.
+-->
+<p class="fam-desc" i18n="@@options.languages.spoken.desc">
+  Les langues proposées à la dictée et à la session.
+</p>
+
+<app-language-list
+  purpose="dictation"
+  [selected]="spoken()"
+  [installed]="installed()"
+  [locked]="locked()"
+  [lockedReason]="lockedReason"
+  (toggled)="toggle($event)"
+/>

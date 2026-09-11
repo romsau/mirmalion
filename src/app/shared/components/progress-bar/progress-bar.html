@@ -1,0 +1,41 @@
+<!--
+  `role="progressbar"` porte la progression, et `aria-valuenow` est **omis** en mode indéterminé :
+  c'est ainsi qu'on dit « en cours, durée inconnue » plutôt que « 0 % ». Pas d'`aria-live` : un
+  lecteur d'écran annonce déjà les changements de valeur d'une barre de progression, et l'y
+  ajouter rendrait le suivi bavard.
+-->
+<p class="label">{{ label() }}</p>
+
+<div
+  class="bar"
+  role="progressbar"
+  [class.indeterminate]="indeterminate()"
+  [attr.aria-label]="label()"
+  [attr.aria-valuemin]="indeterminate() ? null : 0"
+  [attr.aria-valuemax]="indeterminate() ? null : 100"
+  [attr.aria-valuenow]="indeterminate() ? null : ratio() * 100"
+  [style.--fill]="ratio() * 100 + '%'"
+>
+  <i></i>
+</div>
+
+@if (!indeterminate()) {
+  <p class="percent">{{ ratio() | percent }}</p>
+}
+
+@if (detail(); as text) {
+  <p class="detail">{{ text }}</p>
+}
+
+<!--
+  ⚠️ **Variante accent, taille `large`**. Ce bouton a été orange jusqu'à
+  cette date ; il est bleu comme tout bouton isolé — la règle est écrite sur le type
+  `ButtonVariant`. Et il est grand parce qu'il est SEUL dans son écran : l'étape d'installation
+  de l'onboarding n'a que lui, et un bouton unique à la taille d'un bouton de barre d'outils se
+  lit comme une note de bas de page plutôt que comme la sortie de secours qu'il est.
+  `size="large"` existe déjà pour ce cas et ne change ni la couleur ni l'inversion — inutile
+  d'inventer une troisième taille.
+-->
+@if (cancelVisible()) {
+  <app-button size="large" (click)="cancelled.emit()" i18n="@@common.cancel">Annuler</app-button>
+}

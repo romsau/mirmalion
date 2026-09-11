@@ -1,0 +1,19 @@
+// L'invitation de l'historique vide — maquette : `.hist-empty` de l'écran `direct`.
+
+// ⚠️ **Seul le CONTENU est ici** ; le cadre appartient au panneau générique. Les règles sont
+// partagées avec la dictée : mêmes valeurs, phrases différentes.
+
+@use 'abstracts/mixins' as *;
+
+// ⚠️ **Le plafond de la liste appartient à l'HÔTE, pas au panneau** : la maquette donne 477 px à
+// la dictée (`.col-right .hist`) et 424 px à la session (`.rc-right .hist`), parce que les deux
+// colonnes de gauche n'ont pas la même hauteur. Une propriété personnalisée traverse
+// l'encapsulation là où un sélecteur ne le peut pas. ⚠️ La changer se fait **des deux côtés à la
+// fois** — ici et dans `docs/ui/ui.html`, qui porte le même nombre.
+:host {
+  display: contents;
+
+  --hist-max-h: 424px;
+
+  @include history-empty-content;
+}

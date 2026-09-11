@@ -1,0 +1,185 @@
+// Typographie de marque, peinture du document, et règle de sélection de texte.
+
+// ============================================================================================
+// Montserrat — les 7 graisses livrées dans `src/assets/fonts/`.
+
+// **Une seule famille, sept poids** — et non sept familles nommées « Montserrat-Bold »,
+// « Montserrat-Light »… : c'est ce qui permet d'écrire `font-weight: 600` et d'obtenir le
+// bon fichier, au lieu de choisir une famille différente à chaque graisse.
+
+// ⚠️ **Aucun chargement distant** (règle globale n° 4) : les fichiers sont dans le dépôt et
+// intégrés au bundle par le build Angular, qui réécrit ces `url()`. L'application se peint
+// donc identiquement réseau coupé.
+
+// La maquette n'en déclare que quatre (400 à 700) : les trois autres sont livrées et servent
+// aux graisses fines. Un `font-weight: 800` — la maquette en a un, `.onb-h` — retombe sur 700
+// avec un gras synthétique : c'est le comportement de la maquette aussi, aucun écart.
+// ============================================================================================
+
+@font-face {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 100;
+  font-display: swap;
+  src: url('../../assets/fonts/Montserrat-Thin.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 200;
+  font-display: swap;
+  src: url('../../assets/fonts/Montserrat-ExtraLight.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('../../assets/fonts/Montserrat-Light.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../../assets/fonts/Montserrat-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../../assets/fonts/Montserrat-Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../../assets/fonts/Montserrat-SemiBold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../../assets/fonts/Montserrat-Bold.ttf') format('truetype');
+}
+
+// ============================================================================================
+// Le document
+// ============================================================================================
+
+body {
+  min-height: 100%;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+// ============================================================================================
+// Sélection de texte — comportement natif macOS.
+
+// Le chrome de l'application (libellés, boutons, titres, aides) n'est **pas** sélectionnable,
+// comme dans une app native ; seul le **contenu produit** l'est : transcripts, comptes rendus,
+// champs de saisie. La sélection s'active au cas par cas via `.selectable` — ou le mixin
+// `selectable` dans un composant.
+
+// Les dictées de l'historique ne sont **pas** sélectionnables : tronquées à deux lignes et
+// dotées d'un bouton Copier, la sélection n'y apporte rien.
+
+// ⚠️ Dans la maquette la règle est portée par `.window`, parce que le fichier contient aussi
+// une barre de dev qui, elle, garde la sélection. Dans l'application il n'y a pas de chrome de
+// dev : la règle remonte sur `body`.
+// ============================================================================================
+
+body {
+  cursor: default;
+  user-select: none;
+}
+
+.selectable,
+input,
+textarea {
+  cursor: auto;
+  user-select: text;
+}
+
+// ============================================================================================
+// Accessibilité
+// ============================================================================================
+
+// L'anneau de focus par défaut, pour tout ce qui n'en définit pas un. Il suit `--accent-ink`,
+// donc la teinte choisie par l'utilisateur.
+:focus-visible {
+  outline: 1px solid var(--accent-ink);
+  outline-offset: 2px;
+}
+
+// `prefers-reduced-motion` neutralise les animations **sans supprimer l'information** : une
+// barre de progression indéterminée cesse de glisser mais reste visible, un spinner s'arrête
+// sur une position lisible.
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important; // coupe les boucles (spinners, barres)
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// L'apparition des panneaux ancrés. Une image-clé partagée vaut mieux qu'une par composant :
+// deux panneaux qui s'ouvrent différemment seraient un défaut, pas une variation.
+@keyframes popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+// L'apparition du panneau contextuel — Dictée, Session.
+
+// ⚠️ **ICI ET NON DANS UN COMPOSANT, PARCE QUE LES `@keyframes` NE SONT PAS ENCAPSULÉES.**
+// L'encapsulation émulée d'Angular réécrit les sélecteurs, pas les noms d'animation : deux
+// écrans qui définiraient chacun `panel-in` produiraient deux règles globales de même nom, dont
+// la dernière chargée gagnerait. Une seule définition, partagée.
+@keyframes panel-in {
+  from {
+    transform: translateX(8px);
+    opacity: 0;
+  }
+
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+// L'apparition d'une snackbar, par le bas. Même raison que `popover-in` : deux barres qui
+// entreraient différemment seraient un défaut, pas une variation. Elles sont deux — la barre
+// transitoire et celle de mise à jour, qui n'ont en commun que leur boîte.
+@keyframes snack-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

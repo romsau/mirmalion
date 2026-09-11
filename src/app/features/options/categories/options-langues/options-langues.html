@@ -1,0 +1,44 @@
+<!--
+  ⚠️ Une ligne à MENU DÉROULANT ne se rend pas cliquable : aucun navigateur n'ouvre une liste
+  déroulante par programme. Pas d'`(activate)` ici — ce n'est pas un oubli.
+
+  ⚠️ **CE SOUS-LIBELLÉ A MENTI JUSQU'AU.** Il annonçait « Appliquée au prochain
+  démarrage de l'application », ce qui était exact tant que rien ne rechargeait les fenêtres —
+   l'a rendu faux, et un écran de réglages qui se trompe sur le MOMENT où son réglage agit
+  est pire qu'un réglage manquant : on redémarre pour rien, ou on croit que ça n'a pas marché.
+  ⚠️ Il dit maintenant ce qui **se passe**, pas ce qui ne se passe pas : la fenêtre se recharge.
+  Le prévenir vaut mieux que le faire subir — l'écran disparaît une fraction de seconde.
+-->
+<app-option-row
+  passive
+  label="Langue de l'interface"
+  i18n-label="@@options.languages.interface.label"
+  sublabel="La fenêtre se recharge aussitôt"
+  i18n-sublabel="@@options.languages.interface.sublabel"
+>
+  <app-select
+    [options]="interfaceOptions"
+    [value]="interfaceLanguage()"
+    (valueChange)="setInterfaceLanguage($event)"
+    ariaLabel="Langue de l'interface"
+    i18n-ariaLabel="@@options.languages.interface.label"
+  />
+</app-option-row>
+
+<app-option-row
+  label="Langues parlées"
+  i18n-label="@@languages.list.spoken"
+  [sublabel]="spokenSummary()"
+  drillIn
+  [hint]="count(spoken())"
+  (activate)="open('parlees')"
+/>
+
+<app-option-row
+  label="Langues de traduction"
+  i18n-label="@@languages.list.translation"
+  [sublabel]="translationSummary()"
+  drillIn
+  [hint]="count(targets())"
+  (activate)="open('traduction')"
+/>

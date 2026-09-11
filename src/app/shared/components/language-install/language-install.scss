@@ -1,0 +1,58 @@
+// Porté depuis `.li-modal`, `.li-title`, `.li-brief` et `.li-foot` de `docs/ui/ui.html`.
+
+// ⚠️ **La hauteur commune aux deux temps est garantie ici, pas constatée.** Les deux contenus
+// tombaient à 1 px l'un de l'autre — par coïncidence : une confirmation plus longue en allemand
+// ou en portugais aurait fait sauter la boîte entre le clic et la barre, ce que le choix d'une
+// modale unique visait précisément à éviter. Au-delà du minimum, la boîte grandit plutôt que
+// de couper.
+
+// ⚠️ **Le calcul, parce qu'il a déjà été faux une fois.** La maquette donne une boîte de
+// 210 px (`.pmodal.li-modal`) au padding de 28/26/26 (`.li-pane`). Ici le padding arrive en
+// deux temps : celui du corps générique de la modale — 14 px en haut, 16 px ailleurs — et
+// celui-ci, qui n'est que le **complément** pour retrouver les valeurs de la maquette. La
+// hauteur minimale, elle, est celle du contenu seul : 210 px de boîte moins les 30 px
+// verticaux du corps. Une valeur de 138 px traînait, et les boutons touchaient le bas
+//.
+
+:host {
+  display: flex;
+  min-height: 180px;
+  flex-direction: column;
+  justify-content: center;
+  padding: 14px 10px 10px;
+}
+
+.li-title {
+  margin: 0 0 10px;
+  color: var(--ink);
+  font-family: var(--font-brand);
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.li-brief {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+  text-align: center;
+
+  b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+}
+
+.li-foot {
+  display: flex;
+  justify-content: center;
+  margin-top: 22px;
+  gap: 10px;
+}
+
+// Le bloc de progression occupe toute la largeur qu'on lui donne : il est agnostique de sa
+// boîte, c'est à elle de le contraindre.
+app-progress-bar {
+  width: 100%;
+}

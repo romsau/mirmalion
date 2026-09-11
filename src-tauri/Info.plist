@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Clés fusionnées dans l'`Info.plist` du bundle par tauri-bundler.
+
+  ⚠️ LSUIElement fait doublon avec `ActivationPolicy::Accessory`, posé dans `lifecycle.rs`, et
+  ce doublon est voulu. La politique d'activation s'applique au démarrage, donc **après** que
+  le Dock a eu le temps d'afficher l'icône ; la clé du plist, elle, est lue par le lanceur
+  avant que le processus ne démarre — aucun clignotement. Mais elle n'existe que dans un
+  bundle : en développement (`tauri dev` lance le binaire nu), seule la politique s'applique.
+
+  ⚠️ **Elle reste, bien que le Dock soit désormais le défaut**, et c'est un choix : l'app
+  démarre donc sans icône et l'obtient au bout du démarrage. L'inverse — retirer la clé pour
+  gagner ces quelques dixièmes — ferait, chez qui a décoché l'option, apparaître une icône qui
+  disparaît aussitôt : ça se lit comme un plantage, une icône en retard ne se lit pas.
+
+  ═══════════════════════════════════════════════════════════════════════════════════════
+  LES TEXTES D'USAGE — c'est macOS qui les affiche, dans son propre pop-up
+  ═══════════════════════════════════════════════════════════════════════════════════════
+
+  Ils ne remplacent pas notre explication : le cadrage §3.7.2 impose un **priming** dans
+  notre interface AVANT tout appel système. Ces phrases-ci sont la seconde moitié, celle
+  qu'on ne contrôle pas — elles apparaissent dans la boîte de dialogue d'Apple, sous le nom
+  de l'application, et l'utilisateur les lit au moment de cliquer.
+
+  Règles de rédaction, tenues ici :
+  - dire **à quoi ça sert**, jamais « pour fonctionner correctement » ;
+  - une phrase, au présent, sans jargon ;
+  - ⚠️ **jamais le mot « écran »**. `NSAudioCaptureUsageDescription` est une catégorie TCC
+    distincte de la capture d'écran ; l'évoquer enverrait l'utilisateur dans le mauvais
+    volet des Réglages Système, et Mirmalion ne demande JAMAIS l'accès à l'écran (§6.7).
+
+  ⚠️ Ces textes sont en français, la locale source. Leur **localisation passe par des
+  fichiers `InfoPlist.strings` par langue**, pas par `$localize` : ils sont lus par macOS,
+  hors de tout webview — même situation que le « Quitter » du tray. À traiter en phase 6
+  avec le reste des traductions.
+
+  ═══════════════════════════════════════════════════════════════════════════════════════
+  LES LANGUES DÉCLARÉES — c'est ce qui décide de la langue des FENÊTRES D'APPLE
+  ═══════════════════════════════════════════════════════════════════════════════════════
+
+  ⚠️⚠️ **SANS CETTE DÉCLARATION, TOUTE INTERFACE PRÉSENTÉE PAR MACOS EN NOTRE NOM SORT EN
+  ANGLAIS**, quelle que soit la langue du système. Mesuré le 2026-07-31 sur la feuille de
+  téléchargement du framework Translation : titre, texte et boutons en anglais au milieu
+  d'une application française — alors que les **noms de langues** de cette même feuille
+  s'affichaient bien en français, puisqu'ils viennent de la locale système et non de nous.
+  Capture : `docs/ui/feuille-traduction-chrome-en-anglais-2026-07-31.png`.
+
+  macOS choisit cette langue d'après les localisations que le bundle **déclare** : soit des
+  dossiers `fr.lproj`, `de.lproj`…, soit cette clé — prévue par Apple pour « un exécutable
+  non empaqueté ou qui n'utilise pas le mécanisme de localisation des bundles ». C'est
+  exactement notre cas : la localisation d'interface est faite **au build** par Angular, et
+  le bundle ne porte donc aucun `.lproj`.
+
+  ⚠️ **La liste doit rester identique à `SUPPORTED_LOCALES`** (`src-tauri/src/i18n.rs`) et
+  aux locales d'`angular.json`. Déclarer une langue qu'on ne sait pas rendre ferait présenter
+  des fenêtres système dans une langue que le reste de l'application ne parle pas.
+
+  ⚠️ Le premier élément et `CFBundleDevelopmentRegion` disent la **locale source** — celle
+  servie à la racine du bundle, donc le repli quand le système parle une langue hors liste.
+-->
+<plist version="1.0">
+  <dict>
+    <key>LSUIElement</key>
+    <true/>
+
+    <key>CFBundleDevelopmentRegion</key>
+    <string>fr</string>
+
+    <key>CFBundleLocalizations</key>
+    <array>
+      <string>fr</string>
+      <string>en</string>
+      <string>es</string>
+      <string>de</string>
+      <string>it</string>
+      <string>pt</string>
+    </array>
+
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Mirmalion enregistre votre voix pour la transcrire en texte. Le son est traité sur votre Mac et n'est pas conservé.</string>
+
+    <key>NSAudioCaptureUsageDescription</key>
+    <string>Mirmalion capte le son de vos sessions pour les transcrire. L'enregistrement reste sur votre Mac.</string>
+  </dict>
+</plist>

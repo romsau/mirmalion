@@ -1,0 +1,61 @@
+@use 'abstracts/mixins' as *;
+
+:host {
+  @include screen-body;
+}
+
+.screen-title {
+  @include screen-title;
+
+  // ⚠️ **Aligné sur la PREMIÈRE PASTILLE de la fenêtre, pas sur le bord de l'écran** — même
+  // règle qu'en dictée : le titre est le pendant gauche des boutons du header. Le décalage est
+  // la différence des deux marges, il suit donc tout seul si l'une d'elles bouge.
+  margin-left: calc(var(--header-pad-x) - var(--screen-pad-x));
+}
+
+// Contrôles à gauche, historique contextuel à droite. Les valeurs sont partagées avec l'écran
+// de dictée ; seuls les sélecteurs sont d'ici.
+.direct {
+  @include split-columns;
+
+  &.is-collapsed {
+    @include split-columns-collapsed;
+  }
+}
+
+.panel-collapse {
+  @include panel-collapse-button;
+
+  .direct.is-collapsed & {
+    @include panel-collapse-button-collapsed;
+  }
+}
+
+.pc-label {
+  @include panel-collapse-label;
+}
+
+.col-right {
+  @include split-panel;
+}
+
+.col {
+  min-width: 0;
+  min-height: 0;
+}
+
+// ⚠️ **Le défilement est DANS le composant de configuration, pas ici** — il doit garder le
+// bouton « Démarrer » hors du défilement. La colonne ne fait que lui donner sa hauteur.
+
+// `padding-left` relevé sur `.rc-left` de la maquette.
+.col-left {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding-left: 4px;
+
+  app-direct-config {
+    min-height: 0;
+    flex: 1;
+  }
+}

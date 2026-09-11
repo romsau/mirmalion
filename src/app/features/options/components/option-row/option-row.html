@@ -1,0 +1,42 @@
+<!--
+  `<ng-content>` est **hors de toute condition**, à dessein : Angular n'instancie le contenu
+  projeté qu'une fois, et le mettre dans une branche `@if` en fait un cas particulier inutile.
+  Une ligne « drill-in » ne projette simplement rien.
+-->
+<div class="row" (click)="onRowClick($event)">
+  <span class="text">
+    <span class="label">{{ label() }}</span>
+    @if (sublabel(); as sub) {
+      <span class="sublabel">{{ sub }}</span>
+    }
+  </span>
+
+  @if (drillIn()) {
+    <!--
+      ⚠️ **`aria-label` n'est pas facultatif ici.** Sans indication de fin de ligne, ce bouton
+      ne contient qu'une icône décorative : un lecteur d'écran annoncerait « bouton », et rien
+      d'autre. Avec une indication, il annoncerait « 14 termes », ce qui ne dit pas davantage
+      où l'on va. Le libellé de la ligne est le seul nom juste — AXE a attrapé l'oubli.
+    -->
+    <button
+      class="more"
+      type="button"
+      [attr.aria-label]="label()"
+      [disabled]="disabled()"
+      (click)="activate.emit()"
+    >
+      @if (hint(); as text) {
+        <span class="hint">{{ text }}</span>
+      }
+      <app-icon name="chevron-right" />
+    </button>
+  }
+
+  <!--
+    Le contrôle est enveloppé pour être **reconnaissable au clic**. Sans cette enveloppe, un
+    clic sur le contrôle remonterait jusqu'à la ligne, qui agirait une seconde fois : le
+    segmenté du thème passait en sombre, puis la ligne rebasculait en clair. La maquette pose
+    la même garde (`if (!e.target.closest(".switch"))`).
+  -->
+  <span class="control"><ng-content /></span>
+</div>

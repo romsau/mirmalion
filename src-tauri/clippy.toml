@@ -1,0 +1,12 @@
+# Ce que les règles de `[lints.clippy]` (voir `Cargo.toml`) ne demandent pas aux tests.
+#
+# ⚠️ Sans ces trois lignes, les 800 tests du crate ne compilent plus : `unwrap_used`,
+# `expect_used` et `panic` y sont interdits comme ailleurs. Or un test est le seul endroit où
+# l'on VEUT qu'un échec inattendu s'arrête net — `expect("verrou")` dit ce qu'on attendait et
+# arrête la course, quand un `if let Err` l'aurait avalé.
+#
+# ⚠️ Ce n'est pas un relâchement de la règle, c'est sa portée exacte : la règle parle du code
+# qui tourne chez l'utilisateur, où une panique ferme l'application sans un mot.
+allow-unwrap-in-tests = true
+allow-expect-in-tests = true
+allow-panic-in-tests = true

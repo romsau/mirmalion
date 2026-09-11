@@ -1,0 +1,95 @@
+<!--
+  Le contenu de la modale, porté depuis `.up-body` de `docs/ui/ui.html` : quatre éléments
+  empilés et centrés, là où la barre du bas les alignait horizontalement.
+
+  ⚠️ Ni `role="status"` ni `aria-live` : une modale s'annonce à l'ouverture, par son rôle et son
+  nom accessible, et le voile la rend impossible à manquer. Une région vivante en plus la ferait
+  relire à chaque changement d'état.
+-->
+<!--
+  ⚠️ L'icône ouvre la PHRASE, elle ne la surplombe pas : posée au-dessus, elle faisait un
+  troisième étage dans une boîte qui n'en veut que deux. D'où cette ligne, qui les tient
+  ensemble et se centre d'un bloc.
+
+  ⚠️ Pas de gabarit vide quand l'état n'a pas d'icône : un `<span>` conservé garderait la
+  gouttière de la ligne, et le message se centrerait de travers.
+-->
+<span class="up-line">
+  @if (icon(); as name) {
+    <span class="up-ico" aria-hidden="true">
+      <!--
+      L'anneau tourne pendant le téléchargement, et lui seul. `prefers-reduced-motion`
+      l'immobilise globalement sans le retirer : la barre de progression continue de dire ce qui
+      se passe.
+    -->
+      <app-icon [name]="name" [spin]="data.state() === 'downloading'" />
+    </span>
+  }
+
+  @switch (data.state()) {
+    @case ('available') {
+      <span class="up-msg" i18n="@@update.available">
+        Une nouvelle version est disponible ({{ version() }}).
+      </span>
+    }
+    @case ('downloading') {
+      <span class="up-msg" i18n="@@update.downloading"> Téléchargement de la mise à jour… </span>
+    }
+    @case ('ready') {
+      <span class="up-msg" i18n="@@update.ready"> Mise à jour prête à être installée. </span>
+    }
+  }
+</span>
+
+<!--
+  ⚠️ **Une barre locale, et non le composant `ProgressBar`.** Celui-ci est le bloc
+  *libellé + barre + pourcentage + Annuler* : ici le libellé est le message, le pourcentage n'est
+  pas écrit et « Annuler » vit dans la rangée d'actions. La maquette les dessine distinctes —
+  `.up-prog` fait 5 px là où `.fprog` en fait 8.
+
+  ⚠️ **Pas d'`aria-live`** : un lecteur d'écran annonce déjà les changements de valeur d'une
+  barre de progression, et l'y ajouter rendrait le suivi bavard.
+-->
+@if (data.state() === 'downloading') {
+  <span
+    class="up-prog"
+    role="progressbar"
+    i18n-aria-label="@@update.progress"
+    aria-label="Téléchargement de la mise à jour"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    [attr.aria-valuenow]="ratio() * 100"
+    [style.--fill]="ratio() * 100 + '%'"
+  >
+    <i></i>
+  </span>
+}
+
+<!--
+  ⚠️ **Le neutre n'existe que comme second d'une paire** — c'est la règle du bloc « Boutons
+  unifiés » de la maquette : seul, il se lit comme un bouton éteint. Pendant le téléchargement,
+  « Annuler » est le seul bouton de la modale : il prend donc le bouton par défaut.
+-->
+<span class="up-actions">
+  @switch (data.state()) {
+    @case ('available') {
+      <app-button variant="neutral" (click)="data.action('later')" i18n="@@update.later">
+        Plus tard
+      </app-button>
+      <app-button (click)="data.action('install')" i18n="@@update.install">
+        Mettre à jour
+      </app-button>
+    }
+    @case ('downloading') {
+      <app-button (click)="data.action('cancel')" i18n="@@common.cancel">Annuler</app-button>
+    }
+    @case ('ready') {
+      <app-button variant="neutral" (click)="data.action('later')" i18n="@@update.later">
+        Plus tard
+      </app-button>
+      <app-button (click)="data.action('restart')" i18n="@@update.restart">
+        Redémarrer maintenant
+      </app-button>
+    }
+  }
+</span>

@@ -1,0 +1,13 @@
+// L'étape « Autorisations », portée depuis `.onb-step[data-onb="permissions"]` de
+// `docs/ui/ui.html`.
+
+// Elle n'a **rien en propre** : la maquette lui donne exactement la mise en page de l'étape
+// Bienvenue, jusqu'à l'écart de 50 px entre les blocs. C'est cette seconde occurrence qui a
+// fait remonter le motif dans `abstracts/_mixins.scss`. Les lignes, elles, ont leur
+// propre feuille — voir `permission-row.component.scss`.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  @include onboarding-step;
+}

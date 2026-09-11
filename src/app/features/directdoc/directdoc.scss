@@ -1,0 +1,17 @@
+// La coquille de la fenêtre-session — portée depuis `.done` de `docs/ui/ui.html`
+// (écran `directdoc`).
+
+// ⚠️ **Aucune dimension de fenêtre ici.** La largeur, la hauteur et les minimums vivent côté Rust
+// (`lifecycle.rs`, `geometry`) : cette fenêtre est **redimensionnable**, et rien de ce qui suit ne
+// doit supposer une largeur.
+
+// ⚠️ **CE FICHIER NE PORTE PLUS QUE LA COQUILLE**. Tête, barre, filet et contenu vivent
+// désormais dans les **deux panneaux**, parce que l'encapsulation d'Angular ne laisse pas une règle
+// écrite ici atteindre ce qu'un composant enfant rend. Ce qui leur est commun est remonté en mixin
+// (`document-panel`), pas recopié.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  @include document-window;
+}

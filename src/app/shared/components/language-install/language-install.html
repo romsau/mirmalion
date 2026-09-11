@@ -1,0 +1,40 @@
+@if (downloading()) {
+  <!--
+    Le second temps n'est qu'une BOÎTE autour du bloc de progression unique : il porte déjà son
+    libellé, sa barre, son pourcentage et son Annuler. Lui ajouter un titre le dirait deux fois.
+
+    `cancelDelay` à zéro : un téléchargement de plusieurs centaines de mégaoctets n'est jamais
+    une opération courte, et faire attendre 2,5 s avant d'offrir la sortie n'a aucun sens — ici
+    d'autant moins que c'est la SEULE sortie, la modale ne se fermant ni à Échap ni au clic.
+  -->
+  <app-progress-bar
+    [label]="progressLabel"
+    [progress]="data.progress()"
+    [cancelDelay]="0"
+    (cancelled)="data.cancel()"
+  />
+} @else {
+  <h3 class="li-title">{{ heading }}</h3>
+  <p class="li-brief" i18n="@@language.install.brief">
+    Les ressources de transcription seront téléchargées <b>depuis Apple</b>.
+  </p>
+  <!--
+    L'ordre du DOM **est** l'ordre du focus : « Annuler » d'abord, donc premier au clavier et
+    premier ciblé à l'ouverture. Ouvrir sur « Installer » lancerait plusieurs centaines de
+    mégaoctets d'une simple frappe d'Entrée.
+
+    ⚠️ Pas de `cdkFocusInitial` : posé sur `<app-button>`, il viserait un élément non
+    focalisable — le vrai bouton est à l'intérieur du composant. Le piège de focus vise déjà le
+    premier élément tabulable, ce qui donne exactement le bon.
+  -->
+  <!--
+    ⚠️ « Annuler » est NEUTRE, et c'est le seul emploi de cette variante : départager deux
+    boutons côte à côte. Il a été orange jusqu'au ; cette teinte n'existe plus sur
+    aucun bouton de l'application — c'est la modale qui protège d'un geste coûteux, pas la
+    couleur de son bouton.
+  -->
+  <div class="li-foot">
+    <app-button variant="neutral" (click)="refuse()" i18n="@@common.cancel">Annuler</app-button>
+    <app-button (click)="data.accept()" i18n="@@language.install.accept">Installer</app-button>
+  </div>
+}

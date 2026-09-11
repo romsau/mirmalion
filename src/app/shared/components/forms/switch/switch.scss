@@ -1,0 +1,88 @@
+// L'interrupteur, porté depuis `.switch` de `docs/ui/ui.html`.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  display: inline-flex;
+}
+
+.switch {
+  position: relative;
+  flex: none;
+  width: 36px;
+  height: 21px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--line);
+  cursor: pointer;
+  transition: background 0.18s ease;
+
+  // ⚠️ **Un interrupteur éteint était invisible, et c'est le pire cas de tous.** Son rail vaut `--line` — 1,25:1 sur la page — et son bouton est blanc :
+  // éteint, il n'y avait **rien** à 3:1 sur cette surface. Un interrupteur qu'on ne voit pas
+  // n'est pas un interrupteur qu'on trouve moche, c'est un contrôle qu'on ne sait pas là.
+
+  // ⚠️ **Un anneau INTÉRIEUR, pas une bordure** : `border: 1px` aurait rogné 2 px sur les
+  // 36 × 21 du rail et décalé le bouton, qui est positionné en absolu à 3 px du bord. Une
+  // ombre intérieure ne prend aucune place.
+
+  // ⚠️ **Il disparaît quand l'interrupteur est ALLUMÉ** : l'aplat d'accent porte alors le
+  // contraste tout seul (10,69:1 en teinte par défaut), et un liseré gris sur du plein le
+  // salirait. L'anneau reste en revanche sur un éteint DÉSACTIVÉ, que WCAG 1.4.11 exempte
+  // pourtant : la dispense autorise à ne pas le faire, elle n'oblige pas à le défaire.
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+
+  &[aria-checked='true'] {
+    background: var(--accent);
+    box-shadow: none;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  // ⚠️ **PAS de `cursor: not-allowed`.** Le panneau d'interdiction dit qu'on ne peut pas,
+  // jamais pourquoi. La raison se donne en toutes lettres — infobulle sur la ligne, et nom
+  // accessible de l'interrupteur —, pas par un curseur.
+  &:disabled {
+    cursor: default;
+  }
+
+  // ⚠️ **UN INTERRUPTEUR DÉSACTIVÉ NE PERD PAS SON ÉTAT**, et c'est un défaut mesuré
+  // (maquette,) : une première version délavait TOUS les désactivés à `opacity:
+  // .5`, ce qui écrasait aussi l'accent. La dernière langue parlée — figée précisément parce
+  // qu'il en faut au moins une — s'affichait alors comme si elle était éteinte, et paraissait
+  // « se recocher toute seule » dès qu'on en activait une autre.
+
+  // Le gris ne vaut donc que pour les interrupteurs ÉTEINTS. Allumé et figé reste ALLUMÉ,
+  // simplement un ton en retrait.
+  &:disabled:not([aria-checked='true']) {
+    background: var(--line);
+
+    .knob {
+      background: var(--surface-soft);
+      box-shadow: none;
+    }
+  }
+
+  &:disabled[aria-checked='true'] {
+    background: color-mix(in srgb, var(--accent) 70%, var(--line));
+  }
+}
+
+.knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  // Le bouton est blanc dans les deux thèmes : c'est lui qui rend la position lisible, sur le
+  // gris du repos comme sur l'accent de l'état actif.
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 25%);
+  transition: transform 0.18s ease;
+
+  .switch[aria-checked='true'] & {
+    transform: translateX(15px);
+  }
+}

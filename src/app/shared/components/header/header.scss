@@ -1,0 +1,122 @@
+// Le header global, porté depuis `.titlebar` de `docs/ui/ui.html`.
+
+// L'hôte **est** la barre : pas d'élément enveloppant à l'intérieur. Un `<app-header>` qui ne
+// serait qu'une coquille autour d'un `<header>` ajouterait une boîte à styliser pour rien.
+
+// ⚠️ **Aucun mixin ici, et ce n'est pas un oubli.** Ces trois règles ont été extraites dans
+// `abstracts/_mixins.scss` le temps que la fenêtre d'onboarding ait sa propre barre de titre ;
+// elle emploie désormais **ce composant**, il n'y a donc plus qu'un seul consommateur. On
+// mutualise à la deuxième occurrence — donc pas avant. Le jour où une fenêtre-document aura
+// une barre différente (phase 3), ce sera le moment.
+
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px var(--header-pad-x);
+  border-bottom: 1px solid var(--line);
+}
+
+// ⚠️ **Aucun curseur particulier sur la barre, et c'est délibéré.** Un `grab` y a été posé puis
+// retiré : c'est un idiome du WEB, pas de macOS. Aucune barre de titre native ne
+// change de curseur au survol, et l'imiter faisait paraître l'application étrangère au système.
+// Ne pas le réintroduire.
+
+// ⚠️ **Le groupe est indispensable, ce n'est pas une div de décoration** : l'hôte répartit ses
+// enfants en `space-between`, donc deux enfants directs partiraient chacun contre un bord et la
+// marque se retrouverait à droite. Défaut livré une fois sur la barre d'onboarding.
+
+// ⚠️ **`min-height` porte la hauteur de TOUTE la barre**, et ce n'est pas une précaution.
+// 9 px de marge + `--btn-h` + 9 px = les 50 px de `HEADER_HEIGHT` dans
+// `src-tauri/src/commands/window.rs` — la bande sur laquelle le code natif centre les
+// pastilles de macOS. Jusqu'ici cette hauteur venait **par accident** des boutons de
+// navigation ; la fenêtre d'onboarding, qui n'en a aucun, faisait retomber la barre à 34 px et
+// laissait les pastilles flotter au-dessus d'elle. La hauteur d'une barre de titre ne peut pas
+// dépendre de ce qu'on choisit d'y mettre.
+.tb-left {
+  display: flex;
+  min-width: 0;
+  min-height: var(--btn-h);
+  align-items: center;
+  gap: 16px;
+}
+
+// La place des boutons de fenêtre.
+
+// ⚠️ **Ils ne sont pas dessinés ici.** macOS les peint par-dessus le webview (fenêtres en
+// `titleBarStyle: Overlay`) : les reproduire en HTML donnerait deux jeux de pastilles
+// superposées. Cette réserve n'existe que pour que la marque ne passe pas dessous, et leur
+// centrage vertical se règle côté natif — `mirmalion_center_window_buttons`.
+
+// ⚠️ **Deux pastilles, pas trois.** Aucune de nos fenêtres n'est redimensionnable, et macOS
+// retire alors le bouton d'agrandissement. La maquette en dessine trois et réserve 52 px, ce
+// qui laissait un trou à gauche de la marque. 32 px = 12 + 8 + 12.
+.traffic-space {
+  flex: none;
+  width: 32px;
+}
+
+// La marque, teintée par un **masque** plutôt que par deux PNG de couleurs figées.
+
+// ⚠️ La maquette écarte le masque (« rendu fiable, pas de masque ») et livre deux fichiers :
+// bleu Klein en clair, magenta en sombre. Elle ne connaissait alors que ces deux teintes ;
+// l'utilisateur en choisit une parmi **16**, dans chacun des deux thèmes — soit
+// 32 fichiers à produire et à tenir à jour. Le masque n'en demande qu'un, et la marque suit la
+// teinte choisie sans qu'on ait rien à faire.
+
+// ⚠️ **`--accent-ink`, et surtout pas `--accent`.** Mesuré : en thème sombre, l'aplat tombe à
+// 1,59:1 sur la surface pour la teinte Klein (2,83:1 pour le magenta de la maquette) — une
+// marque qu'on ne voit plus. L'encre, elle, est garantie ≥ 5,41:1 sur les 16 teintes et les
+// deux thèmes, et `scripts/check-contrast.mjs` le remesure à chaque `npm run verify`. En thème
+// clair les deux jetons valent la même valeur : le rendu y est identique à la maquette.
+.mark {
+  flex: none;
+  width: 31px;
+  height: 15px;
+  background: var(--accent-ink);
+  mask: url('../../../../assets/logo/logo-mark.png') center / contain no-repeat;
+}
+
+// Le logo et le nom forment un bloc : ils se serrent l'un contre l'autre (9 px), là où le
+// groupe de gauche laisse 16 px après la place des boutons de fenêtre.
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+// Le nom, à la même encre que le logo qu'il accompagne. Les deux disaient la même marque en
+// deux couleurs quand le nom était à l'encre estompée.
+
+// ⚠️ **`--accent-ink` comme le logo**, pour la même raison qu'au-dessus : l'aplat serait
+// illisible en thème sombre sur certaines des 16 teintes.
+.brand-name {
+  font-family: var(--font-brand);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent-ink);
+  letter-spacing: 0.01em;
+}
+
+.tb-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+
+  // ⚠️ **Incompressibles.** Dans un conteneur flex, un enfant rétrécit par défaut dès que la
+  // place manque : le fond du bouton devient plus étroit que son contenu, et l'icône comme le
+  // libellé débordent des deux côtés. Constaté sur une fenêtre dont le webview
+  // était zoomé — mais la fragilité ne dépend pas de la cause : une traduction plus longue
+  // (l'allemand) la rouvrirait.
+
+  // ⚠️ **Le mode compact ne protège plus de ça** : il ne retire que le libellé d'Options. Ce
+  // qui tient la largeur, c'est que l'écran courant n'a pas d'entrée vers lui-même — deux
+  // libellés au plus dans les 450 px repliés, 110 px de marge au plus serré.
+  // `header.layout.spec.ts` le remesure sur `.tb-left` : quand la place manque, c'est le groupe
+  // de gauche qui s'écrase, jamais la barre qui déborde.
+  app-button {
+    flex: none;
+  }
+}

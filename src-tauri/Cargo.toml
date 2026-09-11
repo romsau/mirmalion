@@ -1,0 +1,116 @@
+[package]
+name = "app"
+version = "0.9.17"
+description = "Application desktop mirmalion"
+authors = ["mirmalion"]
+license = "MIT"
+edition = "2024"
+# ⚠️ La valeur n'est pas choisie : cargo refuse de lire ce manifeste si elle descend sous ce
+# qu'exige l'edition. Elle ne promet aucune compatibilité descendante — l'application est livrée
+# pour macOS 26 Apple Silicon, compilée sur une machine, `Cargo.lock` figé. Ce qui est réellement
+# utilisé est déclaré par `rust-toolchain.toml`, à la racine du dépôt.
+rust-version = "1.85"
+publish = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "app_lib"
+# ⚠️ `rlib` seul : `staticlib` et `cdylib` ne servent qu'aux cibles mobiles, qu'on ne livre pas.
+# Les garder faisait produire un `.a` de 400 Mo à chaque génération de développement, que rien ne
+# lie. Le jour où une cible mobile revient, les deux formats reviennent avec elle.
+crate-type = ["rlib"]
+
+# Les règles du projet, imposées par le compilateur plutôt que par la relecture.
+#
+# ⚠️ Ici et non dans `lib.rs` : une règle posée dans `Cargo.toml` vaut aussi pour `cargo check`,
+# pour rust-analyzer et pour quiconque compile le crate sans passer par `npm run verify`. Dans
+# `lib.rs`, elle ne s'applique qu'à la bibliothèque, et l'éditeur ne la voit pas de la même façon.
+#
+# ⚠️ `npm run verify` lance `cargo clippy -- -D warnings` : un lint posé ici à `warn` est donc
+# **bloquant** dans les faits. N'en ajouter un qu'après avoir mesuré qu'il est déjà à zéro —
+# sinon c'est la chaîne de vérification entière qui refuse de passer.
+[lints.rust]
+missing_docs = "warn"
+# ⚠️ Redondant avec l'edition 2024 mais gardé : l'edition le pose à `warn`, et un avertissement
+# n'arrête que `npm run verify`, pas `cargo check` ni l'éditeur. Le `deny` est le cliquet.
+unsafe_op_in_unsafe_fn = "deny"
+
+[lints.clippy]
+# ⚠️ Une section `# Safety` sur une fonction **sûre** annonce un contrat que le compilateur
+# n'impose pas : l'appelant croit être prévenu, et rien ne le retient. Le vocabulaire du projet
+# pour ce cas est `# Pièges`. Mesuré à zéro avant d'être posé.
+unnecessary_safety_doc = "warn"
+# ⚠️ Ce crate compte des millisecondes, des échantillons, des pourcentages et des tokens : un
+# `as` qui tronque y produit une valeur **plausible mais fausse**, exactement le défaut que le
+# projet poursuit ailleurs. Treize sites existaient ; aucun n'était faux, et c'est bien le
+# problème — rien ne distinguait celui qui l'aurait été. Les conversions saturent désormais
+# (`try_from().unwrap_or(MAX)`), ou portent un `#[expect]` qui dit la borne.
+# ⚠️ `#[expect]` et non `#[allow]` : un `expect` qui cesse d'être nécessaire se signale.
+cast_possible_truncation = "warn"
+# ⚠️ La règle que l'en-tête de `commands/dictation.rs` énonce depuis toujours, désormais tenue
+# par le compilateur : un verrou tenu à travers un `.await` bloque le runtime pendant les
+# secondes que met le modèle, et la commande suivante attend derrière. Mesuré à zéro.
+# ⚠️ Elle n'est pas redondante avec le `Send` qu'exige `#[tauri::command]` : celui-ci refuse déjà
+# le cas dans une commande, mais rien ne le refusait dans les fonctions asynchrones du domaine —
+# vérifié en en plantant une.
+await_holding_lock = "warn"
+
+# ⚠️ **L'interdiction de paniquer n'est PAS ici**, elle est dans `src/lib.rs`. Ce n'est pas un
+# oubli : `[lints]` s'applique à **toutes** les cibles du paquet — la bibliothèque, mais aussi
+# `build.rs` et les treize crates de `tests/`. Or la règle parle du code qui tourne chez
+# l'utilisateur, et ni un script de build ni un test d'intégration n'en font partie. Posée ici,
+# elle demanderait une dérogation dans quatorze fichiers qui n'ont rien à se reprocher.
+#
+# ⚠️ `clippy.toml` dispense les modules `#[cfg(test)]`, mais **pas** les crates de `tests/` :
+# ceux-ci ne sont pas compilés en `cfg(test)`, et clippy ne les reconnaît pas comme des tests.
+
+[build-dependencies]
+tauri-build = { version = "2.6.3", features = [] }
+# Pour lire l'identité de signature dans `tauri.conf.json` — voir `sign_dylib` dans build.rs.
+# La recopier serait une source de dérive silencieuse le jour où le certificat change.
+serde_json = "1.0"
+
+[dependencies]
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+thiserror = "2"
+zeroize = "1"
+# `release_max_level_warn` : en build de production, `debug!` et `info!` ne sont pas filtrés
+# à l'exécution — ils sont **retirés à la compilation**, format et arguments compris. Rien à
+# désactiver, rien à oublier de désactiver.
+log = { version = "0.4", features = ["release_max_level_warn"] }
+tauri = { version = "2.11.3", features = ["image-png", "tray-icon"] }
+tauri-plugin-log = "2"
+rusqlite = { version = "0.40.1", features = ["bundled-sqlcipher-vendored-openssl"] }
+tauri-plugin-store = "2"
+tauri-plugin-autostart = "2.5.1"
+tauri-plugin-dialog = "2"
+docx-rs = "0.4.22"
+tauri-plugin-process = "2"
+
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-single-instance = "2"
+tauri-plugin-updater = "2"
+
+# ⚠️ **Pas de `[profile.release]` ici, et c'est mesuré.** `codegen-units = 1` retire 6,6 Mio au
+# binaire livré — 28,0 → 21,4 —, mais il triple le coût de `cargo test --release`, que
+# `npm run verify` lance à chaque relecture. Le réglage est donc posé par
+# `CARGO_PROFILE_RELEASE_CODEGEN_UNITS=1` dans `tauri:build`, où il se paie une fois par livraison
+# et non à chaque vérification. Cargo garde les deux variantes en cache, il n'y a rien à refaire.
+#
+# ⚠️ Deux réglages voisins ont été mesurés et **écartés** : `lto = "thin"` grossit ce binaire-ci
+# de 700 Kio au lieu de le réduire, et `strip = "debuginfo"` n'a aucun effet — le profil release
+# de cargo n'embarque déjà pas d'informations de débogage.
+#
+# ⚠️ **Jamais `panic = "abort"`** : les cinq rappels du pont s'appuient sur `catch_unwind`
+# (`native::guarded`), qu'un abort désarmerait sans rien changer à la compilation. Un
+# `compile_error!` refuse déjà la combinaison.
+
+# Les traces gardent leur fichier et leur numéro de ligne ; ce qui part est l'information dont
+# seul un débogueur pas-à-pas se sert.
+#
+# ⚠️ Cela ne se voit qu'à l'occupation disque : `target/debug` s'accumule sans que cargo n'efface
+# jamais une génération périmée, et l'information de débogage complète en est le plus gros poste.
+[profile.dev]
+debug = "line-tables-only"

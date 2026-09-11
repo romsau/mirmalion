@@ -1,0 +1,8 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Mirmalion Dev",
+  "identifier": "com.mirmalion.desktop.dev",
+  "bundle": {
+    "targets": ["app"]
+  }
+}

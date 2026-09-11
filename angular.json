@@ -1,0 +1,136 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": {
+    "packageManager": "npm"
+  },
+  "newProjectRoot": "projects",
+  "projects": {
+    "mirmalion": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "i18n": {
+        "sourceLocale": {
+          "code": "fr",
+          "subPath": ""
+        },
+        "locales": {
+          "en": "src/locale/messages.en.xlf",
+          "es": "src/locale/messages.es.xlf",
+          "de": "src/locale/messages.de.xlf",
+          "it": "src/locale/messages.it.xlf",
+          "pt": "src/locale/messages.pt.xlf"
+        }
+      },
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "src/main.ts",
+            "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/assets/sounds",
+                "output": "assets/sounds"
+              }
+            ],
+            "styles": ["src/styles.scss"],
+            "stylePreprocessorOptions": {
+              "includePaths": ["src/styles"]
+            },
+            "define": {
+              "ngI18nClosureMode": "false"
+            }
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all",
+              "localize": true,
+              "optimization": {
+                "scripts": true,
+                "fonts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                }
+              }
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "localize": ["fr"]
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "mirmalion:build:production"
+            },
+            "development": {
+              "buildTarget": "mirmalion:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "runnerConfig": "vitest-base.config.ts",
+            "coverageInclude": ["src/app/**/*.ts", "src/testing/**/*.ts"],
+            "coverageExclude": ["src/**/*.spec.ts"],
+            "coverageReporters": ["text-summary", "json"],
+            "coverageThresholds": {
+              "perFile": true,
+              "statements": 100,
+              "branches": 100,
+              "functions": 100,
+              "lines": 100
+            },
+            "exclude": ["**/*.layout.spec.ts"]
+          }
+        },
+        "test-layout": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "runner": "vitest",
+            "runnerConfig": "vitest-base.config.ts",
+            "browsers": ["ChromiumHeadless"],
+            "browserViewport": "1280x900",
+            "include": ["**/*.layout.spec.ts"],
+            "watch": false,
+            "coverage": false
+          }
+        }
+      }
+    }
+  }
+}

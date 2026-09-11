@@ -1,0 +1,123 @@
+<!--
+  La barre de titre, réduite à l'identité : `current` reste à `null`, donc **aucune
+  navigation**. Une fenêtre-document n'a pas les écrans de la fenêtre principale, et proposer
+  « Dictée » depuis un transcript enverrait l'utilisateur nulle part. Elle ne sert ici qu'à
+  réserver la place des pastilles de macOS et à porter la zone de déplacement.
+-->
+<app-header />
+
+<!--
+  ⚠️ **`.done` PORTE `position: relative`, ET C'EST LUI L'ANCÊTRE POSITIONNÉ DE L'OVERLAY.**
+  `app-doc-overlay` se pose en `position: absolute` pour être borné à cette fenêtre plutôt
+  qu'au viewport ; sans cette règle il remonterait jusqu'au bloc de contenu initial. Voir la
+  feuille de style, et l'en-tête du composant.
+-->
+<!--
+  ⚠️ **`<main>` et non `<div>`** : sans repère de page, tout le contenu de la fenêtre-document
+  se trouvait hors de tout point d'atterrissage pour un lecteur d'écran. Même motif — et même
+  angle mort de la suite de tests — que le `<main>` de `WindowShell` : la règle `region` d'AXE
+  ne s'évalue que sur une page entière, jamais sur le fragment qu'analyse un spec.
+-->
+<main class="done">
+  @if (workLabel(); as label) {
+    <!--
+      ⚠️ **Seule la traduction rapporte son avancée et s'arrête.** Elle boucle tour par tour, et
+      le backend la dit **pondérée par les caractères**, jamais par le nombre de tours. La même
+      boucle rend l'arrêt possible.
+
+      ⚠️ Export, copie et fermeture n'ont ni l'un ni l'autre : barre indéterminée, et aucune
+      commande ne les arrête — un « Annuler » sans effet est pire que son absence. C'est
+      `translating()` qui tranche les deux, pour qu'ils ne puissent pas diverger.
+    -->
+    <app-doc-overlay
+      [label]="label"
+      [progress]="workProgress()"
+      [cancellable]="translating()"
+      (cancelled)="cancelTranslation()"
+    />
+  }
+
+  <div class="done-head">
+    <!--
+      Le groupe titre + méta. Il n'est pas décoratif : `.done-head` répartit ses enfants aux
+      deux bords, et deux enfants directs sépareraient le titre de sa ligne d'informations.
+-->
+    <div>
+      <app-inline-title
+        [value]="title()"
+        [fallback]="fileName()"
+        renameLabel="Renommer la transcription"
+        i18n-renameLabel="@@filedoc.title.rename"
+        fieldLabel="Titre de la transcription"
+        i18n-fieldLabel="@@filedoc.title.field"
+        (renamed)="rename($event)"
+      />
+      <!--
+        ⚠️ **L'icône est DÉCORATIVE, et le texte porte le sens.** Une durée nue — « 6 min 23 » —
+        ne dit pas de quoi elle est la durée, et se lisait mal sous le titre. L'horloge la situe
+        d'un coup d'œil ; elle ne la remplace pas. `app-icon` pose déjà `aria-hidden`, donc rien
+        de nouveau n'entre dans l'arbre d'accessibilité : un lecteur d'écran entend la durée,
+        exactement comme avant.
+-->
+      <span class="done-meta">
+        <app-icon name="clock" />
+        {{ meta() }}
+      </span>
+    </div>
+  </div>
+
+  <!--
+    La barre d'actions : « Traduire » et « Exporter », repoussés au bord droit (`.fd-right` de la
+    maquette, porté par la feuille de style de cet écran).
+
+    ⚠️ **ELLE NE PORTE PLUS QUE CES DEUX COMMANDES**. Elle a porté un
+    sélecteur de mode de diarisation, un champ de nombre de locuteurs, un interrupteur « Masquer
+    les locuteurs » et un bouton « Ré-analyser » — tout cela est parti avec les locuteurs. C'est
+    exactement l'état d'arrivée que la maquette dessine.
+-->
+  <div class="done-subbar">
+    <!--
+      ⚠️ **Des select CUSTOM, comme l'écran Dictée** — la liste native ne se style pas, et deux
+      rendus de liste dans la même application se voient au premier coup d'œil.
+
+      ⚠️ `[value]` / `(valueChange)` et non `[(value)]` : le choix doit pouvoir être **refusé**.
+      Une liaison bidirectionnelle écrirait la langue avant même de savoir si elle est traduisible,
+      et le menu annoncerait une traduction qui n'a pas eu lieu.
+-->
+    <app-combo-select
+      class="translate fd-right"
+      [options]="translationOptions"
+      [value]="translationTarget()"
+      [disabled]="busy()"
+      ariaLabel="Traduire vers"
+      i18n-ariaLabel="@@common.translateTo"
+      (valueChange)="translateTo($event)"
+    />
+
+    <!--
+      ⚠️ **Une COMMANDE, pas un champ** : `headLabel` tient le déclencheur sur « Exporter » quoi
+      qu'il arrive, si bien que le menu y retombe après chaque action. Voir l'en-tête de
+      `ComboSelect`.
+-->
+    <app-combo-select
+      class="export"
+      [options]="exportOptions()"
+      [value]="exportValue"
+      [headLabel]="exportLabel"
+      [disabled]="busy()"
+      [ariaLabel]="exportLabel"
+      (valueChange)="pickExport($event)"
+    />
+  </div>
+
+  <!--
+    ⚠️ **Rien tant que la lecture n'a pas eu lieu.** Un transcript vide et « pas encore lu » se
+    ressemblent trait pour trait ; monter la vue avant la réponse ferait clignoter un document
+    vide à chaque ouverture de fenêtre.
+-->
+  <div class="done-content">
+    @if (loaded()) {
+      <app-transcript-view [lines]="lines()" />
+    }
+  </div>
+</main>

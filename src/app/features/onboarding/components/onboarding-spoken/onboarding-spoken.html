@@ -1,0 +1,31 @@
+<h1 class="onb-h" i18n="@@languages.list.spoken">Langues parlées</h1>
+
+<!--
+  ⚠️ La dictée ET la session : ces langues servent aux deux. Pas les fichiers, dont la langue
+  source est DÉTECTÉE et non choisie.
+-->
+<p class="onb-sub" i18n="@@onboarding.spoken.subtitle">
+  Celles dans lesquelles vous dictez et dans lesquelles se tiennent vos sessions. Modifiable à tout
+  moment dans les réglages.
+</p>
+
+<!--
+  ⚠️ Tout ce qui est entre le sous-titre et le bouton forme UN bloc, centré verticalement dans la
+  place restante. Une marge fixe ne tenait pas : la hauteur restante change avec la langue
+  d'interface, et le bloc se retrouvait collé en haut ou en bas selon les cas.
+-->
+<div class="lang-block">
+  <app-language-list
+    purpose="dictation"
+    [selected]="selected()"
+    [installed]="installed()"
+    fill
+    [locked]="locked()"
+    [lockedReason]="lockedReason"
+    (toggled)="toggled.emit($event)"
+  />
+</div>
+
+<div class="onb-footer">
+  <app-button (click)="act.emit()">{{ actionLabel() }}</app-button>
+</div>

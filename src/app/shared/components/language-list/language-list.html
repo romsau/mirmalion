@@ -1,0 +1,48 @@
+<!--
+  Les six langues en DEUX COLONNES, comme la maquette : la liste tient alors sous la hauteur
+  utile de la fenêtre d'onboarding sans repousser le bouton d'action hors champ.
+
+  ⚠️ `role="group"` et non `list` : ce sont des CONTRÔLES, pas des éléments de contenu. Son
+  nom donne leur sens aux interrupteurs, qui se contentent alors de nommer leur langue.
+-->
+<div class="lang-list" role="group" [attr.aria-label]="groupLabel()">
+  @for (row of rows(); track row.language) {
+    <!--
+      ⚠️ TOUTE LA CARTE bascule la langue, pas seulement l'interrupteur — même règle que les
+      lignes de réglage. Viser un rail de 36 px quand la carte en fait 300 n'a aucun intérêt.
+      Le survol l'annonce par le liseré ; le clavier, lui, garde l'interrupteur pour cible :
+      c'est lui qui porte le rôle et l'état.
+
+      ⚠️ La carte n'est PAS un bouton et n'en prend pas le rôle : elle contient déjà un
+      contrôle, et deux cibles imbriquées annoncées à un lecteur d'écran en feraient deux
+      gestes là où il n'y en a qu'un. Elle reste un raccourci à la souris, rien de plus.
+    -->
+    <div
+      class="lang-row"
+      [class.is-locked]="row.locked"
+      [attr.data-hint]="row.hint || null"
+      (click)="request(row)"
+    >
+      <span class="lang-name">{{ row.name }}</span>
+      <!--
+        ⚠️ `aria-hidden` : le nom accessible de l'interrupteur porte déjà « à télécharger ». Sans
+        lui, un lecteur d'écran annoncerait la même chose deux fois sur la même rangée.
+      -->
+      @if (row.missingWhileOn) {
+        <span class="lang-missing" aria-hidden="true">{{ missingLabel }}</span>
+      }
+      <!--
+        ⚠️ `stopPropagation` : sans lui, un clic SUR l'interrupteur remonterait jusqu'à la carte
+        et demanderait la bascule une seconde fois — allumée puis éteinte dans le même geste.
+      -->
+      <app-switch
+        controlled
+        [checked]="row.on"
+        [disabled]="row.locked"
+        [ariaLabel]="row.ariaLabel"
+        (toggleRequested)="request(row)"
+        (click)="$event.stopPropagation()"
+      />
+    </div>
+  }
+</div>

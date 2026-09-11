@@ -1,0 +1,44 @@
+// Le titre-bouton retour, porté depuis `.opt-title-back` de la maquette.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  display: block;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px 2px 0;
+  border: 0;
+  border-radius: 8px;
+  margin: 0 0 2px -4px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--font-brand);
+  font-size: 16px;
+  font-weight: 700;
+  gap: 5px;
+}
+
+.back app-icon {
+  width: 19px;
+  height: 19px;
+  flex: none;
+  color: var(--muted);
+  transition:
+    transform 0.12s ease,
+    color 0.12s ease;
+}
+
+// Le chevron recule d'un cheveu au survol : c'est le seul signe que le titre est un bouton,
+// puisqu'il n'a ni fond ni bordure.
+.back:hover app-icon {
+  color: var(--accent-ink);
+  transform: translateX(-2px);
+}
+
+.back:focus-visible {
+  @include focus-ring(2px);
+}

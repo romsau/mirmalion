@@ -1,0 +1,12 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "updates",
+  "description": "La mise à jour de l'application, et elle seule. ⚠️ CE FICHIER EST SÉPARÉ DE « default.json » PARCE QUE SA PORTÉE L'EST : « default » accorde ses permissions à cinq familles de fenêtres, alors que le contrôle de mise à jour ne part QUE de la fenêtre principale — c'est là qu'est montée la barre qui l'annonce, et une fenêtre-document ou la pilule n'ont rien à en faire. Les fondre ferait de « main » la mesure de tout le reste. ⚠️⚠️ « DOWNLOAD » ET « INSTALL » SONT ACCORDÉS SÉPARÉMENT, ET « DOWNLOAD-AND-INSTALL » NE L'EST PAS : la maquette écrit « Mise à jour prête à être installée » entre les deux, donc l'attente entre le téléchargement et le remplacement du bundle EST un état du produit. Le geste d'un bloc ne le permettrait pas, et « Annuler » y masquerait la barre pendant que l'application se ferait remplacer dans le dos de l'utilisateur. ⚠️ NI « updater:default » (qui ouvrirait les trois plus le geste d'un bloc), NI « process:default », qui ouvrirait « exit » — or on ne quitte cette application que par le menu du tray, et un frontend capable de la tuer contournerait la question posée par une session d'enregistrement en cours.",
+  "windows": ["main"],
+  "permissions": [
+    "updater:allow-check",
+    "updater:allow-download",
+    "updater:allow-install",
+    "process:allow-restart"
+  ]
+}

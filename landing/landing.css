@@ -1,0 +1,490 @@
+/*
+ * Feuille de la page d'accueil. Les jetons de couleur sont ceux de l'application
+ * (`src/styles/themes/_light.scss` et `_dark.scss`) : les recopier ici est le prix d'une page
+ * sans outil de construction. Un jeton qui change là-bas se reporte ici à la main.
+ */
+
+@font-face {
+  font-family: 'Montserrat';
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/Montserrat-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-weight: 500;
+  font-display: swap;
+  src: url('fonts/Montserrat-Medium.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-weight: 600;
+  font-display: swap;
+  src: url('fonts/Montserrat-SemiBold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/Montserrat-Bold.ttf') format('truetype');
+}
+
+:root {
+  color-scheme: light dark;
+  --accent: #002fa7;
+  --accent-600: #0a3bc0;
+  --accent-50: #eef1fb;
+  --accent-ink: #002fa7;
+  --accent-on: #fff;
+  --ink: #14161c;
+  --muted: #6b7080;
+  --line: #e4e6ee;
+  --surface: #fff;
+  --surface-soft: #f6f7fb;
+  --key-bg: #dbe0ea;
+  --shadow-accent: rgb(0 47 167 / 28%);
+  --shadow-ink: rgba(20, 22, 28, 0.09);
+  --radius: 11px;
+  --gutter: clamp(20px, 5vw, 48px);
+  --measure: 60ch;
+  --top-h: 52px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --accent: #a32fa3;
+    --accent-600: #b03fb0;
+    --accent-50: #2a1a2a;
+    --accent-ink: #d36bd3;
+    --ink: #eceef4;
+    --muted: #9aa1b2;
+    --line: #2a2d38;
+    --surface: #1a1c22;
+    --surface-soft: #23262f;
+    --key-bg: #101218;
+    --shadow-accent: rgb(163 47 163 / 35%);
+    --shadow-ink: rgba(0, 0, 0, 0.3);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--top-h);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .download {
+    transition: none;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font:
+    400 17px/1.6 'Montserrat',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent-ink);
+}
+
+a:focus-visible {
+  outline: 3px solid var(--accent-ink);
+  outline-offset: 3px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+kbd {
+  display: inline-block;
+  min-width: 1.7em;
+  padding: 0.05em 0.45em;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  background: var(--key-bg);
+  color: var(--ink);
+  font:
+    600 0.85em/1.5 'Montserrat',
+    sans-serif;
+  text-align: center;
+}
+
+/* ── En-tête fixe ─────────────────────────────────────────────────────────────────────── */
+
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: var(--top-h);
+  padding: 0 var(--gutter);
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+
+/* ⚠️ Le `<picture>` est un élément inline : sans ces deux `display`, l'image repose sur la ligne
+   de base du mot et se décale de trois pixels vers le haut. */
+.brand picture {
+  display: flex;
+}
+
+.brand img {
+  display: block;
+  width: 44px;
+  height: 21px;
+}
+
+.top nav {
+  display: flex;
+  gap: 2px;
+  margin-inline: auto;
+}
+
+.top nav a,
+.lang {
+  padding: 6px 12px;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.lang {
+  border: 1px solid var(--line);
+}
+
+.top nav a:hover,
+.lang:hover {
+  background: var(--surface-soft);
+  color: var(--ink);
+}
+
+@media (max-width: 680px) {
+  .top nav {
+    display: none;
+  }
+
+  .lang {
+    margin-inline-start: auto;
+  }
+}
+
+/* ── Accroche ─────────────────────────────────────────────────────────────────────────── */
+/* La première vue est l'accroche seule : elle prend toute la hauteur de la fenêtre, le reste
+   n'arrive qu'au défilement. Texte à gauche, les deux fenêtres repliées à droite : ce qu'on
+   télécharge se voit avant de lire. */
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(28px, 5vw, 72px);
+  max-width: 1440px;
+  min-height: calc(100svh - var(--top-h));
+  margin: 0 auto;
+  padding: 32px var(--gutter);
+}
+
+.hero__text {
+  display: grid;
+  justify-items: start;
+  gap: 18px;
+  text-align: left;
+}
+
+/* Les fenêtres prennent la hauteur du bloc de texte : leur taille suit l'écran, pas la largeur
+   de la colonne. */
+.hero__shots {
+  display: flex;
+  gap: 64px;
+  align-items: start;
+}
+
+.hero__shots .win img {
+  width: auto;
+  height: min(56vh, 28vw, 480px);
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    padding-top: 48px;
+  }
+
+  .hero__text {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .hero__shots {
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .hero__shots .feature__shot {
+    flex: 1;
+  }
+
+  .hero__shots .win img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+/* La marque seule, sans tuile, sans ombre : le logo tel qu'il est. */
+.hero .logo {
+  width: 168px;
+  height: 80px;
+}
+
+.hero h1 {
+  max-width: 30ch;
+  margin: 6px 0 0;
+  font-size: clamp(34px, 6vw, 60px);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.lede {
+  max-width: 50ch;
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(17px, 2.1vw, 20px);
+  font-weight: 500;
+  text-wrap: balance;
+}
+
+.download {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 16px 30px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-on);
+  font-size: 18px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 10px 26px var(--shadow-accent);
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.download:hover {
+  background: var(--accent-600);
+  transform: translateY(-1px);
+}
+
+.download [data-version] {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-on) 20%, transparent);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.meta {
+  display: grid;
+  gap: 4px;
+}
+
+.meta p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Les langues, en retrait : plus petites et plus fines, sans descendre sous le contraste que
+   la garde impose au gris. */
+.meta p + p {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+/* ── Sections ─────────────────────────────────────────────────────────────────────────── */
+
+.feature {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  align-items: center;
+  gap: clamp(28px, 5vw, 72px);
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(44px, 7vh, 88px) var(--gutter);
+}
+
+/* Texte à droite, capture à gauche : posé à la main dans le HTML, section par section. */
+.feature--reverse .feature__text {
+  order: 2;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--accent-ink);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.feature h2,
+.local h2 {
+  margin: 0 0 14px;
+  font-size: clamp(26px, 3.4vw, 36px);
+  font-weight: 700;
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.feature p {
+  max-width: var(--measure);
+  margin: 0 0 12px;
+}
+
+/* Cadre de capture. */
+/* Pas de cadre : la fenêtre se pose sur la page avec une ombre douce, comme sur un bureau. */
+.feature__shot {
+  margin: 0;
+}
+
+/* Le cadre ne dessine aucun chrome ; les captures n'en portent pas non plus. */
+.win {
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 12px 30px var(--shadow-ink);
+  overflow: hidden;
+}
+
+.win img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Fenêtre repliée : le cadre est étroit et haut, le texte prend la place. */
+.feature--tall {
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+}
+
+.feature--tall .feature__shot {
+  width: min(100%, 400px);
+  justify-self: center;
+}
+
+@media (max-width: 800px) {
+  .feature {
+    grid-template-columns: 1fr;
+  }
+
+  .feature--reverse .feature__text {
+    order: 0;
+  }
+}
+
+/* ── Hors ligne ───────────────────────────────────────────────────────────────────────── */
+
+.local {
+  margin: clamp(20px, 5vh, 56px) var(--gutter);
+  padding: clamp(40px, 7vh, 72px) var(--gutter);
+  border-radius: calc(var(--radius) + 10px);
+  background: var(--accent-50);
+  text-align: center;
+}
+
+.local h2 {
+  max-width: 22ch;
+  margin-inline: auto;
+}
+
+.local p {
+  max-width: var(--measure);
+  margin: 0 auto;
+}
+
+.local ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  max-width: 760px;
+  margin: 26px auto 0;
+  padding: 0;
+  list-style: none;
+}
+
+.local li {
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ── Pied ─────────────────────────────────────────────────────────────────────────────── */
+
+.foot {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  padding: clamp(44px, 7vh, 88px) var(--gutter) 40px;
+  border-top: 1px solid var(--line);
+  text-align: center;
+}
+
+.foot p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.foot nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px;
+  font-size: 14px;
+  font-weight: 600;
+}

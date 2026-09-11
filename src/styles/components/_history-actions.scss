@@ -1,0 +1,52 @@
+// BOUTON-ICÔNE DE LISTE — `.h-act`
+
+// ⚠️ **Règle GLOBALE, volontairement sans préfixe de conteneur.** C'est la maquette qui
+// l'impose, et sa raison est écrite là-bas : trois listes s'en servent — l'historique de
+// dictée, celui de session (phase 4) et la bibliothèque de modèles —, et un préfixe les
+// ferait diverger au premier ajout, ou se battre en spécificité.
+
+// ⚠️ **Ce n'est PAS `Button`, et l'erreur a déjà été commise une fois.** Le patron unifié de
+// l'application veut un fond teinté au repos ; celui-ci n'en a **aucun**. Ces icônes se
+// répètent sur chaque ligne : une pastille teintée par bouton transformerait la colonne de
+// droite en damier. La couleur de l'icône suffit à distinguer copier d'effacer, et
+// l'inversion pleine au survol rejoint le reste de l'application.
+
+// ⚠️ **Les boutons ne sont pas masqués au repos.** Les cacher jusqu'au survol les rendrait
+// inatteignables au clavier — et la maquette ne les cache pas non plus.
+.h-act {
+  flex: none;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  min-height: var(--btn-h);
+  min-width: var(--btn-h);
+  transition:
+    color 0.12s ease,
+    background 0.12s ease;
+
+  app-icon {
+    width: 15px;
+    height: 15px;
+  }
+
+  // ⚠️ **Copier et Supprimer portent la MÊME couleur** depuis (retrait de
+  // l'orange des boutons). Ce ne fut pas toujours le cas, et c'est assumé : ce qui les
+  // distingue est le GLYPHE — presse-papiers contre corbeille — et le nom accessible du
+  // bouton. Une couleur ne se lit ni par un lecteur d'écran ni par un daltonien ; elle ne
+  // portait donc déjà pas cette distinction toute seule.
+  &.copy,
+  &.del {
+    color: var(--accent-ink);
+
+    &:hover {
+      color: var(--accent-on);
+      background: var(--accent);
+    }
+  }
+}

@@ -1,0 +1,19 @@
+<app-header [current]="screen()" [compact]="compact()" (navigate)="go($event)" />
+<!--
+  ⚠️ **Ce `<main>` est un repère, pas une boîte.** Sans lui, **tout** le
+  contenu des écrans se trouvait hors de tout repère de page : le header porte bien un `<nav>`,
+  mais rien ne disait « ici commence le contenu ». Un lecteur d'écran qui navigue par repères —
+  le geste courant pour sauter la navigation — n'avait nulle part où atterrir.
+
+  ⚠️ **ET AUCUNE SUITE DE TESTS NE POUVAIT LE VOIR.** La règle `region` d'AXE est
+  `pageLevel: true` : elle ne s'évalue **que** sur une page entière. `expectNoAxeViolations`
+  analyse un `fixture.nativeElement`, donc un fragment — la règle n'y est jamais exécutée, et
+  les 1 500 tests passaient. Relevé en parcourant l'application dans un vrai navigateur.
+
+  ⚠️ **Il ENVELOPPE le `<router-outlet>`**, ce qui suffit : le routeur insère le composant
+  **après** la balise, donc dans le même parent. Le sortir de `<main>` reviendrait à ne rien
+  faire, sans que rien ne le signale.
+-->
+<main class="shell-main">
+  <router-outlet />
+</main>

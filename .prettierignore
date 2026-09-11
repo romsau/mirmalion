@@ -1,0 +1,37 @@
+# Artefacts générés
+dist/
+src-tauri/gen/
+src-tauri/target/
+
+# Documents de référence, mis en forme à la main.
+#
+# `docs/ui/ui.html` est **la maquette** : elle tranche le rendu au pixel près et se compare
+# d'une version à l'autre. La passer à Prettier réécrit 15 000 lignes et rend tout diff
+# illisible. Les documents de cadrage et la roadmap sont dans le même cas : leur mise en
+# forme (tableaux alignés, listes) est intentionnelle.
+docs/
+
+# `.claude/CLAUDE.md` est de la même famille : un document de référence écrit à la main.
+# Prettier y transforme silencieusement un « + » de continuation en élément de liste — il ne
+# se contente pas de reformater, il change le sens. Constaté deux fois (P0-02, P0-09).
+.claude/
+
+# ⚠️ Les poids embarqués sont des artefacts TIERS, repris octet pour octet — voir
+# `src-tauri/models/README.md`. Leurs `metadata.json` sont produits par le compilateur CoreML :
+# les reformater les ferait diverger de la source amont sans rien apporter, et rendrait
+# illisible le diff du jour où on les mettra à jour.
+src-tauri/models/
+
+# ⚠️ Répertoire de compilation par défaut de SwiftPM. Il NE DOIT PAS exister — voir
+# `src-tauri/.gitignore`, qui explique la boucle infinie du watcher de `tauri dev`. Il
+# réapparaît pourtant : un IDE qui indexe le paquet Swift (SourceKit-LSP) le recrée sans
+# prévenir, et `prettier --check .` s'arrêtait alors sur ses fichiers JSON générés.
+# Prettier ne lit que le `.gitignore` de la racine, pas ceux des sous-répertoires : la ligne
+# doit donc être ici aussi.
+src-tauri/native/.build/
+
+# ⚠️ Documents de travail des lots d'exécution, hors dépôt : ils sont ignorés par
+# `.superpowers/sdd/.gitignore`, un `.gitignore` de sous-répertoire. Prettier ne lit que
+# celui de la racine — même piège que `src-tauri/native/.build/` ci-dessus — et
+# `prettier --check .` s'arrêtait donc sur des briefs qui ne sont pas du code.
+.superpowers/

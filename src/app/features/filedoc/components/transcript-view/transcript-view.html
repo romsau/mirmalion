@@ -1,0 +1,11 @@
+<!--
+  `track $index` : rien n'identifie un paragraphe — ni le STT ni le découpage par silence ne
+  rendent d'identifiant stable —, et le transcript est **remplacé en entier** quand une
+  traduction s'affiche. Une clé fabriquée à partir du texte serait pire qu'un indice : deux
+  « Oui. » identiques entreraient en collision.
+-->
+<div class="tr-raw">
+  @for (line of lines(); track $index) {
+    <p class="cr-p">{{ line.text }}</p>
+  }
+</div>

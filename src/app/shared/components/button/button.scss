@@ -1,0 +1,127 @@
+// Le patron unifié des boutons, porté depuis le bloc « BOUTONS UNIFIÉS » de `docs/ui/ui.html`.
+
+// Une variante = **deux couples de couleurs** : un fond teinté et son encre au repos, un fond
+// plein et son encre à l'état actif. Tout le reste — géométrie, états, transitions — est commun
+// et écrit une seule fois. C'est ce qui fait qu'ajouter une teinte tient en quatre lignes.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  display: inline-flex;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: var(--btn-h);
+  padding: 7px 13px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--rest-surface);
+  color: var(--rest-ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--active-surface);
+    color: var(--active-ink);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  // Sélectionné = l'inversion rendue permanente. Le survol n'a alors plus rien à faire : c'est
+  // déjà l'état d'arrivée.
+  &[aria-pressed='true'] {
+    background: var(--active-surface);
+    color: var(--active-ink);
+  }
+
+  // Désactivé : un vrai changement de couleur, pas une opacité — une opacité délave aussi le
+  // fond et rend l'ensemble illisible. Mesuré 4,61:1 en clair et 5,84:1 en sombre, alors que
+  // WCAG n'exige rien sur un contrôle inactif.
+  &:disabled {
+    background: var(--surface-soft);
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+}
+
+// L'icône suit la couleur du texte — c'est tout l'intérêt du `currentColor` : elle
+// s'inverse au survol sans qu'on ait à la redessiner.
+app-icon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+// Icône seule : le bouton devient carré.
+
+// ⚠️ **Déclenché par l'entrée `iconOnly`, et surtout PAS par `:has(.label:empty)`.** Ce
+// sélecteur-là marchait tant que le libellé ne changeait jamais. Dès qu'il apparaît — le
+// header perd ses libellés en fenêtre étroite et les retrouve en fenêtre large — **WebKit
+// n'invalide pas le sélecteur** : la règle restait appliquée, `aspect-ratio: 1` rendait le
+// bouton carré à la largeur de son nouveau contenu (un carré de 100 px, texte débordant du
+// fond, header deux fois trop haut), et seul un survol de souris forçait le recalcul.
+// Constaté. Ne pas y revenir : une entrée est déterministe, un sélecteur d'état
+// dépend du bon vouloir du moteur.
+.label:empty {
+  display: none;
+}
+
+:host(.icon-only) .button {
+  aspect-ratio: 1;
+  padding: 0;
+}
+
+// ---- Variantes ------------------------------------------------------------------------------
+// Chacune ne fait que nommer quatre couleurs. Le comportement est au-dessus.
+
+:host(.variant-accent) {
+  --rest-surface: var(--accent-50);
+  --rest-ink: var(--accent-ink);
+  --active-surface: var(--accent);
+  --active-ink: #fff;
+}
+
+// ⚠️ **Deux variantes ici, et deux seulement.** Le motif est écrit sur le type `ButtonVariant` :
+// c'est la modale de confirmation qui protège, pas la couleur du bouton. Ne pas rouvrir
+// l'exception WCAG qu'une variante orange traînait (2,61:1 sur fond teinté), ni la règle qui lui
+// retirait son fond au repos — les icônes de liste relèvent de `.h-act`, pas de ce composant.
+
+// Le neutre suit le même patron que l'accent : un fond doux au repos, un fond plein à l'état
+// actif. Les deux autres « neutres » de la maquette — fond transparent, ou bordure — ont été
+// écartés parce qu'ils rompaient le patron et rouvraient la porte à un second motif de bouton.
+:host(.variant-neutral) {
+  --rest-surface: var(--surface-soft);
+  --rest-ink: var(--ink);
+  --active-surface: var(--line);
+  --active-ink: var(--ink);
+}
+
+// ---- Taille -----------------------------------------------------------------------------------
+// `large` ne change ni la couleur ni l'inversion : c'est la même chose, en plus grand. Pour un
+// simple ajustement de hauteur, l'appelant redéfinit `--btn-h` sur le bouton — c'est à cela
+// qu'un jeton sert, et c'est ce qui évite d'inventer une variante par exception de taille.
+
+:host(.size-large) .button {
+  gap: 9px;
+  padding: 13px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+:host(.size-large) app-icon {
+  width: 18px;
+  height: 18px;
+}

@@ -1,0 +1,50 @@
+// Le sous-écran Dictionnaire personnel — porté depuis `.opt-subtools` et `.dico-list` de
+// `docs/ui/ui.html`.
+
+// ⚠️ **Ce qui est ICI et ce qui est dans la ligne** : la page porte la liste et sa barre
+// d'outils, parce que c'est elle qui les dessine. La ligne établie porte les siens, dans son
+// propre composant. Aucun sélecteur ne traverse la frontière.
+
+:host {
+  display: block;
+}
+
+// ⚠️ **DES FILETS, PAS DES CARTES**. Chaque terme vivait dans un encadré
+// à fond doux : sur une liste de vingt mots, vingt cadres empilés font un damier, et le cadre
+// disait « objet à part » là où il n'y a qu'une ligne d'un même tableau.
+
+// ⚠️ **Le `gap` disparaît avec eux, et ce n'est pas un oubli** : c'est le rembourrage des lignes
+// qui donne désormais le rythme. Un espacement conservé laisserait le filet flotter au milieu
+// d'un vide, à égale distance des deux lignes qu'il sépare — donc rattaché à aucune.
+.dico-list {
+  display: flex;
+  flex-direction: column;
+}
+
+// ⚠️ **DEUX COLONNES, et la pile est dans la première.** La rangée n'aligne plus que la
+// corbeille ; le terme et ses graphies s'empilent à l'intérieur (voir `dictionary-row.html`).
+// ⚠️ `align-items: start` : la corbeille se cale en HAUT, à hauteur du terme, et ne flotte pas
+// au milieu d'une pile dont la hauteur dépend du nombre de graphies.
+.dico-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 12px;
+  padding: 12px 2px;
+}
+
+// ⚠️ **Le filet SÉPARE, il ne borde pas** — d'où le sélecteur d'adjacence, qui n'en pose ni
+// au-dessus de la première ligne ni sous la dernière. Un `border-bottom` posé sur toutes aurait
+// fermé la liste par un trait suspendu sous le dernier terme.
+.dico-row + .dico-row {
+  border-top: 1px solid var(--line);
+}
+
+// Les deux vides — « rien saisi » et « rien trouvé ». Ils ne disent pas la même chose, ils
+// s'affichent au même endroit.
+.dico-empty {
+  margin: 18px 0 0;
+  font-size: 12.5px;
+  color: var(--muted);
+  text-align: center;
+}

@@ -1,0 +1,31 @@
+<app-history-panel
+  [entries]="entries()"
+  label="Dernières sessions"
+  i18n-label="@@history.direct.label"
+  [empty]="store.empty()"
+  [search]="store.search()"
+  searchLabel="Rechercher une session dans l'historique"
+  i18n-searchLabel="@@history.direct.searchLabel"
+  searchPlaceholder="Rechercher une session…"
+  i18n-searchPlaceholder="@@history.direct.searchPlaceholder"
+  noResultLabel="Aucune session trouvée."
+  i18n-noResultLabel="@@history.direct.noResult"
+  [itemSize]="rowHeight"
+  (searchChange)="search($event)"
+  (open)="open($event)"
+  (copy)="copy($event)"
+  (remove)="remove($event)"
+  (clearAll)="clearAll()"
+>
+  <!--
+    L'invitation de l'historique vide. Elle est **projetée** parce qu'elle parle de session — la
+    source, le bouton Démarrer — là où le panneau, lui, ne connaît aucun domaine.
+  -->
+  <ng-container emptyState>
+    <app-icon name="screen-wave" />
+    <p class="he-title" i18n="@@history.direct.empty.title">Aucune session enregistrée</p>
+    <p class="he-text" i18n="@@history.direct.empty.text">
+      Choisissez une source et cliquez sur « Démarrer » : vos comptes rendus s'afficheront ici.
+    </p>
+  </ng-container>
+</app-history-panel>

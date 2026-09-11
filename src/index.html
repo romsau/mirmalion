@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mirmalion</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  </head>
+  <body>
+    <!--
+      ⚠️ Le jeton est remplacé par Tauri à chaque chargement de la page, et la source
+      `'nonce-…'` correspondante est ajoutée à `style-src`. Sans lui, il faudrait rendre
+      `'unsafe-inline'` à la CSP : Angular pose les styles de composants dans des `<style>`
+      à l'exécution. En `ng serve`, aucun remplacement n'a lieu — la CSP de développement
+      garde donc `'unsafe-inline'`, qu'un attribut littéral n'invalide pas.
+    -->
+    <app-root ngCspNonce="__TAURI_STYLE_NONCE__"></app-root>
+  </body>
+</html>

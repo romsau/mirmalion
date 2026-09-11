@@ -1,0 +1,44 @@
+<!--
+  `cdkTrapFocusAutoCapture` déplace le focus dans la boîte à l'ouverture, et le **rend au
+  déclencheur** à la destruction. C'est la moitié du travail d'accessibilité d'une modale, et
+  c'est aussi celle qu'on oublie : sans elle, la tabulation continue derrière le voile et le
+  focus se perd à la fermeture.
+
+  Le focus initial se pose sur l'élément portant `cdkFocusInitial` — l'action **la moins
+  destructive**, c'est-à-dire « Annuler » dans une confirmation.
+-->
+<!--
+  Sans en-tête, le titre n'est plus affiché nulle part : il devient `aria-label`. C'est le même
+  nom accessible, porté autrement — jamais une modale sans nom.
+-->
+<div
+  class="pmodal"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-labelledby]="bare() ? null : 'modal-heading'"
+  [attr.aria-label]="bare() ? heading() : null"
+  [class]="panelClasses()"
+  [style.width.px]="width()"
+  cdkTrapFocus
+  [cdkTrapFocusAutoCapture]="true"
+>
+  @if (!bare()) {
+    <header class="pmodal-head">
+      <h3 id="modal-heading">{{ heading() }}</h3>
+      @if (dismissible()) {
+        <app-button
+          [iconOnly]="true"
+          variant="neutral"
+          icon="close"
+          i18n-ariaLabel="@@modal.close"
+          ariaLabel="Fermer"
+          (click)="dismissed.emit()"
+        />
+      }
+    </header>
+  }
+
+  <div class="pmodal-body">
+    <ng-container #content />
+  </div>
+</div>

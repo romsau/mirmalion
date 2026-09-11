@@ -1,0 +1,49 @@
+// Remise à plat minimale — portée depuis `docs/ui/ui.html`.
+
+// Volontairement courte : la maquette ne remet presque rien à zéro, et un reset large
+// (Normalize, Preflight…) ferait diverger le rendu de la référence.
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+// `hidden` doit l'emporter, même sur un `display: flex` ou `grid` posé par un composant.
+[hidden] {
+  display: none !important;
+}
+
+// Barres de défilement fines et discrètes, accordées au thème.
+* {
+  scrollbar-color: var(--line) transparent;
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: var(--line);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+  background-clip: padding-box;
+}

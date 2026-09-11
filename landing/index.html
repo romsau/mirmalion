@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mirmalion — la dictée et la transcription, sur votre Mac</title>
+    <meta
+      name="description"
+      content="Dictée, transcription en direct et transcription de fichiers audio ou vidéo. Tout se passe sur votre Mac, hors ligne : aucun son, aucun texte ne quitte la machine."
+    />
+    <link rel="alternate" hreflang="fr" href="https://mirmalion.web.app/" />
+    <link rel="alternate" hreflang="en" href="https://mirmalion.web.app/en/" />
+    <link rel="icon" href="img/app-icon.png" type="image/png" />
+    <link rel="stylesheet" href="landing.css?v=2" />
+  </head>
+  <body>
+    <header class="top">
+      <a class="brand" href="#top">
+        <picture>
+          <source srcset="img/logo-mark-magenta.png" media="(prefers-color-scheme: dark)" />
+          <img src="img/logo-mark.png" alt="" width="44" height="21" />
+        </picture>
+        Mirmalion
+      </a>
+      <nav aria-label="Sections de la page">
+        <a href="#dictee">Dictée</a>
+        <a href="#direct">Direct</a>
+        <a href="#fichiers">Fichiers</a>
+        <a href="#local">Hors ligne</a>
+      </nav>
+      <a class="lang" href="en/" lang="en" hreflang="en">English</a>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero__text">
+          <picture>
+            <source srcset="img/logo-mark-magenta.png" media="(prefers-color-scheme: dark)" />
+            <img
+              class="logo"
+              src="img/logo-mark.png"
+              alt="Logo Mirmalion"
+              width="168"
+              height="80"
+            />
+          </picture>
+          <h1 id="hero-title">Vous parlez, Mirmalion écrit.</h1>
+          <p class="lede">
+            Dictez dans n'importe quelle application, suivez une conférence dans une autre langue
+            avec le texte en direct, ou transcrivez un fichier. Sur votre Mac, sans réseau.
+          </p>
+          <a
+            class="download"
+            data-download
+            href="https://github.com/romsau/mirmalion/releases/download/v0.9.17/Mirmalion_0.9.17_aarch64.dmg"
+          >
+            Télécharger Mirmalion <span data-version>0.9.17</span>
+          </a>
+          <div class="meta">
+            <p>macOS 26 · Apple Silicon · Gratuit, code ouvert</p>
+            <p>Français, anglais, espagnol, allemand, italien, portugais.</p>
+          </div>
+        </div>
+        <div class="hero__shots" aria-hidden="true">
+          <figure class="feature__shot">
+            <div class="win">
+              <img src="img/dictee.png?v=3" alt="" width="900" height="1270" />
+            </div>
+          </figure>
+          <figure class="feature__shot">
+            <div class="win">
+              <img src="img/direct.png?v=3" alt="" width="900" height="1270" />
+            </div>
+          </figure>
+        </div>
+      </section>
+
+      <section
+        id="dictee"
+        class="feature feature--tall feature--reverse"
+        aria-labelledby="dictee-title"
+      >
+        <div class="feature__text">
+          <p class="eyebrow">Dictée</p>
+          <h2 id="dictee-title">Vous parlez, le texte s'écrit là où est votre curseur.</h2>
+          <p>
+            Un raccourci, <kbd>⌃</kbd><kbd>⌥</kbd>, et vous dictez dans n'importe quelle
+            application. Le texte s'insère à l'endroit exact où vous étiez, ponctué et propre.
+          </p>
+          <p>
+            Un second raccourci, <kbd>⌃</kbd><kbd>⌥</kbd><kbd>⌘</kbd>, écrit directement dans la
+            langue de votre choix. Un dictionnaire personnel apprend vos noms propres et vos termes
+            de métier.
+          </p>
+        </div>
+        <figure class="feature__shot">
+          <div class="win">
+            <img
+              src="img/dictee.png?v=3"
+              alt="L'écran Dictée de Mirmalion : mode de dictée, langue parlée, traduction, reformulation."
+              width="900"
+              height="1270"
+            />
+          </div>
+        </figure>
+      </section>
+
+      <section id="direct" class="feature feature--tall" aria-labelledby="direct-title">
+        <div class="feature__text">
+          <p class="eyebrow">Direct</p>
+          <h2 id="direct-title">Une conférence dans une autre langue, lisible en direct.</h2>
+          <p>
+            Vous suivez une conférence en anglais, une visio en espagnol, une vidéo en allemand :
+            Mirmalion capte le son de votre Mac et affiche le texte au fur et à mesure, traduit dans
+            votre langue si vous le souhaitez.
+          </p>
+          <p>
+            À la fin, un compte rendu rédigé sur votre machine par un modèle de langage local, et un
+            export du texte.
+          </p>
+        </div>
+        <figure class="feature__shot">
+          <div class="win">
+            <img
+              src="img/direct.png?v=3"
+              alt="L'écran Direct de Mirmalion : source audio, langue parlée, traduction, et le bouton Démarrer l'enregistrement."
+              width="900"
+              height="1270"
+              loading="lazy"
+            />
+          </div>
+        </figure>
+      </section>
+
+      <section id="fichiers" class="feature feature--reverse" aria-labelledby="fichiers-title">
+        <div class="feature__text">
+          <p class="eyebrow">Fichiers</p>
+          <h2 id="fichiers-title">Un enregistrement, glissé, transcrit.</h2>
+          <p>
+            Déposez un fichier audio ou vidéo, et récupérez son texte. Aucune adresse à coller,
+            aucun envoi : le fichier ne quitte pas votre disque.
+          </p>
+        </div>
+        <figure class="feature__shot">
+          <div class="win">
+            <img
+              src="img/fichiers.png?v=3"
+              alt="Le panneau Fichiers des Options : glissez un fichier audio ou vidéo, ou parcourez l'ordinateur."
+              width="1800"
+              height="1270"
+              loading="lazy"
+            />
+          </div>
+        </figure>
+      </section>
+
+      <section id="local" class="local" aria-labelledby="local-title">
+        <h2 id="local-title">Rien ne sort de votre machine.</h2>
+        <p>
+          Toutes les fonctions marchent sans réseau. Aucune télémétrie, aucun compte, aucun contenu
+          envoyé nulle part. Le réseau ne sert qu'à deux gestes explicites : télécharger une langue,
+          mettre à jour l'application.
+        </p>
+        <ul role="list" aria-label="Langues gérées">
+          <li>Français</li>
+          <li>Anglais</li>
+          <li>Espagnol</li>
+          <li>Allemand</li>
+          <li>Italien</li>
+          <li>Portugais</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <a class="download" href="#top">Télécharger Mirmalion</a>
+      <nav aria-label="Liens">
+        <a href="https://github.com/romsau/mirmalion">Code source</a>
+        <a href="https://github.com/romsau/mirmalion/releases">Toutes les versions</a>
+        <a href="https://github.com/romsau/mirmalion/blob/main/LICENSE">Licence MIT</a>
+      </nav>
+      <p>Mirmalion est un logiciel libre pour macOS 26 sur Apple Silicon.</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,48 @@
+<!--
+  ⚠️ **AUCUN TITRE, ET AUCUN BOUTON RETOUR** : c'est une famille du rail depuis,
+  plus un sous-écran de Dictée. Le panneau de droite ne porte jamais le nom de sa catégorie —
+  le rail le dit, et c'est lui qui porte `aria-current`.
+-->
+
+<!--
+  ⚠️ Le gras porte ce qu'il faut retenir, et la phrase se lit à la taille du texte courant : en
+  petit et en gris, elle passait pour une mention légale et personne ne comprenait à quoi sert
+  l'écran.
+-->
+<p class="fam-desc" i18n="@@options.dictionary.desc">
+  <strong>Les mots que la dictée écrit mal se corrigent une fois pour toutes</strong>&nbsp;: vos
+  noms propres, vos marques, votre vocabulaire de métier.
+</p>
+
+<app-dictionary-toolbar
+  [query]="store.query()"
+  (search)="store.setQuery($event)"
+  (add)="addWord()"
+/>
+
+<div class="dico-list">
+  @for (entry of store.visible(); track entry.id) {
+    <app-dictionary-row
+      class="dico-row"
+      [entry]="entry"
+      [duplicate]="duplicateVariant() === entry.id"
+      (addVariant)="onAddVariant(entry.id, $event)"
+      (removeVariant)="onRemoveVariant($event)"
+      (removeTerm)="onRemoveTerm(entry.id)"
+    />
+  }
+</div>
+
+<!--
+  Deux vides qui ne disent PAS la même chose, et les confondre enverrait l'utilisateur créer un
+  mot alors qu'il en a quinze : « rien n'a jamais été saisi » invite à commencer, « la
+  recherche ne trouve rien » invite à effacer la recherche. `role="status"` : le résultat d'une
+  frappe s'annonce sans voler le focus.
+-->
+@if (store.loaded() && store.count() === 0) {
+  <p class="dico-empty" i18n="@@dictionary.empty">
+    Votre dictionnaire est vide. Ajoutez un mot que la dictée écrit mal.
+  </p>
+} @else if (store.count() > 0 && store.visible().length === 0) {
+  <p class="dico-empty" role="status" i18n="@@dictionary.noResult">Aucun mot trouvé.</p>
+}

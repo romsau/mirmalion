@@ -1,0 +1,46 @@
+<app-header />
+
+<!--
+  ⚠️ **`<main>` et non `<div>`** : sans repère de page, tout le contenu de l'onboarding se
+  trouvait hors de tout point d'atterrissage pour un lecteur d'écran. Même motif — et même
+  angle mort de la suite de tests — que le `<main>` de `WindowShell` : la règle `region` d'AXE
+  ne s'évalue que sur une page entière, jamais sur le fragment qu'analyse un spec.
+-->
+<main class="onb-body">
+  @switch (step()) {
+    @case ('welcome') {
+      <app-onboarding-welcome (start)="next()" />
+    }
+    @case ('permissions') {
+      <app-onboarding-permissions
+        [status]="status()"
+        [pending]="pending()"
+        (act)="act($event)"
+        (recheck)="recheck()"
+        (finish)="toSpoken()"
+      />
+    }
+    @case ('spoken') {
+      <app-onboarding-spoken
+        [selected]="spokenChoice()"
+        [installed]="installed()"
+        (toggled)="toggleSpoken($event)"
+        (act)="actOnSpoken()"
+      />
+    }
+    @case ('download') {
+      <app-onboarding-download
+        [label]="downloadLabel()"
+        [progress]="downloadProgress()"
+        (cancelled)="cancelDownload()"
+      />
+    }
+    @case ('translation') {
+      <app-onboarding-translation
+        [selected]="translationChoice()"
+        (toggled)="toggleTranslation($event)"
+        (finish)="finish()"
+      />
+    }
+  }
+</main>

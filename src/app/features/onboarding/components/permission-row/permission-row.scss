@@ -1,0 +1,53 @@
+// Une ligne d'autorisation, portée depuis `.onb-item.onb-perm` de `docs/ui/ui.html`.
+
+@use 'abstracts/mixins' as *;
+
+:host {
+  @include onboarding-item;
+
+  // ⚠️ **Centré, là où les blocs de Bienvenue s'alignent en haut.** C'est la maquette : une
+  // ligne d'autorisation porte une action à droite, et une action alignée sur la première
+  // ligne de texte flotterait au-dessus du bloc.
+  align-items: center;
+}
+
+// La reprise d'une explication qui ne tient pas dans la description — la permission
+// Accessibilité réinitialisée par une re-signature, ou une permission refusée qui ne se
+// rétablit que dans les Réglages Système. Plus petite que la description : c'est une note,
+// pas une seconde phrase.
+.onb-it-note {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+// L'état, quand il n'y a aucun geste à proposer. Une seule géométrie, trois teintes — le même
+// principe que les variantes du bouton : ce ne sont pas trois pastilles, c'en est une.
+.perm-tag {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 9px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  gap: 5px;
+
+  app-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  &.is-ok {
+    background: var(--success-50);
+    color: var(--success-ink);
+  }
+
+  &.is-warn {
+    background: var(--warning-50);
+    color: var(--warning-on-50);
+  }
+}

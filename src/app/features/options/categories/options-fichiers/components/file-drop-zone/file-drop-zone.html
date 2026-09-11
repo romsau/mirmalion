@@ -1,0 +1,19 @@
+<!--
+  ⚠️ **L'icône reste pendant le glisser** — c'est le titre qui change et le bouton qui s'en va.
+  La maquette le dit en creux : sa règle `.is-drag` ne masque que `.dz-title` et `.dz-browse`.
+-->
+<app-icon name="waveform" />
+
+<p class="dz-title" [class.is-drop]="dragging()">{{ title() }}</p>
+
+<!--
+  Retiré du DOM pendant le glisser, et non masqué en CSS comme dans la maquette : un bouton
+  invisible mais atteignable au clavier est un piège de tabulation, et la maquette n'avait pas
+  d'autre outil que `display: none` pour l'écarter.
+
+  Aucun `(click)` ici : il remonte jusqu'à l'hôte, qui l'écoute pour toute la zone — voir
+  l'en-tête du composant.
+-->
+@if (!dragging()) {
+  <app-button i18n="@@fichiers.drop.browse">Parcourir l'ordinateur</app-button>
+}

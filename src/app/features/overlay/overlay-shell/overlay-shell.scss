@@ -1,0 +1,28 @@
+// ⚠️ **L'hôte peint TOUTE la fenêtre en accent, pas seulement la pilule.**
+
+// La fenêtre n'est pas transparente — l'option de Tauri exige des API privées d'Apple, motif
+// de rejet au Mac App Store (voir `commands/overlay.rs`). Ce que la pilule ne couvre pas
+// serait donc peint en blanc par le webview : un liseré blanc autour de la pastille, et un
+// éclair blanc à chaque changement d'état, le temps que la fenêtre se retaille. Peindre le
+// fond de la fenêtre à la même couleur que la pilule fait disparaître les deux.
+:host {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  overflow: hidden;
+}
+
+// Le gabarit de mesure : hors de l'écran, mais **mis en page**.
+
+// ⚠️ `visibility: hidden` et non `display: none` : le second supprime la mise en page, donc
+// la largeur qu'on vient justement chercher. Et `position: absolute` pour qu'il ne pousse
+// rien — l'hôte est un conteneur flex centré.
+.overlay-measure {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  visibility: hidden;
+}

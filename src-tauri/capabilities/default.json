@@ -1,0 +1,13 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Permissions de base, accordées fenêtre par fenêtre. ⚠️ TOUTE nouvelle fenêtre doit être ajoutée à « windows » : Tauri 2 refuse par défaut, si bien qu'une fenêtre absente d'ici n'a AUCUNE permission — elle ne peut ni se déplacer, ni écouter un évènement. Le symptôme est muet côté utilisateur (la fenêtre paraît collée à l'écran) et le test « every_window_label_is_declared_in_the_capabilities » de lifecycle.rs existe pour le rendre bruyant. Les étiquettes sont celles de src-tauri/src/lifecycle.rs. ⚠️ AUCUN jeu par défaut du cœur n'est accordé, et la liste ci-dessous est le relevé exact de ce que le frontend appelle : « listen » et son désabonnement (invoke.ts, et les deux abonnements que Tauri construit dessus — onCloseRequested et onDragDropEvent), et « start_dragging » pour les régions de titre. Les commandes du backend, elles, ne passent par aucune permission : c'est generate_handler! qui les déclare. Le test « the_capabilities_grant_only_what_the_frontend_calls » de lifecycle.rs tient ce relevé. ⚠️ « dialog » n'est PAS accordé par son jeu par défaut : celui-ci ouvrirait aussi « message », « ask » et « confirm », dont aucun n'est appelé — les modales sont les nôtres. Il ne reste que le sélecteur de fichier du bouton « Parcourir » — « dialog:allow-open », et rien d'autre. ⚠️ « dialog:allow-save » est parti avec la boîte « Enregistrer sous », que Rust ouvre désormais lui-même : le webview demande un export, il ne désigne aucun fichier. ⚠️ « core:window:allow-destroy » manque volontairement : onCloseRequested fermerait la fenêtre lui-même si notre gestionnaire cessait d'appeler preventDefault(). Il l'appelle toujours — la fermeture appartient à la commande de domaine, qui libère le document d'abord. ⚠️ « filedoc-* » est un JOKER D'ÉTIQUETTE, pas un joker de permission, et la distinction est entière : les fenêtres-documents s'ouvrent en nombre indéterminé et leurs étiquettes portent un compteur — les énumérer est impossible par construction. Ce motif élargit la LISTE DES FENÊTRES qui reçoivent les permissions nommées ci-dessous ; il n'élargit aucune permission. Sans lui, la boîte « Enregistrer sous » appelée depuis une fenêtre-document ne rendrait rien, en silence. « directdoc-* » est le même joker pour les fenêtres-SESSIONS, qui s'ouvrent en nombre tout aussi indéterminé.",
+  "windows": ["main", "onboarding", "overlay", "filedoc-*", "directdoc-*"],
+  "permissions": [
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+    "core:window:allow-start-dragging",
+    "store:default",
+    "dialog:allow-open"
+  ]
+}
