@@ -282,6 +282,16 @@
       <p>O Mirmalion é software livre para macOS 26 em Apple Silicon.</p>
     </footer>
 
+    <script>
+      document.addEventListener('click', function (event) {
+        var menu = document.querySelector('.lang[open]');
+        if (menu && !menu.contains(event.target)) menu.removeAttribute('open');
+      });
+      document.addEventListener('keydown', function (event) {
+        var menu = document.querySelector('.lang[open]');
+        if (event.key === 'Escape' && menu) menu.removeAttribute('open');
+      });
+    </script>
     <aside id="consent" class="consent" hidden aria-label="Medição de audiência">
       <p>
         Este site conta as visitas com o Google Analytics, sem publicidade. Podes recusar.

@@ -650,6 +650,19 @@ const REDIRECT = `
       })();
     </script>`;
 
+/** Le menu de langue se referme d’un clic ailleurs ou par Échap : un `<details>` seul reste ouvert. */
+const LANG_MENU = `
+    <script>
+      document.addEventListener('click', function (event) {
+        var menu = document.querySelector('.lang[open]');
+        if (menu && !menu.contains(event.target)) menu.removeAttribute('open');
+      });
+      document.addEventListener('keydown', function (event) {
+        var menu = document.querySelector('.lang[open]');
+        if (event.key === 'Escape' && menu) menu.removeAttribute('open');
+      });
+    </script>`;
+
 /**
  * Le bandeau de consentement et la mesure d'audience, qui ne se charge qu'après « Accepter ».
  *
@@ -890,7 +903,7 @@ ${t.local.langs.map((l) => `          <li>${l}</li>`).join('\n')}
     </main>
 
 ${footer(code, path)}
-${consent(code, path)}
+${LANG_MENU}${consent(code, path)}
   </body>
 </html>
 `;
@@ -920,7 +933,7 @@ ${sections}
     </main>
 
 ${footer(code, path)}
-${consent(code, path)}
+${LANG_MENU}${consent(code, path)}
   </body>
 </html>
 `;
