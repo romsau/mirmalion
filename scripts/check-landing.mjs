@@ -31,13 +31,33 @@ const PATHS = Object.fromEntries(
 /** La locale Playwright de chaque langue. */
 const LOCALES = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE', it: 'it-IT', pt: 'pt-PT' };
 
-/** Les pages du site, avec la langue que chacune doit déclarer et les autres à lier. */
-const PAGES = LANGS.map((lang) => ({
-  path: PATHS[lang],
-  lang,
-  others: LANGS.filter((code) => code !== lang),
-  locale: LOCALES[lang],
-}));
+/** Le dossier de la page de confidentialité de chaque langue (voir `landing-gen.mjs`). */
+const NOTICE_SLUGS = {
+  fr: 'confidentialite',
+  en: 'privacy',
+  es: 'privacidad',
+  de: 'datenschutz',
+  it: 'privacy',
+  pt: 'privacidade',
+};
+
+/**
+ * Les pages du site, avec la langue que chacune doit déclarer et les autres à lier.
+ *
+ * Une page `notice` (confidentialité) n'a ni bouton de téléchargement ni ancres de sections ;
+ * tout le reste du contrôle s'applique.
+ */
+const PAGES = LANGS.flatMap((lang) => {
+  const shared = { lang, others: LANGS.filter((code) => code !== lang), locale: LOCALES[lang] };
+  return [
+    { path: PATHS[lang], kind: 'home', ...shared },
+    {
+      path: PATHS[lang].replace('index.html', `${NOTICE_SLUGS[lang]}/index.html`),
+      kind: 'notice',
+      ...shared,
+    },
+  ];
+});
 
 /**
  * Inspecte une page ouverte et rend la liste des fautes (vide si tout va bien) et la version
@@ -79,7 +99,10 @@ async function inspect(page, expected) {
   });
 
   let version = null;
-  if (facts.downloads.length !== 1) {
+  if (expected.kind === 'notice') {
+    if (facts.downloads.length !== 0)
+      faults.push(`${facts.downloads.length} bouton(s) [data-download] sur une page secondaire`);
+  } else if (facts.downloads.length !== 1) {
     faults.push(`${facts.downloads.length} bouton(s) [data-download], il en faut exactement un`);
   } else {
     const { href, version: shown } = facts.downloads[0];
@@ -90,7 +113,8 @@ async function inspect(page, expected) {
       faults.push(`le bouton affiche « ${shown} » mais pointe la ${match[1]}`);
     else version = match[1];
   }
-  if (facts.nav.length === 0) faults.push('aucune ancre dans <nav aria-label>');
+  if (facts.nav.length === 0 && expected.kind !== 'notice')
+    faults.push('aucune ancre dans <nav aria-label>');
   for (const href of facts.missingTargets) faults.push(`ancre sans cible : ${href}`);
   if (facts.lang !== expected.lang) faults.push(`lang="${facts.lang}", attendu "${expected.lang}"`);
   for (const code of expected.others) {
@@ -134,8 +158,9 @@ async function check(pages) {
   } finally {
     await browser.close();
   }
-  if (new Set(versions.values()).size > 1) {
-    const message = `les pages n'annoncent pas la même version : ${[...versions.values()].join(', ')}`;
+  const announced = [...versions.values()].filter((version) => version !== null);
+  if (new Set(announced).size > 1) {
+    const message = `les pages n'annoncent pas la même version : ${announced.join(', ')}`;
     process.stderr.write(`${message}\n`);
     messages.push(message);
   }

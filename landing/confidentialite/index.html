@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Confidentialité — Mirmalion</title>
+    <meta
+      name="description"
+      content="L'application Mirmalion ne collecte rien : tout se passe sur votre Mac, sans compte ni télémétrie. Cette page décrit ce que fait le site mirmalion.web.app, et lui seul."
+    />
+    <link rel="alternate" hreflang="fr" href="https://mirmalion.web.app/confidentialite/" />
+    <link rel="alternate" hreflang="en" href="https://mirmalion.web.app/en/privacy/" />
+    <link rel="alternate" hreflang="es" href="https://mirmalion.web.app/es/privacidad/" />
+    <link rel="alternate" hreflang="de" href="https://mirmalion.web.app/de/datenschutz/" />
+    <link rel="alternate" hreflang="it" href="https://mirmalion.web.app/it/privacy/" />
+    <link rel="alternate" hreflang="pt" href="https://mirmalion.web.app/pt/privacidade/" />
+    <link rel="alternate" hreflang="x-default" href="https://mirmalion.web.app/confidentialite/" />
+    <link rel="icon" href="../img/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="../img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="../landing.css?v=4" />
+  </head>
+  <body>
+    <header class="top top--plain">
+      <a class="brand" href="../">
+        <picture>
+          <source srcset="../img/logo-mark-magenta.png" media="(prefers-color-scheme: dark)" />
+          <img src="../img/logo-mark.png" alt="" width="44" height="21" />
+        </picture>
+        Mirmalion
+      </a>
+
+      <div class="top__tools">
+        <a
+          class="github"
+          href="https://github.com/romsau/mirmalion"
+          aria-label="Le dépôt GitHub de Mirmalion, pour écrire à l’auteur"
+        >
+          <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+            />
+          </svg>
+        </a>
+        <details class="lang">
+          <summary aria-label="Langue">Français</summary>
+          <ul role="list">
+            <li>
+              <a
+                href="../en/privacy/"
+                lang="en"
+                hreflang="en"
+                onclick="
+                  try {
+                    localStorage.setItem('mirmalion-lang', 'en');
+                  } catch (e) {
+                    return;
+                  }
+                "
+                >English</a
+              >
+            </li>
+            <li>
+              <a
+                href="../es/privacidad/"
+                lang="es"
+                hreflang="es"
+                onclick="
+                  try {
+                    localStorage.setItem('mirmalion-lang', 'es');
+                  } catch (e) {
+                    return;
+                  }
+                "
+                >Español</a
+              >
+            </li>
+            <li>
+              <a
+                href="../de/datenschutz/"
+                lang="de"
+                hreflang="de"
+                onclick="
+                  try {
+                    localStorage.setItem('mirmalion-lang', 'de');
+                  } catch (e) {
+                    return;
+                  }
+                "
+                >Deutsch</a
+              >
+            </li>
+            <li>
+              <a
+                href="../it/privacy/"
+                lang="it"
+                hreflang="it"
+                onclick="
+                  try {
+                    localStorage.setItem('mirmalion-lang', 'it');
+                  } catch (e) {
+                    return;
+                  }
+                "
+                >Italiano</a
+              >
+            </li>
+            <li>
+              <a
+                href="../pt/privacidade/"
+                lang="pt"
+                hreflang="pt"
+                onclick="
+                  try {
+                    localStorage.setItem('mirmalion-lang', 'pt');
+                  } catch (e) {
+                    return;
+                  }
+                "
+                >Português</a
+              >
+            </li>
+          </ul>
+        </details>
+      </div>
+    </header>
+
+    <main id="top" class="notice">
+      <h1>Confidentialité</h1>
+      <p class="notice__date">Mise à jour le 11 septembre 2026.</p>
+      <p>
+        L'application Mirmalion ne collecte rien : tout se passe sur votre Mac, sans compte ni
+        télémétrie. Cette page décrit ce que fait le site mirmalion.web.app, et lui seul.
+      </p>
+      <h2>Mesure d'audience</h2>
+      <p>
+        Avec votre accord, le site compte ses visites avec Google Analytics, un service de Google
+        Ireland Limited. Il enregistre les pages vues, le pays approximatif, le type d'appareil et
+        de navigateur, et la provenance de la visite. Les signaux publicitaires et la
+        personnalisation sont désactivés.
+      </p>
+      <p>
+        Sans votre accord, rien n'est mesuré. Votre choix est retenu treize mois dans votre
+        navigateur, et le lien « Mesure d'audience » en bas de chaque page permet d'en changer à
+        tout moment. Google conserve ces données deux mois.
+      </p>
+      <h2>Hébergement</h2>
+      <p>
+        Le site est hébergé par Firebase Hosting, un service de Google. Comme tout hébergeur, il
+        tient des journaux techniques, adresse IP et page demandée, pour la sécurité et le bon
+        fonctionnement du service.
+      </p>
+      <h2>Téléchargement et GitHub</h2>
+      <p>
+        Le bouton de téléchargement et le lien GitHub mènent sur github.com, qui applique sa propre
+        politique de confidentialité. Écrire à l'auteur passe par les issues du dépôt : ce que vous
+        y publiez est visible de tous.
+      </p>
+      <h2>Vos droits</h2>
+      <p>
+        Vous pouvez demander l'accès à vos données ou leur suppression, ou poser toute question, en
+        ouvrant une issue sur GitHub. Vous pouvez aussi saisir la CNIL.
+      </p>
+      <h2>Responsable</h2>
+      <p>Le site est publié par l'auteur de Mirmalion, joignable sur GitHub.</p>
+    </main>
+
+    <footer class="foot">
+      <a class="download" href="../">Télécharger Mirmalion</a>
+      <nav aria-label="Liens">
+        <a href="https://github.com/romsau/mirmalion">Code source</a>
+        <a href="https://github.com/romsau/mirmalion/releases">Toutes les versions</a>
+        <a href="https://github.com/romsau/mirmalion/blob/main/LICENSE">Licence MIT</a>
+        <a href="../confidentialite/">Confidentialité</a>
+        <a href="#consent">Mesure d'audience</a>
+      </nav>
+      <p>Mirmalion est un logiciel libre pour macOS 26 sur Apple Silicon.</p>
+    </footer>
+
+    <aside id="consent" class="consent" hidden aria-label="Mesure d'audience">
+      <p>
+        Ce site compte ses visites avec Google Analytics, sans publicité. Vous pouvez refuser.
+        <a href="../confidentialite/">En savoir plus</a>
+      </p>
+      <button type="button" data-consent="yes">Accepter</button>
+      <button type="button" data-consent="no">Refuser</button>
+    </aside>
+    <script>
+      (function () {
+        if (window.mirmalionLeaving) return;
+        var KEY = 'mirmalion-consent';
+        var VALID_MS = 13 * 30 * 24 * 60 * 60 * 1000;
+        var banner = document.getElementById('consent');
+        function measure() {
+          if (window.gtag) return;
+          window.dataLayer = window.dataLayer || [];
+          window.gtag = function () {
+            dataLayer.push(arguments);
+          };
+          gtag('js', new Date());
+          gtag('config', 'G-69VB32R303', {
+            allow_google_signals: false,
+            allow_ad_personalization_signals: false,
+          });
+          var tag = document.createElement('script');
+          tag.async = true;
+          tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-69VB32R303';
+          document.head.appendChild(tag);
+        }
+        function read() {
+          try {
+            var parts = (localStorage.getItem(KEY) || '').split(':');
+            var age = Date.now() - Number(parts[1]);
+            return age >= 0 && age < VALID_MS ? parts[0] : null;
+          } catch (e) {
+            return null;
+          }
+        }
+        function write(value) {
+          try {
+            localStorage.setItem(KEY, value + ':' + Date.now());
+          } catch (e) {
+            return;
+          }
+        }
+        banner.addEventListener('click', function (event) {
+          var button = event.target.closest('[data-consent]');
+          if (!button) return;
+          var value = button.getAttribute('data-consent');
+          write(value);
+          banner.hidden = true;
+          if (value === 'yes') measure();
+        });
+        document.querySelector('a[href="#consent"]').addEventListener('click', function (event) {
+          event.preventDefault();
+          banner.hidden = false;
+        });
+        var choice = read();
+        if (choice === 'yes') measure();
+        else if (choice !== 'no') banner.hidden = false;
+      })();
+    </script>
+  </body>
+</html>

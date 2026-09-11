@@ -19,12 +19,20 @@
         "headers": [{ "key": "Cache-Control", "value": "no-cache, max-age=0" }]
       },
       {
-        "//": "⚠️ Firebase apparie le CHEMIN de la requête, pas le fichier servi : « / » et les cinq « /xx/ » ne finissent par aucune extension et échappent donc à la règle ci-dessus, alors que ce sont les six adresses par lesquelles le site est lu.",
+        "//": "⚠️ Firebase apparie le CHEMIN de la requête, pas le fichier servi : « / », les cinq « /xx/ » et les pages de confidentialité ne finissent par aucune extension et échappent donc à la règle ci-dessus, alors que ce sont les adresses par lesquelles le site est lu.",
         "source": "/",
         "headers": [{ "key": "Cache-Control", "value": "no-cache, max-age=0" }]
       },
       {
         "source": "/@(en|es|de|it|pt)/",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache, max-age=0" }]
+      },
+      {
+        "source": "/confidentialite/",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache, max-age=0" }]
+      },
+      {
+        "source": "/@(en|es|de|it|pt)/@(privacy|privacidad|datenschutz|privacidade)/",
         "headers": [{ "key": "Cache-Control", "value": "no-cache, max-age=0" }]
       }
     ]

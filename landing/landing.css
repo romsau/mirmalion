@@ -586,3 +586,62 @@ kbd {
 .consent button:hover {
   background: var(--line);
 }
+
+/* ── Lien GitHub ──────────────────────────────────────────────────────────────────────── */
+/* L’icône seule dans l’en-tête : c’est par là qu’on écrit à l’auteur, le dépôt étant public. */
+
+.top__tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.top--plain .top__tools {
+  margin-inline-start: auto;
+}
+
+.github {
+  display: inline-flex;
+  padding: 6px;
+  border-radius: 999px;
+  color: var(--muted);
+}
+
+.github svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+.github:hover {
+  background: var(--surface-soft);
+  color: var(--ink);
+}
+
+/* ── Confidentialité ──────────────────────────────────────────────────────────────────── */
+
+.notice {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: clamp(40px, 7vh, 80px) var(--gutter);
+}
+
+.notice h1 {
+  margin: 0 0 8px;
+  font-size: clamp(30px, 4vw, 40px);
+  letter-spacing: -0.02em;
+}
+
+.notice h2 {
+  margin: 36px 0 8px;
+  font-size: 20px;
+}
+
+.notice p {
+  margin: 0 0 12px;
+}
+
+.notice__date {
+  color: var(--muted);
+  font-size: 14px;
+}

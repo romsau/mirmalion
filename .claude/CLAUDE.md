@@ -65,7 +65,8 @@ procédure est dans [`README.md`](../README.md), section « Publier une version 
 de lancer `release`**. Le piège qui coûte une version : incrémenter le numéro d'abord, dans les
 quatre fichiers, faute de quoi la mise à jour n'atteint personne. Elle crée aussi la GitHub
 Release et écrit la version dans `landing/` ; le mécanisme de mise à jour, lui, reste sur
-Firebase.
+Firebase. ⚠️ Les pages de `landing/` sont **engendrées** par `scripts/landing-gen.mjs` : un texte
+du site se modifie là, jamais dans le HTML, que la génération suivante écraserait.
 
 **`npm run verify` — la commande qui vaut relecture.** Elle enchaîne, en s'arrêtant à la première
 faute : `prettier --check` · `verify:landing` (la page d'accueil dans un vrai Chromium) · tests

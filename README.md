@@ -91,9 +91,10 @@ sauvegarder ailleurs que sur la machine de développement.
 
 Le détail de la notarisation, de l'agrafage et de ce qui n'est délibérément pas agrafé est
 documenté en tête de [`scripts/release.sh`](scripts/release.sh). La page d'accueil se vérifie
-avec `npm run verify:landing`, dans un vrai Chromium ; elle existe dans les six langues — ses
-textes vivent dans `landing/index.html` pour le français et `landing/<code>/index.html` pour les
-cinq autres —, et seul le script de publication écrit le numéro de version, dans les six.
+avec `npm run verify:landing`, dans un vrai Chromium. Elle existe dans les six langues, avec sa
+page de confidentialité ; ses textes vivent dans `scripts/landing-gen.mjs`, qui engendre les
+douze pages de `landing/` (`node scripts/landing-gen.mjs && npx prettier --write landing`), et
+seul le script de publication y écrit le numéro de version.
 
 ## Structure du projet
 
