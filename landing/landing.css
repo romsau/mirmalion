@@ -535,3 +535,54 @@ kbd {
   font-size: 14px;
   font-weight: 600;
 }
+
+/* ── Consentement ─────────────────────────────────────────────────────────────────────── */
+/* Petit, en bas, deux boutons d'égale valeur : refuser coûte le même clic qu'accepter. Le lien
+   « Mesure d'audience » du pied le rouvre pour changer d'avis. */
+
+.consent {
+  position: fixed;
+  inset-inline: 16px;
+  bottom: 16px;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 12px;
+  max-width: 720px;
+  margin-inline: auto;
+  padding: 10px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 12px 30px var(--shadow-ink);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* ⚠️ `display: flex` l'emporte sur l'attribut `hidden` : sans cette règle, le bandeau ne se
+   cache jamais. */
+.consent[hidden] {
+  display: none;
+}
+
+.consent p {
+  flex: 1 1 320px;
+  margin: 0;
+}
+
+.consent button {
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.consent button:hover {
+  background: var(--line);
+}

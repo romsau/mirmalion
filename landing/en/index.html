@@ -17,20 +17,6 @@
     <link rel="alternate" hreflang="x-default" href="https://mirmalion.web.app/" />
     <link rel="icon" href="../img/favicon.png" type="image/png" />
     <link rel="apple-touch-icon" href="../img/apple-touch-icon.png" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-69VB32R303"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag('js', new Date());
-      if (!window.mirmalionLeaving) {
-        gtag('config', 'G-69VB32R303', {
-          allow_google_signals: false,
-          allow_ad_personalization_signals: false,
-        });
-      }
-    </script>
     <link rel="stylesheet" href="../landing.css?v=3" />
   </head>
   <body>
@@ -277,8 +263,72 @@
         <a href="https://github.com/romsau/mirmalion">Source code</a>
         <a href="https://github.com/romsau/mirmalion/releases">All releases</a>
         <a href="https://github.com/romsau/mirmalion/blob/main/LICENSE">MIT license</a>
+        <a href="#consent">Analytics</a>
       </nav>
       <p>Mirmalion is free software for macOS 26 on Apple Silicon.</p>
     </footer>
+
+    <aside id="consent" class="consent" hidden aria-label="Analytics">
+      <p>
+        This site counts its visits with Google Analytics, without advertising. You can decline.
+      </p>
+      <button type="button" data-consent="yes">Accept</button>
+      <button type="button" data-consent="no">Decline</button>
+    </aside>
+    <script>
+      (function () {
+        if (window.mirmalionLeaving) return;
+        var KEY = 'mirmalion-consent';
+        var VALID_MS = 13 * 30 * 24 * 60 * 60 * 1000;
+        var banner = document.getElementById('consent');
+        function measure() {
+          if (window.gtag) return;
+          window.dataLayer = window.dataLayer || [];
+          window.gtag = function () {
+            dataLayer.push(arguments);
+          };
+          gtag('js', new Date());
+          gtag('config', 'G-69VB32R303', {
+            allow_google_signals: false,
+            allow_ad_personalization_signals: false,
+          });
+          var tag = document.createElement('script');
+          tag.async = true;
+          tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-69VB32R303';
+          document.head.appendChild(tag);
+        }
+        function read() {
+          try {
+            var parts = (localStorage.getItem(KEY) || '').split(':');
+            var age = Date.now() - Number(parts[1]);
+            return age >= 0 && age < VALID_MS ? parts[0] : null;
+          } catch (e) {
+            return null;
+          }
+        }
+        function write(value) {
+          try {
+            localStorage.setItem(KEY, value + ':' + Date.now());
+          } catch (e) {
+            return;
+          }
+        }
+        banner.addEventListener('click', function (event) {
+          var button = event.target.closest('[data-consent]');
+          if (!button) return;
+          var value = button.getAttribute('data-consent');
+          write(value);
+          banner.hidden = true;
+          if (value === 'yes') measure();
+        });
+        document.querySelector('a[href="#consent"]').addEventListener('click', function (event) {
+          event.preventDefault();
+          banner.hidden = false;
+        });
+        var choice = read();
+        if (choice === 'yes') measure();
+        else if (choice !== 'no') banner.hidden = false;
+      })();
+    </script>
   </body>
 </html>

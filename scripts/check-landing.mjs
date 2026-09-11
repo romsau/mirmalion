@@ -5,8 +5,10 @@
  * Pour chaque page : aucune violation AXE (contraste compris — c'est un navigateur, pas jsdom),
  * un bouton de téléchargement dont l'adresse et le numéro affiché concordent, des ancres qui
  * ciblent une section présente, la langue déclarée, les liens vers les autres langues, et aucune
- * ressource chargée depuis un autre domaine que ceux de la mesure d'audience. Toutes les pages
- * doivent annoncer la même version.
+ * ressource chargée depuis un autre domaine. Toutes les pages doivent annoncer la même version.
+ *
+ * ⚠️ La mesure d'audience ne se charge qu'après consentement, et le contrôle ouvre chaque page
+ * sans consentement : une requête vers Google ici est une fuite, pas une exception à prévoir.
  *
  * ⚠️ Aucune suite ne couvre ce script : lancer `--selftest` avant de croire un vert.
  */
@@ -19,14 +21,6 @@ import { chromium } from 'playwright';
 const AXE_SOURCE = readFileSync(resolve('node_modules/axe-core/axe.min.js'), 'utf8');
 const DMG_URL =
   /^https:\/\/github\.com\/romsau\/mirmalion\/releases\/download\/v(\d+\.\d+\.\d+)\/Mirmalion_(\d+\.\d+\.\d+)_aarch64\.dmg$/;
-/**
- * Les seuls domaines distants admis : ceux de Google Analytics, appelé par chaque page.
- *
- * ⚠️ Volontairement étroit : les pages désactivent les signaux publicitaires, et un appel vers
- * `doubleclick.net` signifierait qu'ils sont revenus.
- */
-const ANALYTICS_HOST =
-  /^https:\/\/(www\.googletagmanager\.com|(www|region\d+)\.google-analytics\.com|analytics\.google\.com)\//;
 
 /** Les six langues du site, dans l'ordre où elles apparaissent dans le bundle. */
 const LANGS = ['fr', 'en', 'es', 'de', 'it', 'pt'];
@@ -103,9 +97,7 @@ async function inspect(page, expected) {
     if (!facts.alternates.includes(code))
       faults.push(`pas de <link rel="alternate" hreflang="${code}">`);
   }
-  for (const url of facts.remote) {
-    if (!ANALYTICS_HOST.test(url)) faults.push(`ressource distante : ${url}`);
-  }
+  for (const url of facts.remote) faults.push(`ressource distante : ${url}`);
   return { faults, version };
 }
 
@@ -127,7 +119,7 @@ async function check(pages) {
       });
       const remote = [];
       page.on('request', (r) => {
-        if (!r.url().startsWith('file:') && !ANALYTICS_HOST.test(r.url())) remote.push(r.url());
+        if (!r.url().startsWith('file:')) remote.push(r.url());
       });
       await page.goto(pathToFileURL(resolve(spec.path)).href);
       const { faults, version } = await inspect(page, spec);
