@@ -443,11 +443,15 @@
        ⚠️ Plus basse qu'un select : un interrupteur mesure 22 px là où une ligne de texte en
        mesure 20. Reprendre le rembourrage du select ferait une carte visiblement plus grande que
        ses voisines pour un contrôle plus petit.
-       ⚠️ Serrée contre le sélecteur au-dessus (8 px) : les deux ne font qu'un champ — ce qu'on
-       capte, et si l'on s'y ajoute. L'écart d'un groupe à l'autre les aurait fait lire comme deux
-       réglages sans rapport. */
+       ⚠️ FRANCHEMENT DÉTACHÉE DU SÉLECTEUR AU-DESSUS (32 px). Elle en était serrée à 8 px,
+       l'intention étant que les deux se lisent comme un champ unique — ce qu'on capte, et si
+       l'on s'y ajoute. À l'usage, la source et le micro sont deux décisions : on choisit une
+       application, puis on décide si sa propre voix entre dans la session.
+       ⚠️ 32 PX EST LA BORNE HAUTE UTILE : c'est déjà l'écart d'un groupe à l'autre. Au-delà, le
+       micro paraîtrait plus loin de sa source que le bloc des langues ne l'est de lui, et
+       l'ordre de lecture de la colonne se brouillerait. */
     .switch-field {
-      margin-top: 8px; display: flex; align-items: center; justify-content: space-between;
+      margin-top: 32px; display: flex; align-items: center; justify-content: space-between;
       gap: 12px; padding: 9px 14px;
       border: 1px solid var(--line); border-radius: 10px; background: var(--surface-soft);
     }
@@ -463,16 +467,22 @@
        ⚠️ Et la correction s'est mordu la queue : le commentaire CSS de remplacement CITAIT la
        fin d'un commentaire CSS, ce qui l'a refermé au milieu et a effacé la même règle une
        seconde fois. Deux mesures, deux fois le même symptôme, deux causes différentes. */
-    .rc-footer { flex: none; display: flex; align-items: center; justify-content: center; padding: 18px 0; }
+    /* ⚠️ LE BAS EST PLUS ÉPAIS QUE LE HAUT (44 contre 18) : le bouton remonte, et le blanc
+       passe sous lui plutôt qu'au-dessus. Un pied symétrique le collait au bord de la fenêtre,
+       où il se lisait comme une barre d'outils et non comme la conclusion de la colonne. */
+    .rc-footer { flex: none; display: flex; align-items: center; justify-content: center; padding: 18px 0 44px; }
     .rc-right { border-left: 1px solid var(--line); padding-left: 28px; display: flex; flex-direction: column; min-height: 0; }
 
     /* Bouton principal « Démarrer la session » */
     /* Patron unifié (fond teinté + inversion au survol), EXCEPTION de taille : reste grand. */
+    /* ⚠️ PLUS GRAND QUE LE PATRON COMMUN, d'un cran de plus qu'avant : c'est le seul geste de
+       l'écran, et le pied ne porte que lui. La taille dit laquelle des décisions de la colonne
+       conclut les autres. */
     .rec-start {
       flex: none; margin: 0; appearance: none; border: 0; cursor: pointer; font: inherit;
-      font-size: 14px; font-weight: 700; color: var(--accent-ink); background: var(--accent-50);
-      border-radius: 12px; padding: 13px 16px; display: inline-flex; align-items: center;
-      justify-content: center; gap: 9px;
+      font-size: 15px; font-weight: 700; color: var(--accent-ink); background: var(--accent-50);
+      border-radius: 13px; padding: 16px 24px; display: inline-flex; align-items: center;
+      justify-content: center; gap: 10px;
       transition: background .15s ease, color .15s ease;
     }
     .rec-start:hover:not(:disabled) { background: var(--accent); color: #fff; }
@@ -1887,19 +1897,64 @@
        jusqu'au 2026-07-31 et une spécification qui écrivait `--warning`. Les deux sont corrigés. */
     .label .req { color: var(--accent-ink); margin-left: 4px; font-weight: 700; font-size: 14px; line-height: 1; }
     .group { margin-bottom: 30px; }
+    /* LES DEUX CHAMPS DE LANGUE SUR UNE LIGNE, chacun à moitié.
+       ⚠️ `min-width: 0` SUR CHAQUE COLONNE : sans lui, un `<select>` refuse de descendre sous
+       la largeur de sa plus longue option, la ligne déborde et l'écran gagne une barre de
+       défilement horizontale. C'est le défaut classique du flex, et il ne se voit qu'avec un
+       nom de langue long — « Portugais » passe, « Pas de traduction » non.
+       ⚠️ CHAQUE COLONNE EST UN `.group` : la marge basse reste portée par la ligne, pas par les
+       champs, sinon les deux marges s'ajouteraient à celle de la rangée. */
+    .group-row { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 30px; }
+    .group-row > .group,
+    .group-row > .switch-field { flex: 1; min-width: 0; margin-bottom: 0; }
+    /* ⚠️ Le `margin-top: 8px` de `.switch-field` sert quand l'interrupteur est COLLÉ au champ
+       qu'il complète — « Inclure mon micro » sous son sélecteur de source. Ici les deux forment
+       une rangée à eux seuls : la marge viendrait doubler celle de la rangée. */
+    .group-row > .switch-field { margin-top: 0; }
+
+    /* UN FILET ENTRE LES PARTIES DE LA COLONNE DICTÉE. Même trait que celui de la barre de
+       titre : `1px solid var(--line)`, et rien d'autre — une couleur propre en ferait un
+       second motif de séparation là où l'application n'en a qu'un.
+       ⚠️ `border-TOP`, ET C'EST CE QUI COMPTE : le filet appartient à la partie qui commence,
+       pas à celle qui finit. Le champ Reformulation est masqué tant que son interrupteur est
+       éteint — en `border-bottom`, la rangée d'interrupteurs porterait un trait fermant la
+       colonne sous du vide.
+       ⚠️ AUCUN FILET SOUS LE TITRE : la première partie n'en porte pas, `+` ne la désigne
+       jamais. Un trait sous « Dictée » doublerait celui de la barre de titre. */
+    .rc-controls > .group,
+    .rc-controls > .group-row,
+    .rc-controls > .switch-field { margin-bottom: 22px; }
+    /* ⚠️ LA DICTÉE RESPIRE PLUS QUE LE DIRECT (28 contre 22), et l'écart entre les deux écrans
+       est voulu : la colonne de dictée porte quatre blocs là où le Direct en porte deux, et
+       c'est elle qu'on ouvre vingt fois par jour. La valeur se lit ici et se change ici — le
+       rembourrage haut des parties séparées la suit juste en dessous. */
+    .dictee .col-left > .group,
+    .dictee .col-left > .group-row { margin-bottom: 28px; }
+    /* ⚠️ LA MARGE HAUTE DE `.switch-field` EST ANNULÉE ICI : elle écartait le micro de sa
+       source quand rien ne les séparait. Le filet le fait désormais, et les deux écarts
+       s'additionneraient. */
+    .rc-controls > .switch-field { margin-top: 0; }
+    .dictee .col-left > .group + .group,
+    .dictee .col-left > .group + .group-row,
+    .dictee .col-left > .group-row + .group-row,
+    .rc-controls > .group + .switch-field,
+    .rc-controls > .switch-field + .group-row,
+    .rc-controls > .group + .group-row {
+      padding-top: 22px; border-top: 1px solid var(--line);
+    }
+    .dictee .col-left > .group + .group,
+    .dictee .col-left > .group + .group-row,
+    .dictee .col-left > .group-row + .group-row { padding-top: 28px; }
+    /* ⚠️ AUCUN FILET ENTRE LES INTERRUPTEURS ET LE CHAMP REFORMULATION : c'est un seul bloc.
+       L'interrupteur commande le champ, et un trait entre les deux les donnerait pour deux
+       réglages indépendants. C'est aussi pourquoi `.group-row + .group` ne figure PAS dans la
+       liste ci-dessus — la seule paire qu'il désignerait est celle-là. */
     /* ⚠️ `.group-link` a existé ici du 2026-07-30 au 2026-07-31 : un petit lien souligné sous
        chaque champ de langue, aligné à droite, qui menait à Options ▸ Langues. Il est **retiré**
        — la sortie vit désormais DANS le menu, en dernière ligne (voir `.cselect-option[data-goto]`).
        Ne pas le réintroduire : il ajoutait une ligne sous chaque champ dans une colonne déjà
        dense, et il fallait le chercher, alors que c'est en OUVRANT le menu qu'on découvre
        qu'une langue manque. */
-    /* Deux champs côte à côte (ex. Langue parlée + Traduction) */
-    /* ⚠️ `.dual-field` / `.field-col` conservés pour Session et Fichiers UNIQUEMENT. L'écran
-       Dictée ne les emploie plus : « Langue parlée » et « Traduction » y occupent chacune une
-       ligne pleine (2026-07-30). */
-    .dual-field { display: flex; gap: 14px; }
-    .dual-field .field-col { flex: 1; min-width: 0; }
-
     /* ============================================================
        INSTALLER UNE LANGUE ABSENTE
 
@@ -1987,54 +2042,67 @@
     .mode-btn:hover:not(.is-active) { background: var(--accent-50); color: var(--accent-ink); }
     .mode-btn.is-active { background: var(--accent); color: #fff; }
 
+    /* LES DEUX INDICES, EMPILÉS À DROITE DE LA CARTE DES MODES.
+       ⚠️ AUCUNE HAUTEUR ÉCRITE : la colonne s'étire (`align-items: stretch` sur `.mode-row`) et
+       les deux indices se partagent ce que mesure la carte. Une hauteur en dur se déréglerait
+       au premier libellé plus long — « Mains libres » n'a pas la même longueur dans les six
+       langues. */
+    .hints { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+
+    /* ⚠️ PETITES TOUCHES POUR LES DEUX, et ce n'est pas un choix de goût : à deux encadrés
+       empilés dans la hauteur de la carte, chacun dispose d'une quarantaine de pixels. Les
+       touches de 40 px de l'ancien indice unique n'y tiennent pas.
+       ⚠️ LES NOMS DE TOUCHES RESTENT ENTIERS : « ctrl » abrégerait ce que le lecteur d'écran
+       annonce. C'est le corps du texte qui rétrécit, pas le mot. */
     .hint {
-      flex: 1; min-width: 0; height: 92px; background: var(--surface-soft); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--ink);
+      flex: 1; min-width: 0; background: var(--surface-soft); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px;
+      display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 9px; color: var(--ink);
     }
-    .hint-txt { font-size: 11.5px; line-height: 1.35; text-align: center; white-space: nowrap; }
-    .keys { display: inline-flex; gap: 8px; }
+    .hint-txt { font-size: 11px; line-height: 1.35; text-align: left; white-space: normal; }
+    .keys { display: inline-flex; gap: 3px; }
+
+    /* LE PREMIER INDICE PÈSE PLUS QUE LE SECOND, et il le doit : ⌃⌥ est le geste, ⌃⌥⌘ n'en est
+       que la variante. Deux boîtes à l'identique les donnaient pour équivalents.
+       ⚠️ AUCUNE DES DEUX HAUTEURS N'EST ÉCRITE : le second prend ce que son contenu demande
+       (`flex: 0 0 auto`), le premier absorbe tout le reste de la colonne. Un partage en
+       pourcentages se déréglerait dès que la phrase du second passe à la ligne — et elle y
+       passe, « Traduit en portugais » ne tient pas sur une ligne. */
+    .hint.is-primary { flex: 1; }
+    .hint.is-primary .key { min-width: 26px; border-radius: 6px; padding: 3px 4px; font-size: 8px; }
+    .hint.is-primary .key .sym { top: 3px; right: 4px; font-size: 8px; }
+    .hint.is-primary .keys { gap: 5px; }
+    .hint.is-primary .hint-txt { font-size: 12px; }
     /* ⚠️ CARRÉE PAR CONSTRUCTION : `aspect-ratio: 1` fait suivre la hauteur à la largeur, et
        la largeur n'est pas choisie — elle vient du nom de la touche rendu dans la police du
        système. Un `height` en dur pariait sur des métriques de fonte. Le rembourrage
        horizontal est resserré : à 10 px, la touche partait à ~64 × 40, un rectangle franc. */
     .key {
       position: relative; background: var(--key-bg); color: var(--ink); border: 1px solid var(--line);
-      border-radius: 8px; min-width: 40px; aspect-ratio: 1; padding: 5px 4px;
+      border-radius: 5px; min-width: 20px; aspect-ratio: 1; padding: 2px 3px;
       display: flex; align-items: flex-end; justify-content: center;
-      font-size: 10px; font-weight: 600; line-height: 1;
+      font-size: 7px; font-weight: 600; line-height: 1;
     }
-    .key .sym { position: absolute; top: 4px; right: 5px; font-size: 11px; color: var(--muted); }
+    /* ⚠️ `--ink` ET NON `--muted` : le symbole n'est décoratif que pour un lecteur d'écran, il
+       reste du texte à l'œil. Sous l'opacité du second indice, le gris tombait à 2,9:1. */
+    .key .sym { position: absolute; top: 2px; right: 3px; font-size: 7px; color: var(--ink); }
 
-    /* L'indice du SECOND raccourci, sous le champ Traduction. Même encadré, mêmes touches, à
-       une échelle nettement plus petite.
-       ⚠️ POURQUOI PLUS PETIT : celui des modes fait 92 px parce qu'il remplit la hauteur de la
-       carte des modes, à côté de laquelle il est posé. Ici il est SOUS un champ, dans une
-       colonne déjà dense — le reprendre à sa taille donnait deux pavés jumeaux empilés, et
-       l'œil ne savait plus lequel comptait.
-       ⚠️ LES NOMS DE TOUCHES RESTENT ENTIERS : « ctrl » abrégerait ce que le lecteur d'écran
-       annonce. C'est le corps du texte qui rétrécit, pas le mot. */
-    /* ⚠️ EN LIGNE, et non empilé comme celui des modes : une fois les touches réduites, la
-       phrase tient à leur droite, et le cadre descend d'une soixantaine de pixels à ~44. */
-    .hint.is-compact {
-      height: auto; margin-top: 8px; padding: 8px 10px; gap: 9px;
-      flex-direction: row; align-items: center; justify-content: flex-start;
-      /* ⚠️ L'OPACITÉ PORTE SUR TOUT LE BLOC, fond, filet, touches et phrase — c'est ce qui est
-         demandé : l'indice recule d'un cran par rapport au champ qu'il commente.
-         ⚠️ 0,7 EST LE PLANCHER, et il ne tient QUE parce que le symbole est repassé en `--ink`
-         juste en dessous : à `--muted`, ce niveau le laissait à 2,9:1. AXE ne l'aurait pas dit
-         — sa règle de contraste ignore l'opacité d'un ancêtre. Ne pas descendre plus bas sans
-         mesurer à la main. */
-      opacity: 0.7;
-    }
-    .hint.is-compact .keys { gap: 3px; }
-    .hint.is-compact .key { min-width: 20px; border-radius: 5px; padding: 2px 3px; font-size: 7px; }
-    /* ⚠️ `--ink` ET NON `--muted` ici : le symbole n'est décoratif que pour un lecteur d'écran,
-       il reste du texte à l'œil. Sous l'opacité du bloc, le gris passait à 2,9:1. */
-    .hint.is-compact .key .sym { top: 2px; right: 3px; font-size: 7px; color: var(--ink); }
-    /* ⚠️ Le retour à la ligne est REDONNÉ ici : `nowrap` sert au bloc des modes, dont la phrase
-       change avec le mode. Celle-ci porte un nom de langue, et « Traduit en portugais » dans une
-       colonne étroite déborderait plutôt que de passer à la ligne. */
-    .hint.is-compact .hint-txt { font-size: 11px; text-align: left; white-space: normal; }
+    /* LE SECOND INDICE RECULE D'UN CRAN. Même encadré, mêmes touches : seule l'encre les
+       sépare désormais, les deux étant posés l'un sur l'autre dans la même colonne.
+       ⚠️ L'OPACITÉ PORTE SUR TOUT LE BLOC, fond, filet, touches et phrase.
+       ⚠️ 0,7 EST LE PLANCHER, et il ne tient QUE parce que le symbole est en `--ink` : à
+       `--muted`, ce niveau le laissait à 2,9:1. AXE ne l'aurait pas dit — sa règle de contraste
+       ignore l'opacité d'un ancêtre. Ne pas descendre plus bas sans mesurer à la main. */
+    .hint.is-secondary { flex: 0 0 auto; opacity: 0.7; }
+    /* LE SECOND INDICE PORTE SES TOUCHES EN SYMBOLES, le premier les écrit en toutes lettres.
+       ⚠️ CE N'EST PAS UNE ÉCONOMIE DE PLACE GRATUITE : à trois touches épelées, la phrase
+       n'avait plus de largeur et retombait sur deux lignes, ce qui rendait les deux encadrés
+       de même hauteur — la hiérarchie voulue disparaissait.
+       ⚠️ LE NOM RESTE ANNONCÉ : il passe dans `aria-label`, donc un lecteur d'écran entend
+       toujours « control option command ». C'est l'œil qui perd le mot, pas l'oreille.
+       ⚠️ LE SYMBOLE DEVIENT LE TEXTE DE LA TOUCHE — il n'est plus décoratif ici, et c'est
+       pourquoi il monte à 10 px : à 7 px il n'était qu'une marque d'angle. Sous l'opacité 0,7,
+       sa couleur est à mesurer à la main, AXE ignorant l'opacité d'un ancêtre. */
+    .key.is-sym { min-width: 18px; align-items: center; font-size: 10px; padding: 0; }
 
     /* Chips langues (parlée + traduction) */
     .chips { display: flex; flex-wrap: wrap; gap: 7px; }
@@ -2719,20 +2787,41 @@
                   Mains libres
                 </button>
               </div>
-              <div class="hint">
-                <span class="keys">
-                  <kbd class="key"><span class="sym">⌃</span>control</kbd>
-                  <kbd class="key"><span class="sym">⌥</span>option</kbd>
-                </span>
-                <span class="hint-txt" id="mode-hint">Maintenez pour dicter.</span>
+              <!-- LES DEUX RACCOURCIS, L'UN SOUS L'AUTRE, à hauteur de la carte des modes.
+                   ⚠️ LE SECOND N'EST PLUS SOUS LE CHAMP TRADUCTION : il commentait un champ, il
+                   annonce en fait un geste — sa place est auprès du geste qu'il complète.
+                   ⚠️ LE SEUL ENDROIT OÙ ⌃⌥⌘ S'APPREND : il n'est ni dans un menu, ni dans une
+                   palette, ni réglable. Retirer ce bloc rend la fonction invisible.
+                   ⚠️ LA PHRASE NOMME LA LANGUE RÉELLEMENT ÉCRITE — « anglais » tant que le champ
+                   ne demande rien, la langue du champ sinon. Écrire « anglais » en dur mentirait
+                   dès qu'une autre cible est choisie.
+                   ⚠️ ABSENT QUAND IL N'Y A RIEN À TRADUIRE — un anglophone sans cible réglée. Le
+                   premier indice occupe alors toute la hauteur, sans cas particulier à écrire. -->
+              <div class="hints">
+                <div class="hint is-primary">
+                  <span class="keys">
+                    <kbd class="key"><span class="sym">⌃</span>control</kbd>
+                    <kbd class="key"><span class="sym">⌥</span>option</kbd>
+                  </span>
+                  <span class="hint-txt" id="mode-hint">Maintenez pour dicter.</span>
+                </div>
+                <div class="hint is-secondary">
+                  <span class="keys">
+                    <kbd class="key is-sym" aria-label="control">⌃</kbd>
+                    <kbd class="key is-sym" aria-label="option">⌥</kbd>
+                    <kbd class="key is-sym" aria-label="command">⌘</kbd>
+                  </span>
+                  <span class="hint-txt">Traduit en anglais</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Langue parlée puis Traduction, ⚠️ CHACUNE SUR SA LIGNE : deux champs à
-               mi-largeur donnaient des listes trop étroites pour les noms de langue, et le lien
-               entre les deux se lit mieux de haut en bas — on parle dans l'une, on obtient
-               l'autre. (Tranché 2026-07-30 ; c'était une paire de colonnes.)
+          <!-- Langue parlée et Traduction, CÔTE À CÔTE : on parle dans l'une, on obtient
+               l'autre, et la paire se lit d'un coup d'œil. ⚠️ À ÉPROUVER SUR LES SIX LANGUES :
+               c'est cette disposition qui avait été écartée la première fois, les listes étant
+               trop étroites pour les noms de langue. L'écran a changé depuis — mais si un nom
+               se tronque, c'est ici qu'il faut revenir.
                ⚠️ SIX langues, et le néerlandais et le turc n'en font pas partie : mesuré,
                SpeechTranscriber ne les couvre pas, et la seule alternative ne ponctue pas les
                textes longs. -->
@@ -2752,7 +2841,8 @@
                ⚠️ Note pour la transposition : une commande logée dans un `listbox` n'est pas
                un patron ARIA standard — côté application, lui donner `role="option"` avec
                `aria-selected="false"` ne suffira peut-être pas à AXE. À éprouver au branchement. -->
-          <div class="group">
+          <div class="group-row">
+            <div class="group">
                 <p class="label">Langue parlée</p>
                 <div class="select-wrap">
                   <select class="select" id="lang-spoken" aria-label="Langue parlée">
@@ -2763,9 +2853,9 @@
                   </select>
                   <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
                 </div>
-          </div>
+            </div>
 
-          <div class="group">
+            <div class="group">
                 <p class="label">Traduction</p>
                 <!-- « Pas de traduction » est VERROUILLÉ, toujours offert : on doit
                      toujours pouvoir ne rien traduire, même sans aucune cible activée. -->
@@ -2777,27 +2867,37 @@
                   </select>
                   <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
                 </div>
-                <!-- ⚠️ LE SEUL ENDROIT OÙ ⌃⌥⌘ S'APPREND : il n'est ni dans un menu, ni dans une
-                     palette, ni réglable. Retirer ce bloc rend la fonction invisible.
-                     ⚠️ LA PHRASE NOMME LA LANGUE RÉELLEMENT ÉCRITE — « anglais » tant que le
-                     champ ne demande rien, la langue du champ sinon. Écrire « anglais » en dur
-                     mentirait dès qu'une autre cible est choisie. -->
-                <div class="hint is-compact">
-                  <span class="keys">
-                    <kbd class="key"><span class="sym">⌃</span>control</kbd>
-                    <kbd class="key"><span class="sym">⌥</span>option</kbd>
-                    <kbd class="key"><span class="sym">⌘</span>command</kbd>
-                  </span>
-                  <span class="hint-txt">Traduit en anglais</span>
-                </div>
+            </div>
+          </div>
+
+          <!-- LES DEUX TRAITEMENTS DU TEXTE, EN INTERRUPTEURS.
+               ⚠️ MÊME SURFACE QU'UN CHAMP — fond, filet, rayon — pour que la colonne se lise
+               comme une colonne de réglages, et non comme des objets dépareillés.
+               ⚠️ LE NETTOYAGE N'A PAS DE CHAMP SOUS LUI, la reformulation en commande un. Les
+               deux interrupteurs se ressemblent, leurs conséquences non : c'est le champ qui
+               apparaît qui l'annonce, pas l'interrupteur.
+               ⚠️ ALLUMÉ PAR DÉFAUT POUR LE NETTOYAGE, éteint pour la reformulation : c'est ce
+               que fait l'application aujourd'hui — le nettoyage est inconditionnel, la
+               reformulation vaut « Pas de reformulation » tant qu'on n'a rien choisi. -->
+          <div class="group-row">
+            <div class="switch-field">
+              <span class="sf-label">Nettoyage</span>
+              <button type="button" class="switch" role="switch" aria-checked="true" aria-label="Nettoyer le texte dicté"><span class="knob"></span></button>
+            </div>
+            <div class="switch-field">
+              <span class="sf-label">Reformulation</span>
+              <button type="button" class="switch" role="switch" aria-checked="false" data-reveal="#group-reform" aria-label="Reformuler le texte dicté"><span class="knob"></span></button>
+            </div>
           </div>
 
           <!-- Reformulation : menu déroulant (+ prompt si Personnalisé…) -->
-          <div class="group">
+          <!-- ⚠️ « PAS DE REFORMULATION » A QUITTÉ LE MENU : l'interrupteur le dit déjà, et deux
+               façons de dire non dans deux contrôles voisins font douter de ce que fait chacun.
+               Le menu ne liste plus que des styles, ce qui est sa seule question. -->
+          <div class="group" id="group-reform" hidden>
             <p class="label">Reformulation</p>
             <div class="select-wrap">
               <select class="select" id="reform-type" aria-label="Reformulation">
-                <option>Pas de reformulation</option>
                 <option>Standard</option>
                 <option>Professionnel</option>
                 <option>Concis</option>
@@ -3011,7 +3111,9 @@
 
             </div>
 
-            <!-- Langue parlée -->
+            <!-- Langue parlée et Traduction, CÔTE À CÔTE, comme en dictée : les deux écrans
+                 posent la même question, ils la posent de la même façon. -->
+            <div class="group-row">
             <div class="group">
               <p class="label">Langue parlée</p>
               <div class="select-wrap">
@@ -3048,6 +3150,7 @@
                 </select>
                 <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
               </div>
+            </div>
             </div>
 
             <!-- ⚠️⚠️ LE TYPE DE COMPTE RENDU A QUITTÉ CET ÉCRAN (porteur, 2026-08-06), ET SA
