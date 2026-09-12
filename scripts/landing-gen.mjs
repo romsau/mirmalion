@@ -16,6 +16,15 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 
 const VERSION = JSON.parse(readFileSync('package.json', 'utf8')).version;
 const DMG = `https://github.com/romsau/mirmalion/releases/download/v${VERSION}/Mirmalion_${VERSION}_aarch64.dmg`;
+/**
+ * Le bouton annonce-t-il une bêta ? Vrai tant que le numéro majeur est zéro.
+ *
+ * ⚠️ La mention se retire d'elle-même à la 1.0.0 : personne n'a à y penser le jour venu, et
+ * c'est la seule façon qu'elle ne survive pas à ce qu'elle annonce.
+ * ⚠️ Elle se pose **hors** du `<span data-version>` : `landing-version.mjs` réécrit le contenu de
+ * ce span à chaque publication, et exige qu'il n'y en ait qu'un. Le mot y disparaîtrait.
+ */
+const BETA = Number(VERSION.split('.')[0]) === 0;
 const SITE = 'https://mirmalion.web.app/';
 const REPO = 'https://github.com/romsau/mirmalion';
 const MEASUREMENT_ID = 'G-69VB32R303';
@@ -52,6 +61,7 @@ const T = {
     h1: 'Vous parlez, Mirmalion écrit.',
     lede: "Dictez dans n'importe quelle application, suivez une conférence dans une autre langue avec le texte en direct, ou transcrivez un fichier. Sur votre Mac, sans réseau.",
     download: 'Télécharger Mirmalion',
+    beta: 'bêta',
     meta1: 'macOS 26 · Apple Silicon · Gratuit, code ouvert',
     meta2: 'Français, anglais, espagnol, allemand, italien, portugais.',
     dictee: {
@@ -146,6 +156,7 @@ const T = {
     h1: 'You speak, Mirmalion writes.',
     lede: 'Dictate in any application, follow a conference in another language with the text live, or transcribe a file. On your Mac, without a network.',
     download: 'Download Mirmalion',
+    beta: 'beta',
     meta1: 'macOS 26 · Apple Silicon · Free, open source',
     meta2: 'French, English, Spanish, German, Italian, Portuguese.',
     dictee: {
@@ -240,6 +251,7 @@ const T = {
     h1: 'Tú hablas, Mirmalion escribe.',
     lede: 'Dicta en cualquier aplicación, sigue una conferencia en otro idioma con el texto en directo, o transcribe un archivo. En tu Mac, sin red.',
     download: 'Descargar Mirmalion',
+    beta: 'beta',
     meta1: 'macOS 26 · Apple Silicon · Gratis, código abierto',
     meta2: 'Francés, inglés, español, alemán, italiano, portugués.',
     dictee: {
@@ -334,6 +346,7 @@ const T = {
     h1: 'Du sprichst, Mirmalion schreibt.',
     lede: 'Diktiere in jeder Anwendung, folge einem Vortrag in einer anderen Sprache mit dem Text live, oder transkribiere eine Datei. Auf deinem Mac, ohne Netz.',
     download: 'Mirmalion herunterladen',
+    beta: 'Beta',
     meta1: 'macOS 26 · Apple Silicon · Kostenlos, offener Code',
     meta2: 'Französisch, Englisch, Spanisch, Deutsch, Italienisch, Portugiesisch.',
     dictee: {
@@ -428,6 +441,7 @@ const T = {
     h1: 'Tu parli, Mirmalion scrive.',
     lede: "Detta in qualsiasi applicazione, segui una conferenza in un'altra lingua con il testo in diretta, o trascrivi un file. Sul tuo Mac, senza rete.",
     download: 'Scarica Mirmalion',
+    beta: 'beta',
     meta1: 'macOS 26 · Apple Silicon · Gratuito, codice aperto',
     meta2: 'Francese, inglese, spagnolo, tedesco, italiano, portoghese.',
     dictee: {
@@ -522,6 +536,7 @@ const T = {
     h1: 'Tu falas, o Mirmalion escreve.',
     lede: 'Dita em qualquer aplicação, acompanha uma conferência noutra língua com o texto em direto, ou transcreve um ficheiro. No teu Mac, sem rede.',
     download: 'Descarregar Mirmalion',
+    beta: 'beta',
     meta1: 'macOS 26 · Apple Silicon · Gratuito, código aberto',
     meta2: 'Francês, inglês, espanhol, alemão, italiano, português.',
     dictee: {
@@ -845,7 +860,7 @@ ${header(code, path, { nav, pathOf: homePath })}
           <h1 id="hero-title">${t.h1}</h1>
           <p class="lede">${t.lede}</p>
           <a class="download" data-download href="${DMG}">
-            ${t.download} <span data-version>${VERSION}</span>
+            ${t.download} <span data-version>${VERSION}</span>${BETA ? ` · ${t.beta}` : ''}
           </a>
           <div class="meta">
             <p>${t.meta1}</p>
