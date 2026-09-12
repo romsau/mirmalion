@@ -1,6 +1,6 @@
 {
   "name": "mirmalion",
-  "version": "0.9.17",
+  "version": "0.9.18",
   "scripts": {
     "ng": "ng",
     "start": "tauri dev --config src-tauri/tauri.conf.dev.json",
