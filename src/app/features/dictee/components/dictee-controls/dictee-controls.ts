@@ -1,5 +1,6 @@
 import { Component, computed, input, model, output } from '@angular/core';
 import { ComboSelect } from '../../../../shared/components/forms/combo-select/combo-select';
+import { Switch } from '../../../../shared/components/forms/switch/switch';
 import { PromptField } from '../../../../shared/components/forms/prompt-field/prompt-field';
 import { ModeSelector } from '../mode-selector/mode-selector';
 import type { FormOption } from '../../../../shared/components/forms/form-option';
@@ -27,7 +28,6 @@ const DEFAULT_TRANSLATION: Language = 'en';
 
 /** Le nom affiché de chaque style de reformulation. */
 const REPHRASING_LABELS: Readonly<Record<RephrasingMode, string>> = {
-  none: $localize`:@@dictee.rephrasing.none:Pas de reformulation`,
   standard: $localize`:@@dictee.rephrasing.standard:Standard`,
   professional: $localize`:@@dictee.rephrasing.professional:Professionnel`,
   concise: $localize`:@@dictee.rephrasing.concise:Concis`,
@@ -49,7 +49,7 @@ const REPHRASING_LABELS: Readonly<Record<RephrasingMode, string>> = {
  */
 @Component({
   selector: 'app-dictee-controls',
-  imports: [ComboSelect, ModeSelector, PromptField],
+  imports: [ComboSelect, ModeSelector, PromptField, Switch],
   templateUrl: './dictee-controls.html',
   styleUrl: './dictee-controls.scss',
 })
@@ -79,7 +79,13 @@ export class DicteeControls {
   /** La langue de traduction, ou « aucune ». */
   readonly translationTarget = model.required<TranslationTarget>();
 
-  /** Le style de reformulation. */
+  /** Le nettoyage par le modèle de langue est-il appliqué ? */
+  readonly cleanupEnabled = model.required<boolean>();
+
+  /** La reformulation est-elle appliquée ? Elle commande l'existence du champ de style. */
+  readonly rephrasingEnabled = model.required<boolean>();
+
+  /** Le style de reformulation, conservé même quand la reformulation est éteinte. */
   readonly rephrasingMode = model.required<RephrasingMode>();
 
   /** Le prompt libre, utile au seul mode `custom`. */
@@ -124,8 +130,12 @@ export class DicteeControls {
   });
 
   /**
-   * Les styles de reformulation, dans l'ordre de `REPHRASING_MODES` et non l'alphabet : « Pas de
-   * reformulation » d'abord, puis du plus neutre au plus marqué, « Personnalisé… » en dernier.
+   * Les styles de reformulation, dans l'ordre de `REPHRASING_MODES` et non l'alphabet : du plus
+   * neutre au plus marqué, « Personnalisé… » en dernier.
+   *
+   * @remarks
+   * ⚠️ Aucune ligne « Pas de reformulation » : c'est l'interrupteur qui la porte. Le menu
+   * n'existe que lorsqu'il est allumé, et il ne répond qu'à « dans quel style ».
    */
   protected readonly rephrasingOptions = computed<readonly FormOption<RephrasingMode>[]>(() =>
     REPHRASING_MODES.map((mode) => ({ value: mode, label: REPHRASING_LABELS[mode] })),

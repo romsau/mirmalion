@@ -39,9 +39,15 @@ export const DICTATION_MODES = ['hold', 'toggle'] as const;
 /** Le mode de déclenchement du raccourci global. */
 export type DictationMode = (typeof DICTATION_MODES)[number];
 
-/** Les modes de reformulation. `'none'` est verrouillé, toujours proposé. */
+/**
+ * Les modes de reformulation.
+ *
+ * @remarks
+ * ⚠️ Plus de `'none'` : c'est l'interrupteur « Reformulation » qui dit non, et deux façons de le
+ * dire — un interrupteur éteint et une première ligne de menu — feraient douter de ce que fait
+ * chacune. Le menu ne répond qu'à une question, « dans quel style ».
+ */
 export const REPHRASING_MODES = [
-  'none',
   'standard',
   'professional',
   'concise',
@@ -215,7 +221,25 @@ export interface AppSettings {
   readonly liveTranslationTarget: TranslationTarget;
   /** Maintenir la touche pour parler, ou basculer d'un appui à l'autre. */
   readonly dictationMode: DictationMode;
-  /** La réécriture appliquée à une dictée, `'none'` pour la laisser telle quelle. */
+  /**
+   * Le nettoyage par le modèle de langue est-il appliqué aux dictées ?
+   *
+   * @remarks
+   * ⚠️ Allumé par défaut : c'est ce que l'application a toujours fait, et l'éteindre est un
+   * choix. Éteint, l'étape n'existe plus — la pilule ne l'annonce pas et le modèle n'est pas
+   * appelé. Le Direct n'est pas concerné : il ne nettoie rien.
+   */
+  readonly cleanupEnabled: boolean;
+  /**
+   * La reformulation est-elle appliquée aux dictées ?
+   *
+   * @remarks
+   * ⚠️ Séparé de {@link AppSettings.rephrasingMode} pour que le style survive à l'extinction :
+   * éteindre puis rallumer retrouve « Professionnel » si c'était lui. Un seul champ portant
+   * « aucune » aurait effacé le choix à chaque bascule.
+   */
+  readonly rephrasingEnabled: boolean;
+  /** Le style dans lequel une dictée est réécrite, quand la reformulation est allumée. */
   readonly rephrasingMode: RephrasingMode;
   /** La langue vers laquelle traduire une dictée, `'none'` pour ne rien traduire. */
   readonly translationTarget: TranslationTarget;
@@ -286,7 +310,9 @@ export const DEFAULT_SETTINGS: AppSettings = {
   liveOverlayVisible: true,
   liveTranslationTarget: 'none',
   dictationMode: 'hold',
-  rephrasingMode: 'none',
+  cleanupEnabled: true,
+  rephrasingEnabled: false,
+  rephrasingMode: 'standard',
   translationTarget: 'none',
   dictationRetention: 200,
   liveRetention: '6m',
@@ -336,6 +362,22 @@ function languageList(value: unknown): readonly Language[] {
  * une version future. Un seul champ abîmé ne doit pas faire perdre les autres, d'où un repli par
  * champ et non un repli global.
  */
+/**
+ * Ce que l'ancien fichier disait de la reformulation, ou `null` s'il ne dit rien d'exploitable.
+ *
+ * @remarks
+ * ⚠️ Ne s'exprime que sur un fichier écrit **avant** l'interrupteur : dès que le booléen existe,
+ * il fait foi. Sans cette garde, éteindre la reformulation sur un style choisi se rallumerait
+ * seule à la relecture suivante.
+ */
+function rephrasedBefore(stored: Record<string, unknown>): boolean | null {
+  if (typeof stored['rephrasingEnabled'] === 'boolean') {
+    return null;
+  }
+  const before = stored['rephrasingMode'];
+  return typeof before === 'string' && before !== 'none' ? true : null;
+}
+
 export function sanitiseSettings(raw: unknown): AppSettings {
   const stored = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
   const pick = <T>(key: keyof AppSettings, allowed: readonly T[]): T =>
@@ -419,6 +461,11 @@ export function sanitiseSettings(raw: unknown): AppSettings {
     // en français pendant qu'une session tourne en anglais.
     liveTranslationTarget: target(storedLiveTarget, liveLanguage),
     dictationMode: pick('dictationMode', DICTATION_MODES),
+    cleanupEnabled: flag('cleanupEnabled'),
+    // ⚠️ **La migration des fichiers écrits avant l'interrupteur passe par ici.** Ils portent un
+    // `rephrasingMode` valant un style, ou `'none'` — jamais le booléen. Retomber sur le défaut
+    // éteindrait la reformulation de qui l'avait réglée ; on la relit donc dans l'ancien champ.
+    rephrasingEnabled: rephrasedBefore(stored) ?? flag('rephrasingEnabled'),
     rephrasingMode: pick('rephrasingMode', REPHRASING_MODES),
     translationTarget: target(storedTarget, dictationLanguage),
     dictationRetention: pick('dictationRetention', DICTATION_RETENTIONS),

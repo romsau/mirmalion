@@ -41,10 +41,22 @@ pub struct Stored {
   pub dictation_language: String,
   /// L'identifiant du micro choisi, ou `None` pour celui du système.
   pub microphone_id: Option<String>,
-  /// Le style de reformulation demandé, ou `None` pour « Pas de reformulation ».
+  /// Le nettoyage par le modèle de langue est-il appliqué aux dictées ?
   ///
   /// # Pièges
   ///
+  /// - ⚠️ Vrai par défaut : c'est ce que l'application a toujours fait, et un fichier de réglages
+  ///   écrit avant l'interrupteur ne dit rien de lui. Le rendre faux par défaut éteindrait le
+  ///   nettoyage de tout le monde à la mise à jour.
+  pub cleanup: bool,
+  /// Le style de reformulation demandé, ou `None` pour « pas de reformulation ».
+  ///
+  /// # Pièges
+  ///
+  /// - ⚠️ L'interrupteur et le style sont **deux** réglages côté interface, et un seul ici : le
+  ///   style survit à l'extinction là-bas, mais ce qui traverse le pont est la seule question qui
+  ///   intéresse le pipeline — reformuler, et dans quel style. Un interrupteur éteint rend
+  ///   `None`, quel que soit le style retenu.
   /// - ⚠️ Le `none` du menu ne devient pas une variante de [`crate::llm::RephrasingStyle`], il
   ///   devient l'absence d'étape — sinon chaque appelant aurait deux façons de ne rien faire.
   pub rephrasing: Option<RephrasingStyle>,
@@ -93,6 +105,7 @@ impl Default for Stored {
       dictation_language: DEFAULT_LANGUAGE.to_owned(),
       microphone_id: None,
       rephrasing: None,
+      cleanup: true,
       translation_target: None,
       dictation_retention: DEFAULT_DICTATION_RETENTION,
       show_in_dock: true,
@@ -142,7 +155,17 @@ impl Stored {
         .unwrap_or(DEFAULT_LANGUAGE)
         .to_owned(),
       microphone_id: text("microphoneId").map(str::to_owned),
-      rephrasing: text("rephrasingMode").and_then(parse_rephrasing),
+      cleanup: parsed
+        .get("cleanupEnabled")
+        .and_then(serde_json::Value::as_bool)
+        .unwrap_or(defaults.cleanup),
+      // ⚠️ **Les deux champs sont lus ensemble, et l'interrupteur commande.** Un fichier écrit
+      // avant lui ne porte que le style : `rephrasingEnabled` absent vaut alors « allumé », ce
+      // que `rephrased_before` tranche — sans quoi la mise à jour éteindrait la reformulation
+      // de qui l'avait réglée.
+      rephrasing: rephrased_before(parsed)
+        .then(|| text("rephrasingMode").and_then(parse_rephrasing))
+        .flatten(),
       translation_target: text("translationTarget")
         .filter(|value| is_scope_language(value))
         .map(str::to_owned),
@@ -197,6 +220,26 @@ pub const LANGUAGES: [&str; 6] = ["fr", "en", "es", "de", "it", "pt"];
 /// Ce code de langue fait-il partie des 6 traitées ?
 fn is_scope_language(value: &str) -> bool {
   LANGUAGES.contains(&value)
+}
+
+/// La reformulation est-elle demandée ? Lit l'interrupteur, et à défaut l'ancien champ seul.
+///
+/// # Pièges
+///
+/// - ⚠️ Ne se rabat sur le style **que** si l'interrupteur est absent du fichier : dès qu'il
+///   existe, il fait foi. Sans cette garde, une reformulation éteinte sur un style choisi se
+///   rallumerait seule à la relecture suivante.
+fn rephrased_before(parsed: &serde_json::Value) -> bool {
+  match parsed
+    .get("rephrasingEnabled")
+    .and_then(serde_json::Value::as_bool)
+  {
+    Some(asked) => asked,
+    None => parsed
+      .get("rephrasingMode")
+      .and_then(serde_json::Value::as_str)
+      .is_some_and(|style| style != "none"),
+  }
 }
 
 /// Le style de reformulation écrit dans le fichier, ou `None` s'il n'y a pas d'étape.
@@ -342,6 +385,64 @@ mod tests {
 
   /// ⚠️ **Un champ abîmé ne doit pas faire perdre les autres.** Le fichier est en clair et
   /// éditable à la main ; une version future peut aussi y écrire des valeurs inconnues.
+  /// **Le nettoyage est allumé tant que rien ne dit le contraire.** Un fichier écrit avant
+  /// l'interrupteur ne le mentionne pas : le rendre faux par défaut éteindrait le nettoyage de
+  /// tout le monde à la mise à jour.
+  #[test]
+  fn cleaning_stays_on_until_the_file_says_otherwise() {
+    assert!(read(serde_json::json!({})).cleanup);
+    assert!(read(serde_json::json!({ "cleanupEnabled": true })).cleanup);
+    assert!(!read(serde_json::json!({ "cleanupEnabled": false })).cleanup);
+    assert!(
+      read(serde_json::json!({ "cleanupEnabled": "oui" })).cleanup,
+      "une valeur inexploitable retombe sur le défaut, elle n'éteint rien"
+    );
+  }
+
+  /// **L'interrupteur de reformulation commande, et l'ancien fichier est relu quand il manque.**
+  /// La table entière est ici : c'est elle qui décide si une mise à jour perd le réglage de
+  /// quelqu'un.
+  #[test]
+  fn the_rephrasing_switch_wins_over_the_style_it_remembers() {
+    let asked = |value| read(value).rephrasing;
+
+    assert_eq!(
+      asked(serde_json::json!({ "rephrasingMode": "professional" })),
+      Some(RephrasingStyle::Professional),
+      "fichier d'avant l'interrupteur : le style seul vaut « allumé »"
+    );
+    assert_eq!(
+      asked(serde_json::json!({ "rephrasingMode": "none" })),
+      None,
+      "fichier d'avant, réglé sur « pas de reformulation »"
+    );
+    assert_eq!(
+      asked(serde_json::json!({
+        "rephrasingEnabled": false,
+        "rephrasingMode": "professional",
+      })),
+      None,
+      "⚠️ LA CASE QUI FAIT EXISTER LA FONCTION : éteint sur un style choisi reste éteint"
+    );
+    assert_eq!(
+      asked(serde_json::json!({
+        "rephrasingEnabled": true,
+        "rephrasingMode": "concise",
+      })),
+      Some(RephrasingStyle::Concise)
+    );
+    assert_eq!(
+      asked(serde_json::json!({ "rephrasingEnabled": true })),
+      None,
+      "allumé sans style exploitable : il n'y a rien à demander au modèle"
+    );
+    assert_eq!(
+      asked(serde_json::json!({})),
+      None,
+      "un fichier vide ne reformule pas"
+    );
+  }
+
   #[test]
   fn one_broken_field_does_not_lose_the_others() {
     let stored = read(serde_json::json!({

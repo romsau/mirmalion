@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ModeSelector } from './mode-selector';
 import type { DictationMode } from '../../../../core/models/settings';
@@ -24,7 +25,38 @@ function hintOf(fixture: ComponentFixture<ModeSelector>): string {
   return rootOf(fixture).querySelector('.hint-txt')?.textContent?.trim() ?? '';
 }
 
+/** Un hôte minimal : la projection ne se teste pas autrement. */
+@Component({
+  selector: 'app-mode-selector-host',
+  imports: [ModeSelector],
+  template: `<app-mode-selector [mode]="'hold'"
+    ><p class="second">Traduit en Anglais</p></app-mode-selector
+  >`,
+})
+class Host {}
+
 describe('ModeSelector', () => {
+  it('offers the second shortcut a place under its own hint', async () => {
+    // ⚠️ Le second indice n'appartient pas à ce composant — il parle de traduction, que le
+    // sélecteur de mode ignore. Il offre la place, l'hôte décide ce qui s'y met.
+    TestBed.resetTestingModule();
+    const fixture = TestBed.createComponent(Host);
+    await fixture.whenStable();
+    const column = (fixture.nativeElement as HTMLElement).querySelector('.hints');
+
+    expect(column).not.toBeNull();
+    expect([...(column?.children ?? [])].map((child) => child.className)).toEqual([
+      'hint',
+      'second',
+    ]);
+  });
+
+  it('keeps its own hint alone when the host projects nothing', async () => {
+    // Un anglophone sans cible réglée : la colonne n'a qu'un indice, et c'est un cas nominal.
+    const column = rootOf(await render()).querySelector('.hints');
+    expect(column?.children).toHaveLength(1);
+  });
+
   it('offers exactly the two modes settled, in the order of the maquette', async () => {
     const fixture = await render();
     expect(buttons(fixture).map((button) => button.textContent?.trim())).toEqual([

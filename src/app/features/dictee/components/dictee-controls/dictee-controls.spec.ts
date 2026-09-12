@@ -13,6 +13,8 @@ async function render(
     language?: Language;
     rephrasingMode?: RephrasingMode;
     translationTarget?: string;
+    cleanupEnabled?: boolean;
+    rephrasingEnabled?: boolean;
   } = {},
 ) {
   TestBed.resetTestingModule();
@@ -22,7 +24,11 @@ async function render(
   fixture.componentRef.setInput('mode', 'hold');
   fixture.componentRef.setInput('language', overrides.language ?? 'fr');
   fixture.componentRef.setInput('translationTarget', overrides.translationTarget ?? 'none');
-  fixture.componentRef.setInput('rephrasingMode', overrides.rephrasingMode ?? 'none');
+  fixture.componentRef.setInput('cleanupEnabled', overrides.cleanupEnabled ?? true);
+  // ⚠️ Allumée par défaut DANS LE BANC, éteinte dans le produit : sans elle, la moitié des
+  // épreuves ci-dessous n'aurait aucun champ de reformulation à interroger.
+  fixture.componentRef.setInput('rephrasingEnabled', overrides.rephrasingEnabled ?? true);
+  fixture.componentRef.setInput('rephrasingMode', overrides.rephrasingMode ?? 'standard');
   fixture.componentRef.setInput('customPrompt', '');
   await fixture.whenStable();
   return fixture;
@@ -34,7 +40,7 @@ function rootOf(fixture: ComponentFixture<DicteeControls>): HTMLElement {
 
 /** La phrase de l'indice du second raccourci, ou `null` quand il n'est pas affiché. */
 function hintOf(fixture: ComponentFixture<DicteeControls>): string | null {
-  return rootOf(fixture).querySelector('.is-compact .hint-txt')?.textContent?.trim() ?? null;
+  return rootOf(fixture).querySelector('.is-secondary .hint-txt')?.textContent?.trim() ?? null;
 }
 
 /**
@@ -68,7 +74,7 @@ describe('DicteeControls', () => {
     const labels = [...rootOf(await render()).querySelectorAll('.label')].map((label) =>
       label.textContent?.trim(),
     );
-    // ⚠️ Plus de « Micro » : il est passé dans Options ▸ Dictée (2026-07-30).
+    // ⚠️ Plus de « Micro » : il est passé dans Options ▸ Dictée.
     expect(labels).toEqual(['Mode de dictée', 'Langue parlée', 'Traduction', 'Reformulation']);
   });
 
@@ -172,17 +178,27 @@ describe('DicteeControls', () => {
   });
 
   /** Les trois touches sont là, et le symbole ne s'annonce pas — c'est le nom qui est lu. */
-  it('shows the three keys, the symbols left to the eye alone', async () => {
-    const keys = [...rootOf(await render()).querySelectorAll('.is-compact .key')];
+  it('shows the three keys as symbols, each still named to the ear', async () => {
+    // ⚠️ Le symbole EST le texte de la touche ici, contrairement à l'indice du mode : à trois
+    // touches épelées, la phrase n'avait plus de largeur. Le nom passe donc par `aria-label`,
+    // et un lecteur d'écran entend toujours « control option command ».
+    const keys = [...rootOf(await render()).querySelectorAll('.is-secondary .key')];
 
-    expect(keys.map((key) => key.textContent?.replace(/[⌃⌥⌘]/gu, '').trim())).toEqual([
+    expect(keys.map((key) => key.textContent?.trim())).toEqual(['⌃', '⌥', '⌘']);
+    expect(keys.map((key) => key.getAttribute('aria-label'))).toEqual([
       'control',
       'option',
       'command',
     ]);
-    for (const key of keys) {
-      expect(key.querySelector('.sym')?.getAttribute('aria-hidden')).toBe('true');
-    }
+  });
+
+  it('puts the second shortcut beside the first, never under the translation field', async () => {
+    // ⚠️ Les deux indices se lisent ensemble : ils annoncent deux gestes, pas deux champs.
+    const root = rootOf(await render({ translationTarget: 'es' }));
+    const secondary = root.querySelector('.is-secondary');
+
+    expect(secondary?.closest('app-mode-selector')).not.toBeNull();
+    expect(secondary?.closest('.field-row')).toBeNull();
   });
 
   it('asks for the language options from either menu, and says which one', async () => {
@@ -206,15 +222,60 @@ describe('DicteeControls', () => {
   });
 
   it('keeps the rephrasing list in the order that was settled, not alphabetical', async () => {
-    // Trier alphabétiquement mettrait « Amical » en tête et « Pas de reformulation » au milieu.
+    // Trier alphabétiquement mettrait « Amical » en tête.
+    // ⚠️ Aucune ligne « Pas de reformulation » : c'est l'interrupteur qui la porte, et deux
+    // façons de dire non feraient douter de ce que fait chacune.
     expect(labelsOf(await openMenu(await render(), 2))).toEqual([
-      'Pas de reformulation',
       'Standard',
       'Professionnel',
       'Concis',
       'Détaillé',
       'Amical',
       'Personnalisé…',
+    ]);
+  });
+
+  it('lets the rephrasing switch command the existence of the style field', async () => {
+    // ⚠️ Le champ n'est pas masqué, il n'existe pas : un champ caché reste tabulable dans
+    // certains navigateurs, et il serait annoncé alors qu'il ne s'applique à rien.
+    const off = rootOf(await render({ rephrasingEnabled: false }));
+    expect([...off.querySelectorAll('.label')].map((label) => label.textContent?.trim())).toEqual([
+      'Mode de dictée',
+      'Langue parlée',
+      'Traduction',
+    ]);
+
+    const on = rootOf(await render({ rephrasingEnabled: true }));
+    expect([...on.querySelectorAll('.label')].map((label) => label.textContent?.trim())).toContain(
+      'Reformulation',
+    );
+  });
+
+  it('emits both switches without touching the rephrasing style', async () => {
+    // ⚠️ Le style survit à l'extinction : éteindre puis rallumer doit retrouver le sien.
+    const fixture = await render({ rephrasingMode: 'professional' });
+    const cleanup: boolean[] = [];
+    const rephrasing: boolean[] = [];
+    const styles: RephrasingMode[] = [];
+    fixture.componentInstance.cleanupEnabled.subscribe((on) => cleanup.push(on));
+    fixture.componentInstance.rephrasingEnabled.subscribe((on) => rephrasing.push(on));
+    fixture.componentInstance.rephrasingMode.subscribe((mode) => styles.push(mode));
+
+    const switches = [...rootOf(fixture).querySelectorAll<HTMLElement>('.switch-field .switch')];
+    switches[0].click();
+    switches[1].click();
+    await fixture.whenStable();
+
+    expect(cleanup).toEqual([false]);
+    expect(rephrasing).toEqual([false]);
+    expect(styles).toEqual([]);
+  });
+
+  it('names each switch to a screen reader, which sees no visible label of its own', async () => {
+    const switches = [...rootOf(await render()).querySelectorAll('.switch-field .switch')];
+    expect(switches.map((control) => control.getAttribute('aria-label'))).toEqual([
+      'Nettoyer le texte dicté',
+      'Reformuler le texte dicté',
     ]);
   });
 

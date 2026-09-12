@@ -250,10 +250,16 @@ describe('Dictee', () => {
 
     panel.translationTarget.set('en');
     panel.rephrasingMode.set('concise');
+    panel.cleanupEnabled.set(false);
+    panel.rephrasingEnabled.set(true);
     await fixture.whenStable();
 
     expect(update).toHaveBeenCalledWith({ translationTarget: 'en' });
     expect(update).toHaveBeenCalledWith({ rephrasingMode: 'concise' });
+    expect(update).toHaveBeenCalledWith({ cleanupEnabled: false });
+    // ⚠️ L'interrupteur n'écrit QUE lui-même : le style survit à l'extinction, c'est tout
+    // l'intérêt d'avoir séparé les deux réglages.
+    expect(update).toHaveBeenCalledWith({ rephrasingEnabled: true });
   });
 
   it('drops a subscription that arrives after the screen is gone', async () => {

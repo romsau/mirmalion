@@ -61,20 +61,27 @@
     </div>
   </div>
 
-  <div class="group">
-    <p class="label" i18n="@@dictee.language">Langue parlée</p>
-    <app-combo-select
-      [options]="languageOptions()"
-      [(value)]="language"
-      [actionLabel]="actionLabel"
-      (action)="languageOptionsRequested.emit('spoken')"
-      [disabled]="recording()"
-      ariaLabel="Langue parlée"
-      i18n-ariaLabel="@@dictee.language"
-    />
-  </div>
-
   <!--
+    ⚠️ **Les deux champs de langue sur une ligne, comme en dictée** : les deux écrans posent la
+    même question, ils la posent de la même façon. ⚠️ La marge est mince — « Nessuna traduzione »
+    tient à quelques pixels près dans la colonne italienne, plus juste encore qu'en dictée. Si un
+    nom se tronque un jour, c'est ici qu'il faut revenir.
+  -->
+  <div class="field-row">
+    <div class="group">
+      <p class="label" i18n="@@dictee.language">Langue parlée</p>
+      <app-combo-select
+        [options]="languageOptions()"
+        [(value)]="language"
+        [actionLabel]="actionLabel"
+        (action)="languageOptionsRequested.emit('spoken')"
+        [disabled]="recording()"
+        ariaLabel="Langue parlée"
+        i18n-ariaLabel="@@dictee.language"
+      />
+    </div>
+
+    <!--
     ⚠️ **La paire de langues se vérifie ici, avant « Démarrer », jamais pendant.** Apple présente
     sa propre feuille pour installer une paire, et elle exige un hôte SwiftUI dans une fenêtre
     visible : au milieu d'une session, c'est impossible.
@@ -82,17 +89,18 @@
     ⚠️ « Pas de traduction » est verrouillé et toujours offert : on doit pouvoir ne rien traduire
     même sans cible activée. Le compte rendu se fabrique toujours sur l'**original**.
 -->
-  <div class="group">
-    <p class="label" i18n="@@dictee.translation">Traduction</p>
-    <app-combo-select
-      [options]="translationOptions()"
-      [(value)]="translationTarget"
-      [actionLabel]="actionLabel"
-      (action)="languageOptionsRequested.emit('translation')"
-      [disabled]="recording()"
-      ariaLabel="Traduire vers"
-      i18n-ariaLabel="@@common.translateTo"
-    />
+    <div class="group">
+      <p class="label" i18n="@@dictee.translation">Traduction</p>
+      <app-combo-select
+        [options]="translationOptions()"
+        [(value)]="translationTarget"
+        [actionLabel]="actionLabel"
+        (action)="languageOptionsRequested.emit('translation')"
+        [disabled]="recording()"
+        ariaLabel="Traduire vers"
+        i18n-ariaLabel="@@common.translateTo"
+      />
+    </div>
   </div>
 
   <!--

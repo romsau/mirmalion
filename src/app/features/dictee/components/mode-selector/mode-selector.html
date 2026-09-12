@@ -30,17 +30,25 @@
     même touche, et les annoncer tous les deux la ferait entendre en double. Le symbole est
     donc décoratif ; c'est le nom qui est lu.
   -->
-  <div class="hint">
-    <span class="keys">
-      <kbd class="key">
-        <span class="sym" aria-hidden="true">⌃</span>
-        control
-      </kbd>
-      <kbd class="key">
-        <span class="sym" aria-hidden="true">⌥</span>
-        option
-      </kbd>
-    </span>
-    <span class="hint-txt">{{ hint() }}</span>
+  <!--
+    ⚠️ **La colonne porte deux indices, et le second ne vient pas d'ici.** Il parle de
+    traduction, que ce composant ignore : il offre la place, l'hôte décide ce qui s'y met.
+    Projeté ou non, la colonne se règle sur la hauteur de la carte des modes.
+  -->
+  <div class="hints">
+    <div class="hint">
+      <span class="keys">
+        <kbd class="key">
+          <span class="sym" aria-hidden="true">⌃</span>
+          control
+        </kbd>
+        <kbd class="key">
+          <span class="sym" aria-hidden="true">⌥</span>
+          option
+        </kbd>
+      </span>
+      <span class="hint-txt">{{ hint() }}</span>
+    </div>
+    <ng-content />
   </div>
 </div>

@@ -20,7 +20,9 @@ describe('DEFAULT_SETTINGS', () => {
       liveOverlayVisible: true,
       liveTranslationTarget: 'none',
       dictationMode: 'hold',
-      rephrasingMode: 'none',
+      cleanupEnabled: true,
+      rephrasingEnabled: false,
+      rephrasingMode: 'standard',
       translationTarget: 'none',
       dictationRetention: 200,
       liveRetention: '6m',
@@ -59,6 +61,35 @@ describe('sanitiseSettings', () => {
     expect(sanitiseSettings({})).toEqual(DEFAULT_SETTINGS);
   });
 
+  /**
+   * **L'interrupteur de reformulation commande, et l'ancien fichier est relu quand il manque.**
+   * C'est cette table qui décide si une mise à jour perd le réglage de quelqu'un.
+   */
+  it('lets the rephrasing switch win over the style it remembers', () => {
+    const asked = (stored: Record<string, unknown>) => sanitiseSettings(stored).rephrasingEnabled;
+
+    expect(asked({ rephrasingMode: 'professional' })).toBe(true);
+    expect(asked({ rephrasingMode: 'none' })).toBe(false);
+    // ⚠️ La case qui fait exister le réglage séparé : éteint sur un style choisi reste éteint.
+    expect(asked({ rephrasingEnabled: false, rephrasingMode: 'professional' })).toBe(false);
+    expect(asked({ rephrasingEnabled: true })).toBe(true);
+    expect(asked({})).toBe(false);
+  });
+
+  it('keeps cleaning on until the file says otherwise', () => {
+    // ⚠️ Un fichier écrit avant l'interrupteur n'en dit rien : le défaut faux éteindrait le
+    // nettoyage de tout le monde à la mise à jour.
+    expect(sanitiseSettings({}).cleanupEnabled).toBe(true);
+    expect(sanitiseSettings({ cleanupEnabled: false }).cleanupEnabled).toBe(false);
+    expect(sanitiseSettings({ cleanupEnabled: 'oui' }).cleanupEnabled).toBe(true);
+  });
+
+  it('forgets a rephrasing style the menu no longer offers', () => {
+    // « none » a quitté la liste : un fichier qui le porte encore retombe sur le premier style,
+    // et c'est l'interrupteur, lui, qui retient qu'on ne reformulait pas.
+    expect(sanitiseSettings({ rephrasingMode: 'none' }).rephrasingMode).toBe('standard');
+  });
+
   it('keeps every valid stored value', () => {
     const stored: AppSettings = {
       theme: 'dark',
@@ -76,6 +107,8 @@ describe('sanitiseSettings', () => {
       liveOverlayVisible: false,
       liveTranslationTarget: 'de',
       dictationMode: 'toggle',
+      cleanupEnabled: false,
+      rephrasingEnabled: true,
       rephrasingMode: 'professional',
       translationTarget: 'de',
       dictationRetention: 500,

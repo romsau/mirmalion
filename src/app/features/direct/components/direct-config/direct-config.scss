@@ -57,12 +57,16 @@
 }
 
 // Hors du défilement, et centré.
+//
+// ⚠️ **Le bas est plus épais que le haut** : le bouton remonte, et le blanc passe sous lui plutôt
+// qu'au-dessus. Un pied symétrique le collait au bord de la fenêtre, où il se lisait comme une
+// barre d'outils et non comme la conclusion de la colonne.
 .rc-footer {
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 18px 0;
+  padding: 18px 0 44px;
 }
 
 // ⚠️ **Préfixe `rc-`, comme toute la colonne de configuration** : `.rec-stop` et `.rec-timer` sont
@@ -134,16 +138,16 @@
   border: 0;
   cursor: pointer;
   font: inherit;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--accent-ink);
   background: var(--accent-50);
-  border-radius: 12px;
-  padding: 13px 16px;
+  border-radius: 13px;
+  padding: 16px 24px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 9px;
+  gap: 10px;
   transition:
     background 0.15s ease,
     color 0.15s ease;
@@ -188,17 +192,33 @@
 // mesure 20. Reprendre le rembourrage du select ferait une carte visiblement plus grande que
 // ses voisines pour un contrôle plus petit.
 .switch-field {
-  @include field-surface;
+  @include switch-field;
 
-  // ⚠️ **Serré contre le sélecteur au-dessus** : les deux ne font qu'un
-  // champ — ce qu'on capte, et si l'on s'y ajoute. L'écart d'un groupe à l'autre (30 px) les
-  // aurait fait lire comme deux réglages sans rapport.
-  margin-top: 8px;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 9px 14px;
+  // ⚠️ **Franchement détaché du sélecteur au-dessus.** Il en était serré à 8 px, l'intention
+  // étant que les deux se lisent comme un champ unique — ce qu'on capte, et si l'on s'y ajoute.
+  // À l'usage ce sont deux décisions : on choisit une application, puis on décide si sa propre
+  // voix entre dans la session.
+  //
+  // ⚠️ 32 px est la borne haute utile : c'est déjà l'écart d'un groupe à l'autre. Au-delà, le
+  // micro paraîtrait plus loin de sa source que le bloc des langues ne l'est de lui.
+  margin-top: 32px;
+}
+
+// Les deux champs de langue sur une ligne.
+.field-row {
+  @include field-row;
+
+  margin-bottom: 30px;
+}
+
+// ⚠️ **Le filet appartient à la partie qui commence, d'où `border-top`.** Posé en bas du bloc
+// précédent, il fermerait la colonne par un trait suspendu si ce qui suit venait à disparaître.
+//
+// ⚠️ **« Inclure mon micro » est DANS le groupe « Source audio »**, pas à côté : les deux blocs
+// de premier niveau sont donc la source et les langues, et il n'y a qu'un joint entre eux.
+:host .rc-controls > .group + .field-row {
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
 }
 
 .sf-label {

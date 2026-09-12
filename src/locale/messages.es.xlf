@@ -234,6 +234,30 @@
         <source>Reformulation</source>
         <target>Reformulación</target>
       </trans-unit>
+      <trans-unit id="dictee.cleanup" datatype="html">
+        <source>Nettoyage</source>
+<target>Limpieza</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dictee/components/dictee-controls/dictee-controls.html</context>
+          <context context-type="linenumber">104,106</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dictee.cleanup.aria" datatype="html">
+        <source>Nettoyer le texte dicté</source>
+<target>Limpiar el texto dictado</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dictee/components/dictee-controls/dictee-controls.html</context>
+          <context context-type="linenumber">108,109</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dictee.rephrasing.aria" datatype="html">
+        <source>Reformuler le texte dicté</source>
+<target>Reformular el texto dictado</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dictee/components/dictee-controls/dictee-controls.html</context>
+          <context context-type="linenumber">117,118</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="dictee.rephrasing.prompt" datatype="html">
         <source>Écrivez votre prompt de reformulation…</source>
         <target>Escribe tu prompt de reformulación…</target>
@@ -245,10 +269,6 @@
       <trans-unit id="dictee.language.seeOptions" datatype="html">
         <source>Voir les options de langues</source>
         <target>Ver las opciones de idiomas</target>
-      </trans-unit>
-      <trans-unit id="dictee.rephrasing.none" datatype="html">
-        <source>Pas de reformulation</source>
-        <target>Sin reformulación</target>
       </trans-unit>
       <trans-unit id="dictee.rephrasing.standard" datatype="html">
         <source>Standard</source>

@@ -377,6 +377,7 @@ async fn begin(app: &tauri::AppHandle, pressed: Instant, combo: Combo) {
     *current = Some(Session {
       run: Run::start(Plan {
         language: stored.dictation_language.clone(),
+        cleanup: stored.cleanup,
         rephrasing: stored.rephrasing,
         translation_target: target_for(combo, &stored),
       }),

@@ -75,10 +75,21 @@
   }
 }
 
-// L'indice : les deux touches, puis la phrase qui suit le mode.
+// La colonne des deux indices, à droite de la carte des modes.
+//
+// ⚠️ Elle ne fixe aucune hauteur : `align-items: stretch` sur `.mode-row` la règle sur la carte,
+// et les deux indices s'y partagent la place. Une hauteur en dur se déréglerait au premier
+// libellé plus long — « Mains libres » n'a pas la même longueur dans les six langues.
+.hints {
+  @include shortcut-hints;
+}
+
+// L'indice du geste principal : les deux touches, puis la phrase qui suit le mode.
 //
 // ⚠️ Tout son dessin — encadré, touches, symbole, phrase — vit dans `shortcut-hint` : il est
-// partagé avec l'indice du second raccourci, sous le champ Traduction.
+// partagé avec l'indice du second raccourci, que l'hôte projette dans la colonne ci-dessus.
+// ⚠️ Le second indice n'est PAS stylé ici : projeté, il garde l'encapsulation de son hôte.
 .hint {
   @include shortcut-hint;
+  @include shortcut-hint-primary;
 }

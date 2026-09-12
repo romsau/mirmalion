@@ -12,11 +12,41 @@
   @include section-label;
 }
 
-// L'indice du second raccourci, sous le champ Traduction. Même motif que celui du sélecteur
-// de mode, à son échelle réduite.
+// L'indice du second raccourci, projeté dans la colonne de `app-mode-selector`.
 //
-// ⚠️ `.is-compact` n'est pas décoratif : `app-mode-selector`, enfant de cette colonne, porte un
-// `.hint` lui aussi. L'encapsulation sépare les styles, pas les sélecteurs d'un test.
-.hint.is-compact {
-  @include shortcut-hint($compact: true);
+// ⚠️ **Il est stylé ICI et pas là-bas** : l'encapsulation émulée accroche le contenu projeté à
+// l'hôte qui l'écrit, jamais au composant qui l'accueille. Le déplacer dans `mode-selector.scss`
+// le laisserait sans style, sans erreur et sans bruit.
+.hint.is-secondary {
+  @include shortcut-hint;
+  @include shortcut-hint-secondary;
+}
+
+// Les deux champs de langue sur une ligne, puis les deux interrupteurs sur la suivante.
+.field-row {
+  @include field-row;
+
+  margin-bottom: 28px;
+}
+
+.switch-field {
+  @include switch-field;
+}
+
+.sf-label {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+// ⚠️ **LES FILETS APPARTIENNENT À LA PARTIE QUI COMMENCE, d'où `border-top`.** Le champ de style
+// n'existe pas quand la reformulation est éteinte : en `border-bottom`, la rangée d'interrupteurs
+// porterait un trait fermant la colonne sous du vide.
+//
+// ⚠️ **Aucun filet entre les interrupteurs et le champ qu'ils commandent** : c'est un seul bloc.
+// D'où `.switches` exclu de la règle, et la rangée des langues seule à porter le trait.
+:host > .group + .field-row,
+:host > .field-row + .field-row {
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
 }

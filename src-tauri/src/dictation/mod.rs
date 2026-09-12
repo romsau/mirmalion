@@ -116,15 +116,43 @@ pub enum Step {
 /// - ⚠️ Figé, et pas relu en cours de route : l'utilisateur peut changer de langue de traduction
 ///   pendant que le modèle travaille, et appliquer le nouveau choix à une dictée déjà commencée
 ///   donnerait un résultat que personne n'a demandé.
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Plan {
   /// La langue parlée. Figée elle aussi : traduire la fin d'une dictée depuis une autre
   /// langue que son début n'a aucun sens.
   pub language: String,
+  /// Le nettoyage par le modèle de langue est-il demandé ?
+  ///
+  /// # Pièges
+  ///
+  /// - ⚠️ **Un booléen et non une option, contrairement à ses deux voisins**, et c'est le seul
+  ///   endroit du plan où la différence se voit : le nettoyage n'a pas de paramètre. Il a lieu
+  ///   ou il n'a pas lieu. En faire une `Option<()>` aurait aligné les trois champs à l'œil pour
+  ///   rendre l'appelant illisible.
+  pub cleanup: bool,
   /// Le style de reformulation demandé, s'il y en a un.
   pub rephrasing: Option<RephrasingStyle>,
   /// La langue vers laquelle traduire, s'il y en a une.
   pub translation_target: Option<String>,
+}
+
+/// Le plan d'une dictée dont personne n'a rien demandé de particulier.
+///
+/// # Pièges
+///
+/// - ⚠️ **Écrit à la main, et `cleanup` y vaut `true`** : `derive(Default)` le rendrait `false`,
+///   c'est-à-dire une dictée qui ne nettoie pas — l'inverse du réglage livré. Un défaut de
+///   structure qui contredit le défaut du produit se paie sur les bancs, où il fait mesurer un
+///   parcours que personne n'exécute.
+impl Default for Plan {
+  fn default() -> Self {
+    Self {
+      language: String::new(),
+      cleanup: true,
+      rephrasing: None,
+      translation_target: None,
+    }
+  }
 }
 
 /// Ce qu'une dictée laisse à l'historique.
@@ -331,12 +359,15 @@ impl Run {
       };
 
       match self.stage {
-        Stage::Cleaning => {
+        // Une étape optionnelle non demandée n'est pas « sautée » : elle n'existe pas pour cette
+        // dictée. Le nettoyage a rejoint les deux autres le jour où un interrupteur l'a ouvert.
+        Stage::Cleaning if self.plan.cleanup => {
           return Step::Clean {
             text: self.text.clone(),
             language: self.plan.language.clone(),
           };
         }
+        Stage::Cleaning => continue,
         // Une étape optionnelle non demandée n'est pas « sautée » : elle n'existe pas pour
         // cette dictée. On boucle jusqu'à la suivante qui existe.
         Stage::Rephrasing => match self.plan.rephrasing {
@@ -415,6 +446,7 @@ mod tests {
   fn plan(rephrasing: Option<RephrasingStyle>, target: Option<&str>) -> Plan {
     Plan {
       language: "fr".to_owned(),
+      cleanup: true,
       rephrasing,
       translation_target: target.map(str::to_owned),
     }
@@ -480,6 +512,25 @@ mod tests {
       Step::Insert("nettoyé".into()),
       "ni reformulation ni traduction : on insère le nettoyé"
     );
+  }
+
+  /// **L'interrupteur de nettoyage retire l'étape, il ne la fait pas échouer.** La distinction
+  /// est tout le sujet : une étape qui renonce laisse une trace — la pilule l'a annoncée, la
+  /// variante existe et vaut le texte d'avant. Une étape non demandée n'existe pas.
+  #[test]
+  fn the_cleaning_step_does_not_exist_when_the_switch_is_off() {
+    let mut run = Run::start(Plan {
+      cleanup: false,
+      ..Plan::default()
+    });
+
+    run.transcribed("brut".into());
+    assert_eq!(
+      run.advance("dico".into()),
+      Step::Insert("dico".into()),
+      "ni nettoyage, ni reformulation, ni traduction : le texte du dictionnaire part au curseur"
+    );
+    assert_eq!(run.variants().cleaned, None);
   }
 
   /// **LE CŒUR DE LA MACHINE.** Chaque étape optionnelle peut renoncer sans que la dictée

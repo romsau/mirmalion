@@ -136,6 +136,7 @@ mod tests {
   fn plan() -> Plan {
     Plan {
       language: "fr".to_owned(),
+      cleanup: true,
       rephrasing: None,
       translation_target: None,
     }
@@ -205,6 +206,7 @@ mod tests {
       100,
       &Plan {
         language: "en".to_owned(),
+        cleanup: true,
         rephrasing: Some(RephrasingStyle::Concise),
         translation_target: Some("it".to_owned()),
       },
@@ -234,6 +236,7 @@ mod tests {
       100,
       &Plan {
         language: String::new(),
+        cleanup: true,
         rephrasing: None,
         translation_target: Some(String::new()),
       },
@@ -259,6 +262,7 @@ mod tests {
       1600,
       &Plan {
         language: "it".to_owned(),
+        cleanup: true,
         rephrasing: Some(RephrasingStyle::Custom),
         translation_target: Some("fr".to_owned()),
       },

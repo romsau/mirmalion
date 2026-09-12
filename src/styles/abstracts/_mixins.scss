@@ -435,34 +435,22 @@
 ///
 /// ⚠️ `$compact` efface le bloc et repeint le symbole en `--ink` : sous l'opacité, `--muted`
 /// tombe à 2,9:1, que la règle de contraste d'AXE ne voit pas. Plancher mesuré : `0.7`.
-@mixin shortcut-hint($compact: false) {
+@mixin shortcut-hint {
   display: flex;
   min-width: 0;
-  flex-direction: column;
+  flex: 1;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding: 8px 10px;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--surface-soft);
   color: var(--ink);
-
-  @if $compact {
-    margin-top: 8px;
-    padding: 8px 10px;
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 9px;
-    opacity: 0.7;
-  } @else {
-    height: 92px;
-    flex: 1;
-    padding: 12px 16px;
-    gap: 8px;
-  }
+  gap: 9px;
 
   .keys {
     display: inline-flex;
-    gap: if($compact, 3px, 8px);
+    gap: 3px;
   }
 
   // ⚠️ **Carrée par construction, pas par une largeur devinée.** `aspect-ratio: 1` fait suivre la
@@ -472,37 +460,119 @@
   .key {
     position: relative;
     display: flex;
-    min-width: if($compact, 20px, 40px);
+    min-width: 20px;
     align-items: flex-end;
     justify-content: center;
-    padding: if($compact, 2px 3px, 5px 4px);
+    padding: 2px 3px;
     aspect-ratio: 1;
     border: 1px solid var(--line);
-    border-radius: if($compact, 5px, 8px);
+    border-radius: 5px;
     background: var(--key-bg);
     color: var(--ink);
-    font-size: if($compact, 7px, 10px);
+    font-size: 7px;
     font-weight: 600;
     line-height: 1;
   }
 
+  // ⚠️ `--ink` et non `--muted` : le symbole n'est décoratif que pour un lecteur d'écran, il
+  // reste du texte à l'œil. Sous l'opacité de l'indice secondaire, le gris tombait à 2,9:1.
   .sym {
     position: absolute;
-    top: if($compact, 2px, 4px);
-    right: if($compact, 3px, 5px);
-    color: if($compact, var(--ink), var(--muted));
-    font-size: if($compact, 7px, 11px);
+    top: 2px;
+    right: 3px;
+    color: var(--ink);
+    font-size: 7px;
   }
 
   .hint-txt {
-    font-size: if($compact, 11px, 11.5px);
+    font-size: 11px;
     line-height: 1.35;
-    text-align: center;
-    // ⚠️ Le retour à la ligne n'est rendu qu'à l'indice compact : sa phrase porte un nom de
-    // langue, et « Traduit en portugais » déborderait d'une colonne étroite au lieu de passer
-    // à la ligne. Celle du sélecteur de mode tient sur une ligne par construction.
-    white-space: if($compact, normal, nowrap);
+    text-align: left;
+    white-space: normal;
   }
+}
+
+/// L'indice du geste principal : plus grand que son voisin, parce qu'il compte plus.
+///
+/// ⚠️ **Aucune hauteur écrite** : il absorbe ce que l'indice secondaire ne prend pas, et la
+/// colonne se règle sur la carte des modes. Un partage en pourcentages se déréglerait dès que la
+/// phrase du second passe à la ligne.
+@mixin shortcut-hint-primary {
+  flex: 1;
+
+  .keys {
+    gap: 5px;
+  }
+
+  .key {
+    min-width: 26px;
+    padding: 3px 4px;
+    border-radius: 6px;
+    font-size: 8px;
+  }
+
+  .sym {
+    top: 3px;
+    right: 4px;
+    font-size: 8px;
+  }
+
+  .hint-txt {
+    font-size: 12px;
+  }
+}
+
+/// L'indice secondaire : il recule d'un cran, et ne prend que la place qu'il lui faut.
+///
+/// ⚠️ **L'opacité porte sur tout le bloc** — fond, filet, touches et phrase. 0,7 est le plancher,
+/// et il ne tient QUE parce que le symbole est en `--ink` : à `--muted`, ce niveau le laissait à
+/// 2,9:1. AXE ne l'aurait pas dit, sa règle de contraste ignorant l'opacité d'un ancêtre. Ne pas
+/// descendre plus bas sans mesurer à la main.
+@mixin shortcut-hint-secondary {
+  flex: 0 0 auto;
+  opacity: 0.7;
+}
+
+/// La colonne qui empile les deux indices à droite de la carte des modes.
+@mixin shortcut-hints {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/// Deux champs côte à côte sur une ligne — « Langue parlée » et « Traduction ».
+///
+/// ⚠️ **`min-width: 0` sur chaque colonne** : sans lui, un champ refuse de descendre sous la
+/// largeur de son plus long contenu, la ligne déborde et l'écran gagne une barre de défilement
+/// horizontale. C'est le défaut classique du flex, et il ne se voit qu'avec un contenu long —
+/// « Nessuna traduzione » passe à quelques pixels près.
+@mixin field-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  > * {
+    min-width: 0;
+    flex: 1;
+    margin-bottom: 0;
+  }
+}
+
+/// La carte à interrupteur : un libellé et son contrôle sur une ligne, avec la surface d'un champ.
+///
+/// ⚠️ **Moins haute qu'un champ** : un interrupteur mesure 22 px là où une ligne de texte en
+/// mesure 20. Reprendre le rembourrage du champ ferait une carte visiblement plus grande que ses
+/// voisines pour un contrôle plus petit.
+@mixin switch-field {
+  @include field-surface;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 14px;
+  gap: 12px;
 }
 
 /// La boîte d'un champ où l'on SAISIT du texte — input d'une ligne, zone de prompt, recherche.

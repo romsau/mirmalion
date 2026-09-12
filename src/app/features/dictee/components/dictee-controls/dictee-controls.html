@@ -17,15 +17,30 @@
 -->
 <div class="group">
   <p class="label" i18n="@@dictee.mode">Mode de dictée</p>
-  <app-mode-selector [(mode)]="mode" />
+  <!--
+    ⚠️ **Le seul endroit où ⌃⌥⌘ s'apprend** : ni menu, ni palette, ni réglage. Le retirer rend la
+    fonction invisible, pas discrète.
+    ⚠️ **Absent quand il n'y a rien à traduire** — un anglophone sans cible réglée. L'indice du
+    mode occupe alors toute la colonne.
+    ⚠️ **Projeté, donc stylé ICI** : l'encapsulation émulée accroche le contenu projeté à son
+    hôte, jamais au composant qui l'accueille.
+    ⚠️ **Le symbole est le texte de la touche**, son nom passe par `aria-label` et n'est pas
+    traduit : à trois touches épelées, la phrase retombait sur deux lignes.
+  -->
+  <app-mode-selector [(mode)]="mode">
+    @if (translatedInto(); as into) {
+      <div class="hint is-secondary">
+        <span class="keys">
+          <kbd class="key" aria-label="control">⌃</kbd>
+          <kbd class="key" aria-label="option">⌥</kbd>
+          <kbd class="key" aria-label="command">⌘</kbd>
+        </span>
+        <span class="hint-txt" i18n="@@dictee.translation.hint">Traduit en {{ into }}</span>
+      </div>
+    }
+  </app-mode-selector>
 </div>
 
-<!--
-  ⚠️ **Une ligne chacun**, et non deux colonnes côte à côte comme le faisait la maquette. Deux
-  champs à mi-largeur donnaient des listes trop étroites pour les noms de langue, et le lien
-  entre « langue parlée » et « traduction » se lit mieux de haut en bas — on parle dans l'une,
-  on obtient l'autre.
--->
 <!--
   ⚠️ **Les deux menus sont des select custom** : « Traduction » porte une dernière ligne séparée
   par un filet, et une liste native ne se style pas — le cas que la documentation d'`app-select`
@@ -35,63 +50,75 @@
   partout où accepter est la seule issue. Là où un choix peut être refusé, on écrit les deux
   liaisons à la main — voir `filedoc.html`.
 -->
-<div class="group">
-  <p class="label" i18n="@@dictee.language">Langue parlée</p>
-  <app-combo-select
-    [options]="languageOptions()"
-    [(value)]="language"
-    [actionLabel]="actionLabel"
-    (action)="languageOptionsRequested.emit('spoken')"
-    ariaLabel="Langue parlée"
-    i18n-ariaLabel="@@dictee.language"
-  />
+<!--
+  ⚠️ **Les deux champs sur une ligne** : on parle dans l'une, on obtient l'autre, et la paire se
+  lit d'un coup d'œil. ⚠️ La marge est mince — « Nessuna traduzione » tient à quelques pixels
+  près dans la colonne italienne. Si un nom se tronque un jour, c'est ici qu'il faut revenir.
+-->
+<div class="field-row">
+  <div class="group">
+    <p class="label" i18n="@@dictee.language">Langue parlée</p>
+    <app-combo-select
+      [options]="languageOptions()"
+      [(value)]="language"
+      [actionLabel]="actionLabel"
+      (action)="languageOptionsRequested.emit('spoken')"
+      ariaLabel="Langue parlée"
+      i18n-ariaLabel="@@dictee.language"
+    />
+  </div>
+
+  <div class="group">
+    <p class="label" i18n="@@dictee.translation">Traduction</p>
+    <app-combo-select
+      [options]="translationOptions()"
+      [(value)]="translationTarget"
+      [actionLabel]="actionLabel"
+      (action)="languageOptionsRequested.emit('translation')"
+      ariaLabel="Traduire vers"
+      i18n-ariaLabel="@@common.translateTo"
+    />
+  </div>
 </div>
 
-<div class="group">
-  <p class="label" i18n="@@dictee.translation">Traduction</p>
-  <app-combo-select
-    [options]="translationOptions()"
-    [(value)]="translationTarget"
-    [actionLabel]="actionLabel"
-    (action)="languageOptionsRequested.emit('translation')"
-    ariaLabel="Traduire vers"
-    i18n-ariaLabel="@@common.translateTo"
-  />
-  <!--
-    ⚠️ **Le seul endroit où ⌃⌥⌘ s'apprend.** Le raccourci ne s'annonce nulle part ailleurs : ni
-    menu, ni palette, ni réglage. Retirer ce bloc rend la fonction invisible, pas discrète.
+<!--
+  ⚠️ **Les deux traitements du texte, en interrupteurs.** Ils se ressemblent, leurs conséquences
+  non : le nettoyage n'a pas de champ sous lui, la reformulation en commande un. C'est le champ
+  qui apparaît qui l'annonce, pas l'interrupteur.
 
-    ⚠️ **Absent quand il n'y a rien à traduire** — un anglophone sans cible réglée. Le raccourci
-    existe toujours, il ne fait simplement rien de plus que ⌃⌥ : l'annoncer promettrait une
-    différence qui n'existe pas.
-
-    ⚠️ Le symbole et le nom ne sont PAS deux informations : « ⌘ » et « command » désignent la
-    même touche. Le symbole est décoratif ; c'est le nom qui est lu.
-  -->
-  @if (translatedInto(); as into) {
-    <div class="hint is-compact">
-      <span class="keys">
-        <kbd class="key">
-          <span class="sym" aria-hidden="true">⌃</span>
-          control
-        </kbd>
-        <kbd class="key">
-          <span class="sym" aria-hidden="true">⌥</span>
-          option
-        </kbd>
-        <kbd class="key">
-          <span class="sym" aria-hidden="true">⌘</span>
-          command
-        </kbd>
-      </span>
-      <span class="hint-txt" i18n="@@dictee.translation.hint">Traduit en {{ into }}</span>
-    </div>
-  }
+  ⚠️ **Le nettoyage est allumé par défaut** — c'est ce que l'application a toujours fait. Éteint,
+  l'étape n'existe plus : le modèle n'est pas appelé et la pilule ne l'annonce pas.
+-->
+<div class="field-row switches">
+  <div class="switch-field">
+    <span class="sf-label" i18n="@@dictee.cleanup">Nettoyage</span>
+    <app-switch
+      [checked]="cleanupEnabled()"
+      (checkedChange)="cleanupEnabled.set($event)"
+      ariaLabel="Nettoyer le texte dicté"
+      i18n-ariaLabel="@@dictee.cleanup.aria"
+    />
+  </div>
+  <div class="switch-field">
+    <span class="sf-label" i18n="@@dictee.rephrasing">Reformulation</span>
+    <app-switch
+      [checked]="rephrasingEnabled()"
+      (checkedChange)="rephrasingEnabled.set($event)"
+      ariaLabel="Reformuler le texte dicté"
+      i18n-ariaLabel="@@dictee.rephrasing.aria"
+    />
+  </div>
 </div>
 
-<div class="group">
-  <p class="label" i18n="@@dictee.rephrasing">Reformulation</p>
-  <!--
+<!--
+  ⚠️ **Le champ n'est pas masqué, il n'existe pas** quand la reformulation est éteinte : un champ
+  caché reste tabulable dans certains navigateurs, et il serait annoncé alors qu'il ne s'applique
+  à rien. C'est aussi ce qui fait qu'aucun filet ne se retrouve suspendu sous du vide.
+-->
+@if (rephrasingEnabled()) {
+  <div class="group">
+    <p class="label" i18n="@@dictee.rephrasing">Reformulation</p>
+    <!--
     ⚠️ **Custom, comme les deux au-dessus** : rien ici ne l'exigeait, c'est la cohérence de la
     colonne qui l'exige — deux rendus de liste côte à côte se voient au premier coup d'œil.
 
@@ -100,27 +127,28 @@
     Un webview ne dessine rien au-delà de sa fenêtre, là où le `<select>` natif le pouvait — c'est
     ce qu'on a échangé contre la cohérence.
 -->
-  <app-combo-select
-    [options]="rephrasingOptions()"
-    [(value)]="rephrasingMode"
-    placement="above"
-    ariaLabel="Reformulation"
-    i18n-ariaLabel="@@dictee.rephrasing"
-  />
+    <app-combo-select
+      [options]="rephrasingOptions()"
+      [(value)]="rephrasingMode"
+      placement="above"
+      ariaLabel="Reformulation"
+      i18n-ariaLabel="@@dictee.rephrasing"
+    />
 
-  <!--
+    <!--
     ⚠️ Le champ n'est pas seulement masqué, il n'existe pas : un champ caché reste tabulable
     dans certains navigateurs, et il serait annoncé alors qu'il ne s'applique à rien.
 -->
-  @if (showsPrompt()) {
-    <app-prompt-field
-      class="prompt-input"
-      [value]="customPrompt()"
-      placeholder="Écrivez votre prompt de reformulation…"
-      i18n-placeholder="@@dictee.rephrasing.prompt"
-      ariaLabel="Prompt de reformulation"
-      i18n-ariaLabel="@@dictee.rephrasing.promptAria"
-      (valueChange)="writePrompt($event)"
-    />
-  }
-</div>
+    @if (showsPrompt()) {
+      <app-prompt-field
+        class="prompt-input"
+        [value]="customPrompt()"
+        placeholder="Écrivez votre prompt de reformulation…"
+        i18n-placeholder="@@dictee.rephrasing.prompt"
+        ariaLabel="Prompt de reformulation"
+        i18n-ariaLabel="@@dictee.rephrasing.promptAria"
+        (valueChange)="writePrompt($event)"
+      />
+    }
+  </div>
+}

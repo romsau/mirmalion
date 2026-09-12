@@ -75,7 +75,13 @@ export class Dictee {
   /** Vers quelle langue traduire, ou « aucune ». */
   protected readonly translationTarget = computed(() => this.settings.settings().translationTarget);
 
-  /** Le style de reformulation demandé au LLM local. */
+  /** Le nettoyage par le modèle de langue est-il appliqué aux dictées ? */
+  protected readonly cleanupEnabled = computed(() => this.settings.settings().cleanupEnabled);
+
+  /** La reformulation est-elle appliquée aux dictées ? */
+  protected readonly rephrasingEnabled = computed(() => this.settings.settings().rephrasingEnabled);
+
+  /** Le style de reformulation demandé au LLM local, conservé même quand elle est éteinte. */
   protected readonly rephrasingMode = computed(() => this.settings.settings().rephrasingMode);
 
   /** Le mode de déclenchement : maintenir ⌃⌥, ou basculer. */
@@ -155,6 +161,22 @@ export class Dictee {
   /** Choisit la langue vers laquelle les dictées seront traduites. */
   protected async setTranslation(translationTarget: TranslationTarget): Promise<void> {
     await this.settings.update({ translationTarget });
+  }
+
+  /** Allume ou éteint le nettoyage des dictées par le modèle de langue. */
+  protected async setCleanup(cleanupEnabled: boolean): Promise<void> {
+    await this.settings.update({ cleanupEnabled });
+  }
+
+  /**
+   * Allume ou éteint la reformulation des dictées.
+   *
+   * @remarks
+   * ⚠️ Le style n'est pas touché : c'est tout l'intérêt d'un réglage séparé — éteindre puis
+   * rallumer retrouve « Professionnel » si c'était lui.
+   */
+  protected async setRephrasingEnabled(rephrasingEnabled: boolean): Promise<void> {
+    await this.settings.update({ rephrasingEnabled });
   }
 
   /** Choisit le style de reformulation appliqué aux dictées. */
