@@ -860,7 +860,7 @@ ${header(code, path, { nav, pathOf: homePath })}
           <h1 id="hero-title">${t.h1}</h1>
           <p class="lede">${t.lede}</p>
           <a class="download" data-download href="${DMG}">
-            ${t.download} <span data-version>${VERSION}</span>${BETA ? ` · ${t.beta}` : ''}
+            ${t.download} <span data-version>${VERSION}</span>${BETA ? ` (${t.beta})` : ''}
           </a>
           <div class="meta">
             <p>${t.meta1}</p>
